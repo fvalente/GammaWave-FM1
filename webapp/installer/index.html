@@ -1,0 +1,1682 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: GPL-3.0-only
+     Copyright (C) 2026 Leo Kuroshita (@kurogedelic), Hügelton Instruments
+     GAMMAWAVE // WRAITH Edition for M-VAVE FM-1 -->
+<html lang="fr" data-palette="gamma">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GAMMAWAVE // WRAITH — M-VAVE FM-1 Firmware</title>
+<style>
+  :root, :root[data-palette="gamma"] {
+    --bg: #070709;
+    --surf: #111116;
+    --surf2: #181820;
+    --fg: #f8f0e0;
+    --dim: #9a9284;
+    --theme: #ff9424;
+    --accent: #60e4ff;
+    --danger: #ff5252;
+    --border: #2c2824;
+    --glow: rgba(255, 148, 36, 0.18);
+  }
+  :root[data-palette="wraith"] {
+    --bg: #08060c;
+    --surf: #130f1c;
+    --surf2: #1b1528;
+    --fg: #f4ecf8;
+    --dim: #9c8ea8;
+    --theme: #ff6088;
+    --accent: #78f0b8;
+    --danger: #ff4870;
+    --border: #32243c;
+    --glow: rgba(255, 96, 136, 0.18);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: radial-gradient(circle at 50% 0%, var(--surf2) 0%, var(--bg) 70%);
+    color: var(--fg);
+    font: 14px/1.6 "IBM Plex Mono", "JetBrains Mono", "Consolas", -apple-system, BlinkMacSystemFont, monospace;
+    min-height: 100vh;
+  }
+  main { max-width: 820px; margin: 0 auto; padding: 32px 20px 64px; }
+  header.hero {
+    border: 1px solid var(--theme);
+    background: linear-gradient(180deg, var(--surf2) 0%, var(--surf) 100%);
+    box-shadow: 0 0 28px var(--glow), inset 0 1px 0 rgba(255,255,255,0.06);
+    padding: 20px 22px;
+    margin-bottom: 24px;
+    position: relative;
+  }
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .tag-pill {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    background: rgba(96, 228, 255, 0.08);
+  }
+  .controls-top { display: flex; gap: 8px; align-items: center; }
+  .btn-ghost {
+    font: inherit;
+    font-size: 12px;
+    background: var(--surf);
+    color: var(--fg);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    cursor: pointer;
+  }
+  .btn-ghost:hover { border-color: var(--theme); color: var(--theme); }
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    margin: 0 0 4px;
+    color: var(--theme);
+    text-shadow: 0 0 16px var(--glow);
+  }
+  .subtitle {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin: 0 0 14px;
+  }
+  .specs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .spec-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+  .spec-card strong { color: var(--theme); display: block; font-size: 11px; letter-spacing: 0.08em; }
+  .card {
+    background: var(--surf);
+    border: 1px solid var(--border);
+    padding: 18px 20px;
+    margin-bottom: 20px;
+  }
+  .card-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--theme);
+    margin: 0 0 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  p { margin: 0 0 12px; }
+  button {
+    font: inherit;
+    font-weight: 600;
+    background: var(--theme);
+    color: #070709;
+    border: 1px solid var(--theme);
+    padding: 9px 22px;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: all 0.12s ease;
+  }
+  button:hover:not(:disabled) {
+    filter: brightness(1.12);
+    box-shadow: 0 0 14px var(--glow);
+  }
+  button:disabled { opacity: 0.35; cursor: default; }
+  button.secondary {
+    background: transparent;
+    color: var(--fg);
+    border-color: var(--border);
+  }
+  button.secondary:hover:not(:disabled) {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  select, input[type="file"] {
+    font: inherit;
+    background: var(--bg);
+    color: var(--fg);
+    border: 1px solid var(--border);
+    padding: 5px 8px;
+  }
+  #status {
+    margin-top: 14px;
+    min-height: 1.6em;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .small { color: var(--dim); font-size: 12px; }
+  progress {
+    width: 100%;
+    height: 8px;
+    margin-top: 14px;
+    appearance: none;
+    background: var(--bg);
+    border: 1px solid var(--border);
+  }
+  progress::-webkit-progress-bar { background: var(--bg); }
+  progress::-webkit-progress-value { background: linear-gradient(90deg, var(--theme), var(--accent)); }
+  pre {
+    color: var(--dim);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 10px;
+    font-size: 11px;
+    white-space: pre-wrap;
+    margin-top: 12px;
+    max-height: 180px;
+    overflow-y: auto;
+  }
+  .nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 16px 0;
+  }
+  .nav-btn {
+    display: inline-block;
+    text-decoration: none;
+    padding: 8px 14px;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 600;
+    background: rgba(96, 228, 255, 0.06);
+  }
+  .nav-btn:hover { background: var(--accent); color: #070709; }
+  /* Interactive Synth Preview */
+  .synth-grid {
+    display: grid;
+    grid-template-columns: 1fr 220px;
+    gap: 14px;
+    align-items: start;
+  }
+  @media (max-width: 640px) { .synth-grid { grid-template-columns: 1fr; } }
+  .synth-controls {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .ctl-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+  .ctl-box label { display: flex; justify-content: space-between; color: var(--dim); margin-bottom: 3px; }
+  .ctl-box label span.val { color: var(--fg); font-weight: 600; }
+  .ctl-box input[type="range"] { width: 100%; accent-color: var(--theme); margin: 0; }
+  .ctl-box select { width: 100%; font-size: 11px; padding: 3px; }
+  canvas.scope {
+    width: 100%;
+    height: 120px;
+    background: #040406;
+    border: 1px solid var(--border);
+    display: block;
+  }
+  .step-row {
+    display: grid;
+    grid-template-columns: repeat(16, 1fr);
+    gap: 2px;
+    margin-top: 8px;
+  }
+  .step-cell {
+    height: 20px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    padding: 0;
+  }
+  .step-cell.on { background: var(--theme); border-color: var(--theme); }
+  .step-cell.now { outline: 2px solid var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <header class="hero">
+    <div class="topbar">
+      <span class="tag-pill">POCKET GAMMAWAVE // GW-1 // DUAL-CORE AC791N</span>
+      <div class="controls-top">
+        <button class="btn-ghost" id="pal-toggle" type="button">THEME: GAMMA</button>
+        <button class="btn-ghost" id="lang" type="button"></button>
+      </div>
+    </div>
+    <h1>POCKET GAMMAWAVE // GW-1</h1>
+    <div class="subtitle">Solar Hearth. Spectrogram Filter. 4-Track Tape. — Custom Firmware &amp; Web Studio for M-VAVE FM-1</div>
+    <p data-t="intro" style="margin-bottom:8px"></p>
+    <div class="nav-links">
+      <a class="nav-btn" href="../editor/" data-t="editor"></a>
+      <a class="nav-btn" href="../editor/?mock=1" data-t="editorMock"></a>
+      <a class="nav-btn" href="../../firmware/FM-1.fwsc" download="FM-1.fwsc">📥 FM-1.fwsc (Official V15)</a>
+      <a class="nav-btn" href="https://shadowtune.itch.io/gammawave" target="_blank" rel="noopener" style="background:linear-gradient(90deg,#ffb800,#ff5500);color:#050608;border-color:#ffb800;font-weight:800">🔥 BUY GAMMAWAVE VST (PC/Mac) ↗</a>
+      <a class="nav-btn" href="https://gammawaveaudio.com/" target="_blank" rel="noopener">🌐 GAMMAWAVEAUDIO.COM ↗</a>
+    </div>
+    <div class="specs-grid">
+      <div class="spec-card"><strong>WAVE 1 &amp; 2 + HEARTH</strong>Blazing Yellow Sun + Orbiting Moon, Gravity, Singularity, Photosphere</div>
+      <div class="spec-card"><strong>SPECTROGRAM FILTER</strong>Yellow-Orange-Purple FFT Waterfall + Orange Filter &amp; Cyan Mod Curve</div>
+      <div class="spec-card"><strong>4-TRACK ANALOG TAPE</strong>Live 4-Lane Audio Waveform Tape Deck + Stereo .WAV Master Bounce</div>
+      <div class="spec-card"><strong>MODULAR 4-SLOT FX RACK</strong>CRUSH, DELAY, REVERB, CHORUS + Synced 1/16 PUMP &amp; MUTATE</div>
+    </div>
+  </header>
+
+  <!-- Interactive Browser Audio Preview of the GammaWave / WRAITH FM-1 Engine -->
+  <section class="card">
+    <div class="card-title">
+      <span data-t="previewTitle">GAMMAWAVE // WRAITH — LIVE BROWSER DSP PREVIEW</span>
+      <div style="display:flex;gap:6px">
+        <button id="syn-play" type="button" style="padding:4px 12px;font-size:12px" data-t="synPlay">▶ PLAY SEQ</button>
+        <button id="syn-dice" type="button" class="secondary" style="padding:4px 10px;font-size:12px" data-t="synDice">🎲 DICE MUTATE</button>
+      </div>
+    </div>
+    <div class="synth-grid">
+      <div>
+        <canvas id="scope-cv" class="scope" width="460" height="120"></canvas>
+        <div class="step-row" id="seq-steps"></div>
+      </div>
+      <div>
+        <canvas id="curve-cv" class="scope" width="220" height="120"></canvas>
+        <div class="small" style="margin-top:6px;text-align:center" id="curve-label">TRANSFER CURVE // HEARTH</div>
+      </div>
+    </div>
+    <div class="synth-controls">
+      <div class="ctl-box">
+        <label><span>PRESET</span></label>
+        <select id="syn-preset">
+          <option value="0">INGOT SUB (ANALOG)</option>
+          <option value="1">WORM REESE (ANALOG)</option>
+          <option value="2">SCREAM 303 (ACID)</option>
+          <option value="3">HEARTH LD (ANALOG)</option>
+          <option value="4">PLASMA CORE (PHASE)</option>
+          <option value="5">WRAITH PAD (ANALOG)</option>
+          <option value="6">BLACK CHOIR (VOICE)</option>
+          <option value="7">GEIGER BIT (LOFI)</option>
+        </select>
+      </div>
+      <div class="ctl-box">
+        <label><span>DIST TYPE</span></label>
+        <select id="syn-dtype">
+          <option value="5" selected>HEARTH (Tube+Sub)</option>
+          <option value="6">BLAST (Wraith 4x Fold)</option>
+          <option value="7">PLASMA (AM Warp)</option>
+          <option value="8">FLUX (Geiger Drift)</option>
+          <option value="0">SOFT</option>
+          <option value="1">HARD</option>
+          <option value="2">FOLD</option>
+          <option value="3">CRUSH</option>
+          <option value="4">RECT</option>
+        </select>
+      </div>
+      <div class="ctl-box">
+        <label><span>FILTER TYPE</span></label>
+        <select id="syn-ftype">
+          <option value="0">LP (Lowpass)</option>
+          <option value="4">VOWEL (Formant)</option>
+          <option value="5" selected>SCREAM (Fold Res)</option>
+          <option value="1">HP (Highpass)</option>
+          <option value="2">BP (Bandpass)</option>
+        </select>
+      </div>
+      <div class="ctl-box">
+        <label><span>DIST DRIVE</span><span class="val" id="v-drive">68%</span></label>
+        <input type="range" id="syn-drive" min="0" max="127" value="86">
+      </div>
+      <div class="ctl-box">
+        <label><span>CUTOFF</span><span class="val" id="v-cut">58%</span></label>
+        <input type="range" id="syn-cut" min="5" max="127" value="74">
+      </div>
+      <div class="ctl-box">
+        <label><span>RESONANCE</span><span class="val" id="v-res">72%</span></label>
+        <input type="range" id="syn-res" min="0" max="127" value="92">
+      </div>
+    </div>
+  </section>
+
+  <!-- Main WebMIDI Firmware Installer Card -->
+  <section class="card">
+    <div class="card-title"><span data-t="flashTitle">WEBMIDI FIRMWARE UPLOADER (M-VAVE FM-1)</span></div>
+    <p data-t="warn" style="color:var(--theme);font-weight:600"></p>
+    <p data-t="samples" class="small" style="color:var(--accent)"></p>
+    <p data-t="dual" class="small" style="border-left:3px solid var(--theme);padding:4px 0 4px 12px"></p>
+    <p class="small" data-t="direct"></p>
+
+    <div style="border:1px solid var(--theme);background:var(--bg);padding:12px 14px;margin:14px 0">
+      <p style="margin:0 0 8px;font-weight:600;color:var(--theme)" data-t="firstTitle"></p>
+      <p class="small" style="margin:0 0 10px" data-t="firstText"></p>
+      <p style="margin:0 0 10px"><button id="first-stock" class="secondary" data-t="firstStock"></button></p>
+      <p class="small" style="margin:0" data-t="firstOk"></p>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin:18px 0 10px">
+      <label class="small"><span data-t="verLabel"></span> <select id="ver"></select></label>
+      <button id="go" disabled data-t="install"></button>
+    </div>
+    <p class="small" data-t="verOld"></p>
+
+    <progress id="bar" max="100" value="0"></progress>
+    <p id="status"></p>
+    <pre id="log"></pre>
+
+    <details id="stock" open style="margin-top:20px;border-top:1px solid var(--border);padding-top:12px">
+      <summary style="cursor:pointer;color:var(--accent);font-weight:600" data-t="stockTitle"></summary>
+      <p id="stock-preload-badge" class="small" style="margin-top:8px;color:#48f098;font-weight:600">✓ FM-1.fwsc (Officiel V15 — 699 956 octets, SHA-256 vérifié) est déjà inclus et préchargé !</p>
+      <p class="small" style="margin-top:6px">
+        <a href="../../firmware/FM-1.fwsc" download="FM-1.fwsc" style="color:var(--theme);font-weight:600">📥 Télécharger FM-1.fwsc (Officiel V15 local)</a> ·
+        <a href="https://yms-file-store.oss-cn-hongkong.aliyuncs.com/software/firmware/FM-1.fwsc" target="_blank" rel="noopener" style="color:var(--accent)">Miroir Cloud M-VAVE V15</a>
+      </p>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;margin:12px 0">
+        <button id="stock-direct" disabled>⚡ Flasher V15 Officiel Directement (depuis autre firmware)</button>
+        <button id="stock-go" class="secondary" disabled data-t="stockGo"></button>
+      </div>
+      <p class="small" data-t="stockBackup"></p>
+      <p class="small"><label><span data-t="stockFile"></span> (optionnel, déjà préchargé) : <input id="stock-file" type="file" accept=".fwsc"></label></p>
+      <p class="small"><label><input id="stock-recovery" type="checkbox"> <span data-t="stockRecovery"></span></label></p>
+    </details>
+  </section>
+
+  <footer class="card small">
+    <div style="border:1px solid var(--theme);background:rgba(255,184,0,0.07);padding:10px 12px;margin-bottom:12px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px">
+      <div>
+        <strong style="color:var(--theme);font-size:13px">🔥 GET THE FULL GAMMAWAVE DESKTOP VST (PC / MAC)</strong><br>
+        <span>Unlock the full multi-oscillator Solar Hearth &amp; FFT Spectrogram synth in your DAW:</span>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <a class="nav-btn" href="https://shadowtune.itch.io/gammawave" target="_blank" rel="noopener" style="background:linear-gradient(90deg,#ffb800,#ff5500);color:#050608;border-color:#ffb800;font-weight:800">🛒 BUY ON ITCH.IO ↗</a>
+        <a class="nav-btn" href="https://gammawaveaudio.com/" target="_blank" rel="noopener">🌐 GAMMAWAVEAUDIO.COM ↗</a>
+      </div>
+    </div>
+    <p><span data-t="brick"></span>
+      <a href="https://github.com/kurogedelic/FM-1-transporter" target="_blank" rel="noopener" style="color:var(--theme)">FM-1-transporter</a></p>
+    <p data-t="beta"></p>
+    <p><span data-t="manual"></span>
+      <a href="https://github.com/fvalente/GammaWave-FM1/blob/main/docs/MANUAL.md" target="_blank" rel="noopener" style="color:var(--accent)">English</a> ·
+      <a href="https://github.com/fvalente/GammaWave-FM1/blob/main/docs/MANUAL.es.md" target="_blank" rel="noopener" style="color:var(--accent)">Español</a></p>
+    <p><strong>GAMMAWAVE // WRAITH FM-1</strong> (<a href="https://gammawaveaudio.com/" target="_blank" rel="noopener" style="color:var(--theme)">gammawaveaudio.com</a> · <a href="https://shadowtune.itch.io/gammawave" target="_blank" rel="noopener" style="color:var(--accent)">Buy GammaWave VST</a> · <a href="https://github.com/fvalente/GammaWave-FM1" target="_blank" rel="noopener" style="color:var(--accent)">GitHub Source</a>): Built on <a href="https://github.com/juanjiant-bit/JIANT" target="_blank" rel="noopener" style="color:inherit">JIANT FM</a> &amp; <a href="https://github.com/hugelton/Felucca" target="_blank" rel="noopener" style="color:inherit">Felucca</a> by Leo Kuroshita (@kurogedelic), <a href="https://hugelton.com" target="_blank" rel="noopener" style="color:inherit">Hügelton Instruments</a>, with SLOOP song arranger by isod89 &amp; GammaWave/Wraith industrial DSP.<br>
+      FM6 engine: msfa from Dexed (Google Inc., Pascal Gauthier, Apache-2.0). Package includes JieLi AC79 SDK files (uboot.boot, cfg_tool.bin, eq_cfg_hw.bin under Apache-2.0). <a href="../../firmware/LICENSING.md" style="color:var(--accent)">Licences</a>: <a href="../../firmware/LICENSE" style="color:var(--accent)">GPL-3.0</a>, <a href="../../firmware/LICENSES/Apache-2.0.txt" style="color:var(--accent)">Apache-2.0</a>, <a href="../../firmware/LICENSES/" style="color:var(--accent)">all</a>.<br>
+      <span data-t="license"></span> <a href="https://github.com/fvalente/GammaWave-FM1" target="_blank" rel="noopener" style="color:var(--theme)">fvalente/GammaWave-FM1 (GPL-3.0)</a></p>
+  </footer>
+</main>
+<script type="module">
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2026 Leo Kuroshita (@kurogedelic), Hügelton Instruments
+//
+// FM-1 .fwsc packages in the browser: the package identity and the image the
+// device reads during an update.
+
+const BLOCKS = 20, BLK = 0x30, KEEP = 0x2F;
+const STOCK_V15_SHA256 = "db1642b2b6fa5c2cccb11ffd13878068bb28601678d3644049f99dc40e7edb8a";
+const STOCK_APP_SIZE = 0x8DFBC;
+const STOCK_V15_SIZE = 699956;
+
+const T = new Uint16Array(256);
+for (let i = 0; i < 256; i++) {
+  let c = i << 8;
+  for (let k = 0; k < 8; k++) c = c & 0x8000 ? (c << 1) ^ 0x1021 : c << 1;
+  T[i] = c & 0xFFFF;
+}
+
+function crc16(d, crc = 0) {
+  for (let i = 0; i < d.length; i++) crc = ((crc << 8) & 0xFFFF) ^ T[((crc >> 8) ^ d[i]) & 0xFF];
+  return crc;
+}
+
+function enc(buf, off, size, key = 0xFFFF) {
+  for (let i = 0; i < size; i++) {
+    buf[off + i] ^= key & 0xFF;
+    key = ((key * 2) ^ (key & 0x8000 ? 0x1021 : 0)) & 0xFFFF;
+  }
+}
+
+function sfc(buf, off, size, base, key) {
+  for (let i = 0; i < size; i += 32) enc(buf, off + i, Math.min(size - i, 32), key ^ ((off + i - base) >> 2));
+}
+
+function chipkeyDecode(d) {
+  let sum = 0;
+  for (let i = 0; i < 16; i++) sum += d[i];
+  sum &= 0xFF;
+  sum = sum >= 0xE0 ? 0xAA : sum <= 0x10 ? 0x55 : sum;
+  let k = 0;
+  for (let i = 0; i < 16; i++) if ((d[16 + i] ^ d[15 - i]) < sum) k |= 1 << i;
+  return k;
+}
+
+const align32 = (v) => (v + 31) & ~31;
+const u16 = (b, o) => b[o] | (b[o + 1] << 8);
+const u32 = (b, o) => (b[o] | (b[o + 1] << 8) | (b[o + 2] << 16) | (b[o + 3] << 24)) >>> 0;
+function w16(b, o, v) { b[o] = v & 0xFF; b[o + 1] = (v >> 8) & 0xFF; }
+function w32(b, o, v) { w16(b, o, v & 0xFFFF); w16(b, o + 2, (v >>> 16) & 0xFFFF); }
+
+class Entry {                                   // JLFS head, 32 bytes
+  constructor(raw, off) {
+    this.hdrOff = off;
+    this.hcrc = u16(raw, off);
+    this.dcrc = u16(raw, off + 2);
+    this.offset = u32(raw, off + 4);
+    this.size = u32(raw, off + 8);
+    this.flags = raw[off + 12];
+    this.resvd = raw[off + 13];
+    this.index = u16(raw, off + 14);
+    this.rawName = raw.slice(off + 16, off + 32);
+    const z = this.rawName.indexOf(0);
+    this.name = String.fromCharCode(...this.rawName.slice(0, z < 0 ? 16 : z));
+    if (crc16(raw.subarray(off + 2, off + 32)) !== this.hcrc) throw new Error(`JLFS header CRC mismatch @${off.toString(16)}`);
+  }
+  packInto(buf) {
+    const o = this.hdrOff;
+    w16(buf, o + 2, this.dcrc); w32(buf, o + 4, this.offset); w32(buf, o + 8, this.size);
+    buf[o + 12] = this.flags; buf[o + 13] = this.resvd; w16(buf, o + 14, this.index);
+    buf.set(this.rawName, o + 16);
+    this.hcrc = crc16(buf.subarray(o + 2, o + 32));
+    w16(buf, o, this.hcrc);
+  }
+}
+
+class Package {
+  constructor(bytes) {
+    this.raw = new Uint8Array(bytes);
+    this.parseUfw();
+    this.flash = this.raw.slice(this.flashFileOff, this.flashFileOff + this.flashSize);
+    this.parseFlash();
+  }
+
+  get product() { return productOf(this.raw); }
+
+  setProduct(name) {
+    if (name.length > BLOCKS) throw new Error("product name too long");
+    for (let i = 0; i < BLOCKS; i++) {
+      const m = i < name.length ? (name.charCodeAt(i) + i + 1) & 0xFF : 0x7D;
+      if (i < name.length && m === 0x7D) throw new Error("product name encodes to the unused marker");
+      this.raw[i * BLK + KEEP] = m;
+    }
+  }
+
+  headerBytes() {
+    const h = new Uint8Array(BLOCKS * KEEP);
+    for (let i = 0; i < BLOCKS; i++) h.set(this.raw.subarray(i * BLK, i * BLK + KEEP), i * KEEP);
+    return h;
+  }
+
+  hdrFileOff(i) { return Math.floor(i / KEEP) * BLK + (i % KEEP); }
+
+  parseUfw() {
+    const h = this.headerBytes();
+    enc(h, 0, 0x40);
+    const hcrc = u16(h, 0), lcrc = u16(h, 2), nent = u16(h, 8);
+    if (crc16(h.subarray(2, 0x40)) !== hcrc) throw new Error("not an FM-1 .fwsc (UFW header CRC mismatch)");
+    this.skew = BLOCKS * BLK - h.length;
+    this.ufw = h;
+    this.nent = nent;
+    const hsize = 0x40 + nent * 0x50;
+    if (crc16(h.subarray(0x40, hsize)) !== lcrc) throw new Error("UFW entry list CRC mismatch");
+    this.entries = [];
+    for (let off = 0x40; off < hsize; off += 0x50) {
+      const e = h.slice(off, off + 0x50);
+      enc(e, 0, 0x50);
+      const z = e.subarray(0x40, 0x50).indexOf(0);
+      this.entries.push({ off, type: u16(e, 0), dcrc: u16(e, 4), dataOff: u32(e, 8), size: u32(e, 12),
+        name: String.fromCharCode(...e.subarray(0x40, z < 0 ? 0x50 : 0x40 + z)), plain: e });
+    }
+    const fl = this.entries.find((e) => e.type === 0);
+    if (!fl) throw new Error("no flash.bin in the package");
+    this.flashEntry = fl;
+    this.flashFileOff = fl.dataOff + this.skew;
+    this.flashSize = fl.size;
+    if (crc16(this.raw.subarray(this.flashFileOff, this.flashFileOff + fl.size)) !== fl.dcrc) throw new Error("flash.bin CRC mismatch");
+  }
+
+  parseFlash() {
+    const dec = this.flash.slice();
+    const h = dec.slice(0, 32);
+    enc(h, 0, 32);
+    if (crc16(h.subarray(2, 32)) !== u16(h, 0)) throw new Error("flash header CRC mismatch");
+    this.chipKey = null; this.appBase = null;
+    for (let off = 32; ; off += 32) {
+      enc(dec, off, 32);
+      const e = new Entry(dec, off);
+      if (e.name === "isd_config.ini") {
+        const blob = dec.subarray(e.offset, e.offset + 34);
+        if (crc16(blob.subarray(0, 32)) === u16(blob, 32)) this.chipKey = chipkeyDecode(blob.subarray(0, 32));
+      }
+      if (e.flags === 0x81 && e.name === "app_dir_head" && this.appBase === null) this.appBase = e.offset;
+      if (e.index) break;
+    }
+    if (this.chipKey === null || this.appBase === null) throw new Error("chip key or app_dir_head not found");
+    const b = this.appBase, k = this.chipKey, end = align32(b + 32);
+    sfc(dec, b, end - b, b, k);
+    const head = new Entry(dec, b);
+    const blkEnd = b + head.size;
+    if (blkEnd > end) sfc(dec, end, blkEnd - end, b, k);
+    this.sfcEnd = Math.max(end, blkEnd);
+    this.cfgLen = 0;
+    const probe = this.flash.slice(b, align32(blkEnd) + 32);
+    sfc(probe, 0, probe.length, 0, k);
+    try {
+      const cfg = new Entry(probe, blkEnd - b);
+      if (cfg.name === "cfg" && blkEnd + cfg.size <= this.flash.length) this.cfgLen = cfg.size;
+    } catch (_) { /* no cfg block */ }
+    if (this.cfgLen) {
+      const region = this.flash.slice(b, blkEnd + this.cfgLen);
+      sfc(region, 0, region.length, 0, k);
+      dec.set(region, b);
+      this.sfcEnd = blkEnd + this.cfgLen;
+    }
+    this.head = head;
+    this.app = null;
+    for (let off = b + 32; ; off += 32) {
+      const e = new Entry(dec, off);
+      if (e.flags === 0x82 && e.name === "app.bin") this.app = e;
+      if (e.index) break;
+    }
+    if (!this.app) throw new Error("app.bin not found in app area");
+    this.appOff = b + this.app.offset;
+    this.dec = dec;
+  }
+
+  // the new app, padded to the stock size (Felucca never changes the layout)
+  setApp(app) {
+    if (app.length > this.app.size) throw new Error(`app is ${app.length} B, the slot is ${this.app.size} B`);
+    const nw = new Uint8Array(this.app.size).fill(0xFF);
+    nw.set(app);
+    const a = this.app, h = this.head, b = this.appBase;
+    this.dec.set(nw, this.appOff);
+    a.dcrc = crc16(nw);
+    a.packInto(this.dec);
+    h.dcrc = crc16(this.dec.subarray(h.hdrOff + 32, h.hdrOff + h.size));
+    h.packInto(this.dec);
+    this.sfcEnd = Math.max(align32(b + 32), b + h.size + this.cfgLen);
+    const region = this.dec.slice(b, this.sfcEnd);
+    sfc(region, 0, region.length, 0, this.chipKey);
+    this.flash.set(region, b);
+  }
+
+  serialize() {
+    const out = this.raw.slice();
+    out.set(this.flash, this.flashFileOff);
+    const fl = this.flashEntry, e = fl.plain.slice();
+    w16(e, 4, crc16(this.flash));
+    enc(e, 0, 0x50);
+    const h = this.ufw.slice();
+    h.set(e, fl.off);
+    const hsize = 0x40 + this.nent * 0x50;
+    w16(h, 2, crc16(h.subarray(0x40, hsize)));
+    w16(h, 0, crc16(h.subarray(2, 0x40)));
+    enc(h, 0, 0x40);
+    for (let i = 0; i < hsize; i++) out[this.hdrFileOff(i)] = h[i];
+    return out;
+  }
+}
+
+// the package identity ("FM-1_904"): one marker byte after each of the first 20 blocks
+function productOf(fwsc) {
+  if (fwsc.length < BLOCKS * BLK) throw new Error("not an FM-1 package (too short)");
+  let s = "";
+  for (let i = 0; i < BLOCKS; i++) {
+    const m = fwsc[i * BLK + KEEP];
+    if (m !== 0x7D) s += String.fromCharCode((m - i - 1) & 0xFF);
+  }
+  return s;
+}
+
+// the image the device addresses during an update: the .fwsc without the 20 marker bytes
+function logicalImage(fwsc) {
+  const out = new Uint8Array(fwsc.length - BLOCKS);
+  for (let i = 0; i < BLOCKS; i++) out.set(fwsc.subarray(i * BLK, i * BLK + KEEP), i * KEEP);
+  out.set(fwsc.subarray(BLOCKS * BLK), BLOCKS * KEEP);
+  return out;
+}
+
+async function sha256hex(bytes) {
+  const d = await crypto.subtle.digest("SHA-256", bytes);
+  return [...new Uint8Array(d)].map((x) => x.toString(16).padStart(2, "0")).join("");
+}
+
+// Only the user's unmodified official V15 is accepted for a return to stock.
+// The digest pins every file, loader and flash layout; filenames are not evidence.
+async function validateStockPackage(bytes) {
+  if (bytes.length !== STOCK_V15_SIZE || await sha256hex(bytes) !== STOCK_V15_SHA256)
+    throw new Error("Select the unmodified official FM-1 V15 file (FM-1.fwsc).");
+  const pkg = new Package(bytes);
+  if (pkg.product !== "FM-1_015" || pkg.flashFileOff !== 1044 || pkg.flashSize !== 602112 ||
+      pkg.appBase !== 16384 || pkg.appOff !== 16672 || pkg.app.size !== STOCK_APP_SIZE ||
+      !pkg.entries.some((e) => e.type === 100 && e.name === "ota.bin" && e.size === 19969))
+    throw new Error("The official firmware has an unsupported FM-1 layout.");
+  return { product: pkg.product, image: logicalImage(bytes), sha256: STOCK_V15_SHA256 };
+}
+
+// official V15 + Felucca app -> installable package (Uint8Array)
+async function buildFeluccaPackage(stockBytes, appBytes, product) {
+  const sha = await sha256hex(stockBytes);
+  if (sha !== STOCK_V15_SHA256) throw new Error("this is not the official FM-1 V15 firmware file (FM-1.fwsc)");
+  const pkg = new Package(stockBytes);
+  pkg.setApp(appBytes);
+  pkg.setProduct(product);
+  return pkg.serialize();
+}
+
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2026 Leo Kuroshita (@kurogedelic), Hügelton Instruments
+//
+// The FM-1 USB-MIDI update protocol over WebMIDI (after tools/fm1_install.py).
+// Step 1: the running firmware (official
+// or Felucca) reads parts of the package and stages the update loader. Step 2:
+// the loader reads the whole image and writes it. Both steps are "the device
+// asks, we answer": cmd 0x30 read requests on the logical image.
+
+const HS_QUERY = [0xF0, 0x00, 0x32, 0x45, 0x00, 0x00, 0x00, 0x40, 0x7F, 0xF7];
+const UPGRADE = [0xF0, 0x22, 0x24, 0x35, 0x7F, 0xF7];
+const MAXDATA = 512;
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const IS_OTA = (id) => /^ota-/i.test(id.model);
+
+// errors carry a code the pages translate: notfound, model, stopped, noloader, lost, noreturn,
+// mismatch (detail: the identity the device reports), badreq
+function fail(code, msg, detail = "") { const e = new Error(msg); e.code = code; e.detail = detail; return e; }
+
+function pack7(data) {
+  const out = []; let acc = 0, nb = 0;
+  for (const b of data) {
+    acc |= b << nb; nb += 8;
+    while (nb >= 7) { out.push(acc & 0x7F); acc >>>= 7; nb -= 7; }
+  }
+  if (nb) out.push(acc & 0x7F);
+  return out;
+}
+
+function unpack7(s) {
+  const out = []; let acc = 0, nb = 0;
+  for (const b of s) {
+    acc |= (b & 0x7F) << nb; nb += 7;
+    while (nb >= 8) { out.push(acc & 0xFF); acc >>>= 8; nb -= 8; }
+  }
+  return out;
+}
+
+function response(addr, data, fl = 0) {
+  const len = data.length;
+  const body = [0x00, 0x59, 0x30, (len + 8) & 0xFF, ((len + 8) >> 8) & 0xFF, 0, fl,
+    addr & 0xFF, (addr >>> 8) & 0xFF, (addr >>> 16) & 0xFF, (addr >>> 24) & 0xFF,
+    len & 0xFF, (len >> 8) & 0xFF, 0, ...data];
+  let s = 0;
+  for (let i = 6; i < body.length; i++) s += body[i];
+  body.push(~s & 0xFF);
+  return [0xF0, ...pack7(body), 0xF7];
+}
+
+function parseRequest(pkt) {
+  if (pkt[0] !== 0xF0 || pkt[pkt.length - 1] !== 0xF7) return null;
+  const u = unpack7(pkt.slice(1, -1));
+  if (u.length !== 15 || u[0] !== 0 || u[1] !== 0x59 || u[2] !== 0x30) return null;
+  let s = 0;
+  for (let i = 6; i < 14; i++) s += u[i];
+  if ((~s & 0xFF) !== u[14]) return null;
+  return { fl: u[6], addr: (u[7] | (u[8] << 8) | (u[9] << 16) | (u[10] << 24)) >>> 0, len: u[11] | (u[12] << 8) | (u[13] << 16) };
+}
+
+function parseIdentity(pkt) {
+  const d = unpack7(pkt.slice(1, -1));
+  if (d.length !== 34 || d[0] !== 0 || d[1] !== 0x59 || d[2] !== 0x11) return null;
+  const txt = String.fromCharCode(...d.slice(6, 33)).replace(/\0+$/, "");
+  const m = /^([^_]+)_(\d+)$/.exec(txt);
+  return m ? { text: txt, model: m[1], version: parseInt(m[2], 10) } : null;
+}
+
+// one MIDI in/out pair with a SysEx queue
+class Link {
+  constructor(input, output) {
+    this.input = input; this.output = output; this.q = []; this.waiter = null;
+    input.onmidimessage = (ev) => {
+      if (ev.data[0] !== 0xF0) return;
+      this.q.push(Array.from(ev.data));
+      if (this.waiter) { const w = this.waiter; this.waiter = null; w(); }
+    };
+  }
+  get lost() { return this.input.state === "disconnected" || this.output.state === "disconnected"; }
+  // false when the port is gone (unplugged): WebMIDI throws on a disconnected output
+  send(bytes) {
+    try { this.output.send(bytes); return true; } catch (_) { return false; }
+  }
+  drain() { this.q.length = 0; }
+  async read(ms) {
+    if (!this.q.length) {
+      let tm;
+      await Promise.race([new Promise((r) => { this.waiter = r; }), new Promise((r) => { tm = setTimeout(r, ms); })]);
+      clearTimeout(tm);
+      this.waiter = null;
+    }
+    return this.q.shift() || null;
+  }
+  close() { this.input.onmidimessage = null; }
+}
+
+async function handshake(link, tries = 3) {
+  link.drain();
+  for (let t = 0; t < tries; t++) {
+    if (!link.send(HS_QUERY)) return null;
+    const end = Date.now() + 1000;
+    while (Date.now() < end) {
+      const p = await link.read(end - Date.now());
+      if (!p) break;
+      const id = parseIdentity(p);
+      if (id) return id;
+    }
+  }
+  return null;
+}
+
+class Updater {
+  constructor(access, log) {
+    this.access = access;
+    this.log = log || (() => {});
+  }
+
+  // every in/out pair with the same port name that answers the handshake
+  async find(filter) {
+    const outs = [...this.access.outputs.values()];
+    for (const input of this.access.inputs.values()) {
+      if (input.state === "disconnected") continue;
+      if (!/fm-1|felucca|ota|composite|sinco|usb-midi/i.test(input.name || "")) continue;   // never probe other gear
+      const output = outs.find((o) => o.name === input.name && o.state !== "disconnected");
+      if (!output) continue;
+      try { await input.open(); await output.open(); } catch (_) { continue; }
+      const link = new Link(input, output);
+      const id = await handshake(link, 2);
+      if (id && (!filter || filter(id))) return { link, id, name: input.name };
+      link.close();
+    }
+    return null;
+  }
+
+  async waitFor(filter, ms) {
+    const end = Date.now() + ms;
+    while (Date.now() < end) {
+      const dev = await this.find(filter);
+      if (dev) return dev;
+      await sleep(1000);
+    }
+    return null;
+  }
+
+  // serve read requests until the device asks for one of the finish addresses; stops early
+  // when the port disappears (lost: true) instead of waiting out idleMs
+  async serve(link, image, finishAddr, idleMs, onProgress) {
+    let served = 0, last = Date.now();
+    for (;;) {
+      const pkt = await link.read(1000);
+      if (!pkt) {
+        if (link.lost) return { served, finished: false, lost: true };
+        if (Date.now() - last > idleMs) return { served, finished: false };
+        continue;
+      }
+      const r = parseRequest(pkt);
+      if (!r) continue;
+      last = Date.now();
+      if (r.addr === 0xE0000000 || r.addr === 0xF0000000) {
+        link.send(response(r.addr, [...new TextEncoder().encode("success"), 0]));
+        if (r.addr === finishAddr) return { served, finished: true };
+        continue;
+      }
+      if (r.len > MAXDATA || r.addr + r.len > image.length) throw fail("badreq", `bad request ${r.addr.toString(16)}+${r.len}`);
+      await sleep(10);
+      if (!link.send(response(r.addr, Array.from(image.subarray(r.addr, r.addr + r.len)), r.fl))) {
+        return { served, finished: false, lost: true };
+      }
+      served++;
+      if (onProgress) onProgress(served, r.addr);
+    }
+  }
+
+  // full install: running firmware -> loader -> new firmware
+  async install(image, product, onStep) {
+    const step = onStep || (() => {});
+    const dev = await this.find((id) => !IS_OTA(id));
+    if (!dev) throw fail("notfound", "FM-1 not found (USB cable, and no other app using it?)");
+    const [model] = product.split("_");
+    if (dev.id.model !== model) { dev.link.close(); throw fail("model", `the device is ${dev.id.text}, the package is for ${product}`); }
+    step("start", dev.id.text);
+    dev.link.send(UPGRADE);
+    await sleep(2000);
+    const s1 = await this.serve(dev.link, image, 0xE0000000, 8000, (n) => step("verify", n));
+    dev.link.close();
+    if (!s1.finished) throw fail(s1.lost ? "lost" : "stopped", `the device ${s1.lost ? "was disconnected" : "stopped"} after ${s1.served} requests: nothing was written`);
+    step("loader");
+    await sleep(3000);
+    const ota = await this.waitFor((id) => id.model === "ota-" + model, 30000);
+    if (!ota) throw fail("noloader", "the update loader did not appear. Replug the USB cable and press Install again: the device stays in update mode until it is finished.");
+    const s2 = await this.write(ota, image, step);
+    if (!s2.finished) throw fail(s2.lost ? "lost" : "stopped", `the loader ${s2.lost ? "was disconnected" : "stopped"} after ${s2.served} requests. Replug and press Install again to resume.`);
+    step("reboot");
+    await sleep(3000);
+    const back = await this.waitFor((id) => !IS_OTA(id), 40000);
+    if (!back) throw fail("noreturn", "the device did not come back: power-cycle it");
+    back.link.close();
+    if (back.id.text !== product) throw fail("mismatch", `installed, but the device reports ${back.id.text}`, back.id.text);
+    step("done", back.id.text);
+    return back.id.text;
+  }
+
+  // step 2 with the loader found by find()/waitFor()
+  async write(ota, image, step) {
+    ota.link.send(UPGRADE);
+    await sleep(2000);
+    const s2 = await this.serve(ota.link, image, 0xF0000000, 180000, (n) => step("write", n));
+    ota.link.close();
+    return s2;
+  }
+
+  // resume: the device is already in update mode (loader) -> true when the write finished
+  async resume(image, onStep, product = null) {
+    const model = product && product.split("_")[0];
+    const ota = await this.find((id) => model ? id.model === "ota-" + model : IS_OTA(id));
+    if (!ota) return false;
+    const step = onStep || (() => {});
+    const result = await this.write(ota, image, step);
+    if (!result.finished) return false;
+    if (product) {
+      step("reboot");
+      await sleep(3000);
+      const back = await this.waitFor((id) => id.model === model, 40000);
+      if (!back) throw fail("noreturn", "The FM-1 did not return after resuming the write.");
+      back.link.close();
+      if (back.id.text !== product) throw fail("mismatch", "The FM-1 reports a different firmware after resuming.", back.id.text);
+      step("done", back.id.text);
+    }
+    return true;
+  }
+}
+
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2026 Leo Kuroshita (@kurogedelic), Hügelton Instruments
+// Local, complete musical archives. Requests name whitelisted objects, never flash addresses.
+// 8: the FM6 patch bank of 1.0..1.0.2 (listed empty since 1.0.3: a restore of an older archive's bank moves its patches
+// into the user presets restored before it); 9: the user presets' FM6 patches (1.0.3).
+// 32..34 were the user sample slots (JIANT has none): an older archive's entries for them are skipped on read.
+// JIANT: 10 the song index (every song's rows and scenes), 40..71 every song's sections (40 + 4 x song + section); the
+// sections of each song are restored by its number, after 2..5 (the current song's, as before).
+const BACKUP_IDS_V3 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];                    // Felucca 1.0.3 .. JIANT 0.2, and their archives
+const BACKUP_IDS = [...BACKUP_IDS_V3, 10, ...Array.from({ length: 32 }, (_, i) => 40 + i)];
+const BACKUP_RETIRED = (id) => Number.isInteger(id) && id >= 32 && id <= 34;
+const BACKUP_IDS_V2 = BACKUP_IDS_V3.filter((id) => id !== 9);           // 1.0..1.0.2, and their archives
+const BACKUP_IDS_V1 = BACKUP_IDS_V2.filter((id) => id !== 8);           // firmware before FM6, and its archives
+const idsOf = (n) => [BACKUP_IDS, BACKUP_IDS_V3, BACKUP_IDS_V2, BACKUP_IDS_V1].find((ids) => ids.length === n) || null;
+const BACKUP_CMD = { LIST: 65, GET: 66, PUT: 67 };
+const BACKUP_CHUNK = 256;
+const bkU32 = (n) => Array.from({ length: 5 }, (_, i) => (n >>> (i * 7)) & (i === 4 ? 15 : 127));
+const bkR32 = (a, off = 0) => {
+  if (a.length < off + 5 || a[off + 4] > 15) throw new Error("Invalid archive number");
+  return (a[off] | a[off + 1] << 7 | a[off + 2] << 14 | a[off + 3] << 21 | a[off + 4] << 28) >>> 0;
+};
+function bkPack(bytes) {
+  const a = [];
+  for (let off = 0; off < bytes.length; off += 7) {
+    const chunk = bytes.subarray(off, off + 7);
+    a.push(chunk.reduce((m, b, i) => m | (b >>> 7) << i, 0), ...chunk.map((b) => b & 127));
+  }
+  return a;
+}
+function bkUnpack(a, size) {
+  const out = new Uint8Array(size); let i = 0, j = 0;
+  while (j < size) {
+    const n = Math.min(7, size - j), mask = a[i++];
+    if (mask == null || mask >>> n) throw new Error("Invalid archive bytes");
+    for (let k = 0; k < n; k++) {
+      if (a[i] == null || a[i] > 127) throw new Error("Short archive chunk");
+      out[j++] = a[i++] | (mask >>> k & 1) << 7;
+    }
+  }
+  if (i !== a.length) throw new Error("Trailing archive bytes");
+  return out;
+}
+function bkCrc(bytes) {
+  let c = 0xffffffff;
+  for (const b of bytes) {
+    c ^= b;
+    for (let k = 0; k < 8; k++) c = c >>> 1 ^ (c & 1 ? 0xedb88320 : 0);
+  }
+  return (~c) >>> 0;
+}
+function bkCheck(rc) {
+  if (rc) throw new Error(({ 1: "Invalid archive object", 2: "Archive data failed validation", 3: "Stop playback first", 4: "Flash write failed", 5: "Start a fresh backup" })[rc] || `Archive error ${rc}`);
+}
+function bkManifest(a) {
+  if (a[0] !== 1) throw new Error("Unsupported archive protocol");
+  bkCheck(a[1]);
+  if (a.length !== 3 + a[2] * 11) throw new Error("Incomplete archive manifest");
+  const all = Array.from({ length: a[2] }, (_, i) => {
+    const p = 3 + i * 11;
+    return { id: a[p], size: bkR32(a, p + 1), crc: bkR32(a, p + 6) };
+  });
+  // A device on Felucca lists its user sample slots (32..34): JIANT has none, they are left out (the installer says so)
+  const kept = all.filter((o) => !BACKUP_RETIRED(o.id)), ids = idsOf(kept.length);
+  if (!ids) throw new Error("Incomplete archive manifest");
+  kept.forEach((o, i) => {
+    if (o.id !== ids[i]) throw new Error("Unexpected archive object");
+    if (o.size > 3840 || (!o.size && o.crc)) throw new Error("Archive object too large");
+  });
+  kept.skipped = all.length - kept.length;
+  return kept;
+}
+const bkBase64 = (bytes) => { let s = ""; for (const b of bytes) s += String.fromCharCode(b); return btoa(s); };
+function readBackup(file) {
+  if (typeof file === "string") file = JSON.parse(file);
+  const kept = file && Array.isArray(file.objects) ? file.objects.filter((o) => !BACKUP_RETIRED(o?.id)) : null;
+  const ids = kept ? idsOf(kept.length) : null;
+  if (!file || file.format !== "felucca-backup" || file.version !== 1 || !ids)
+    throw new Error("Not a complete Felucca backup");
+  const objects = kept.map((o, i) => {
+    if (!o || o.id !== ids[i] || !Number.isInteger(o.size) || o.size < 0 || o.size > 3840 ||
+        !Number.isInteger(o.crc) || o.crc < 0 || o.crc > 0xffffffff || typeof o.data !== "string" ||
+        o.data.length !== 4 * Math.ceil(o.size / 3) || !/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(o.data))
+      throw new Error("Invalid backup object");
+    const bytes = Uint8Array.from(atob(o.data), (c) => c.charCodeAt(0));
+    if (bytes.length !== o.size || bkCrc(bytes) !== o.crc) throw new Error("Backup checksum mismatch");
+    return { ...o, bytes };
+  });
+  if (!objects[0].size || !objects[1].size) throw new Error("Backup is missing the current music or settings");
+  return { ...file, objects };
+}
+async function captureBackup(request, firmware, onProgress = () => {}) {
+  const manifest = bkManifest(await request([BACKUP_CMD.LIST, []], { timeout: 3000, retries: 0 }));
+  const objects = [], total = manifest.reduce((n, o) => n + o.size, 0); let done = 0;
+  for (const o of manifest) {
+    const bytes = new Uint8Array(o.size);
+    for (let off = 0; off < o.size; off += BACKUP_CHUNK) {
+      const size = Math.min(BACKUP_CHUNK, o.size - off);
+      const a = await request([BACKUP_CMD.GET, [o.id, ...bkU32(off), size & 127, size >>> 7]], { timeout: 1000, retries: 1 });
+      bkCheck(a[1]);
+      if (a[0] !== o.id || bkR32(a, 2) !== off || (a[7] | a[8] << 7) !== size) throw new Error("Unexpected backup reply");
+      bytes.set(bkUnpack(a.slice(9), size), off);
+      done += size; onProgress(done, total);
+    }
+    if (bkCrc(bytes) !== o.crc) throw new Error("The device changed during backup. Try again while stopped.");
+    objects.push({ ...o, data: bkBase64(bytes) });
+  }
+  const file = { format: "felucca-backup", version: 1, firmware, created: new Date().toISOString(), objects };
+  readBackup(file); return file;
+}
+async function restoreBackup(request, file, onProgress = () => {}) {
+  const archive = readBackup(file); // Validate every byte before the first destructive request.
+  const total = archive.objects.reduce((n, o) => n + o.size, 0); let done = 0;
+  const ask = async (r, o = {}) => request(r, { timeout: 4000, retries: 0, ...o });
+  const put = async (args) => { const a = await ask([BACKUP_CMD.PUT, args]); bkCheck(a[2]); return a; };
+  // Restore live music last. Other objects commit individually; a disconnect can leave a partial restore.
+  for (const o of [...archive.objects.slice(2), archive.objects[1], archive.objects[0]]) {
+    if (o.id >= 9) {                     // firmware before 1.0.3 does not take id 9, before JIANT 0.3 the songs (10, 40..71):
+                                         // rc 1 at begin, nothing written: skip it
+      const a = await ask([BACKUP_CMD.PUT, [0, o.id, ...bkU32(o.size), ...bkU32(o.crc)]]);
+      if (a[2] === 1) { done += o.size; onProgress(done, total); continue; }
+      bkCheck(a[2]);
+    } else await put([0, o.id, ...bkU32(o.size), ...bkU32(o.crc)]);
+    try {
+      for (let off = 0; off < o.size; off += BACKUP_CHUNK) {
+        const chunk = o.bytes.subarray(off, off + BACKUP_CHUNK);
+        await put([1, o.id, ...bkU32(off), ...bkPack(chunk)]);
+        done += chunk.length; onProgress(done, total);
+      }
+      await put([2, o.id]);
+    } catch (e) { await put([3, o.id]).catch(() => {}); throw e; }
+  }
+  return archive;
+}
+
+// Installer connection: no editor page or watcher owns this input simultaneously.
+class BackupConnection {
+  constructor(input, output) {
+    this.input = input; this.output = output; this.pending = null;
+    input.onmidimessage = (e) => {
+      const d = e.data;
+      if (d.length < 6 || d[0] !== 240 || d[1] !== 125 || d[2] !== 70 || d[3] !== 76 || d.at(-1) !== 247) return;
+      if (this.pending?.cmd === d[4]) { const p = this.pending; this.pending = null; clearTimeout(p.timer); p.resolve(Array.from(d.slice(5, -1))); }
+    };
+  }
+  async request([cmd, args], opt = {}) {
+    if (this.pending || this.closed || this.input.state === "disconnected" || this.output.state === "disconnected") throw new Error("Backup connection closed or busy");
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(() => { this.pending = null; reject(new Error("Backup timed out. Keep the FM-1 connected and stopped.")); }, opt.timeout || 1200);
+      this.pending = { cmd, timer, resolve, reject };
+      try { this.output.send([240, 125, 70, 76, cmd, ...args, 247]); }
+      catch (e) { clearTimeout(timer); this.pending = null; reject(e); }
+    });
+  }
+  close() {
+    this.closed = true; this.input.onmidimessage = null;
+    if (this.pending) { const p = this.pending; this.pending = null; clearTimeout(p.timer); p.reject(new Error("Backup connection closed")); }
+  }
+}
+
+const $ = (id) => document.getElementById(id);
+const TEXT = {
+  fr: {
+    intro: "Branchez votre M-VAVE FM-1 en USB et flashez directement le firmware GAMMAWAVE // WRAITH depuis Chrome ou Edge via WebMIDI.",
+    warn: "Ne débranchez pas le câble USB pendant l'écriture du firmware.",
+    samples: "Note : GAMMAWAVE/JIANT utilise la mémoire flash des samples utilisateurs (USR1–3) pour sauvegarder vos morceaux complets et banques FM6.",
+    dual: "Architecture Dual-Core AC791N + HOTRAM activée : les 2 cœurs processeur calculent les 6 pistes synthé + distorsions HEARTH/BLAST/PLASMA/FLUX et filtres VOWEL/SCREAM en temps réel. (Maintenez REC au démarrage pour forcer le mode 1 cœur).",
+    install: "⚡ INSTALLER GAMMAWAVE v1.0-GW SUR FM-1", other: "EN / 日本語",
+    flashTitle: "INSTALLATION WEBMIDI DU FIRMWARE (M-VAVE FM-1)",
+    previewTitle: "GAMMAWAVE // WRAITH — PRÉÉCOUTE SYNTHÉ & SCOPE DANS LE NAVIGATEUR",
+    synPlay: "▶ JOUER SÉQUENCE", synStop: "■ STOP", synDice: "🎲 MUTATION DICE",
+    firstTitle: "Vous venez d'un autre firmware custom ? Repassez d'abord par le V15 officiel",
+    firstText: "L'installateur vérifie automatiquement votre FM-1 avant d'écrire : il flashe directement sur le firmware officiel V15 ou sur JIANT/GAMMAWAVE. Si un autre firmware custom est présent, utilisez la section de retour au V15 ci-dessous.",
+    firstStock: "Repasser d'abord en V15 officiel",
+    firstOk: "Vérification automatique d'identité avant flash : sûr et sans sonde matérielle.",
+    checking: "Vérification du firmware du FM-1…",
+    otherfw: "Ce FM-1 utilise un autre firmware custom : rien n'a été écrit. Repassez d'abord en V15 officiel ci-dessous. Détecté : ",
+    editor: "🎛️ Ouvrir le Web Studio Editor (Live USB)",
+    editorMock: "🧪 Essayer le Web Studio Editor (Simulateur sans FM-1)",
+    verLabel: "Version du package :", verOld: "Vous pouvez installer la dernière version GammaWave ou revenir à une version précédente.", latest: "dernière", manual: "Manuel :",
+    direct: "Branchez le câble USB directement à l'ordinateur. Aucun programmateur externe requis.",
+    brick: "En cas de coupure d'alimentation durant le flash, la récupération matérielle utilise :",
+    beta: "GAMMAWAVE // WRAITH FM-1 est distribué sous licence GPL-3.0 sans garantie. Utilisez-le sous votre propre responsabilité.",
+    back: "Téléchargez le fichier officiel FM-1 V15 (FM-1.fwsc) chez M-VAVE. La validation se fait localement dans votre navigateur.",
+    stockTitle: "Retourner au firmware officiel V15 (avec sauvegarde complète)", stockFile: "Fichier officiel FM-1.fwsc", stockGo: "Sauvegarder et restaurer V15 officiel",
+    stockBackup: "Sauvegarde automatiquement vos morceaux, banques et réglages sur votre PC avant de restaurer le V15 officiel.",
+    stockRecovery: "Reprendre une mise à jour interrompue (sauvegarde déjà effectuée)",
+    stockValid: "Firmware officiel V15 vérifié ✓", stockConfirm: "La sauvegarde complète a-t-elle bien été enregistrée ? Continuer vers le firmware officiel V15 ?",
+    stockNeedBackup: "Impossible de sauvegarder depuis le mode bootloader. Cochez la reprise uniquement si vous avez déjà une sauvegarde.",
+    stockUnsupported: "Ce firmware ne supporte pas la sauvegarde complète. Installez d'abord la version actuelle.",
+    backup: "Sauvegarde complète en cours ", stockError: "Fichier officiel invalide : ",
+    nomidi: "WebMIDI non supporté par ce navigateur. Ouvrez cette page dans Chrome, Edge ou Brave.", loadfail: "Impossible de charger le firmware : ",
+    start: "Démarrage…", verify: "Vérification de l'image…", loader: "Passage en mode mise à jour (OTA)…", write: "Écriture Flash en cours…",
+    reboot: "Redémarrage du FM-1…", done: "✓ Installation GAMMAWAVE terminée avec succès !", stopped: "Interrompu. Rebranchez le câble USB et cliquez à nouveau sur Installer.",
+    error: "Erreur : ",
+    denied: "Accès MIDI (SysEx) refusé. Autorisez l'accès MIDI dans la barre d'adresse puis réessayez.",
+    blocked: "L'accès MIDI est bloqué pour ce site. Cliquez sur l'icône à gauche de la barre d'adresse → Autorisations → Contrôle des appareils MIDI → Autoriser, puis rechargez la page.",
+    notfound: "M-VAVE FM-1 non détecté. Vérifiez que leFM-1 est allumé, branché avec un câble USB de données, et fermez les autres logiciels MIDI (DAW).",
+    model: "L'appareil connecté n'est pas un M-VAVE FM-1.",
+    lost: "Connexion USB perdue. Rebranchez le FM-1 et cliquez à nouveau sur Installer.",
+    noloader: "FM-1 en mode mise à jour introuvable. Rebranchez le câble USB et réessayez.",
+    noreturn: "Le FM-1 n'a pas redémarré automatiquement. Éteignez-le puis rallumez-le.",
+    mismatch: "Écriture terminée, mais le FM-1 annonce une autre version : ",
+    badpkg: "Le package firmware est endommagé. Rechargez la page.",
+    leave: "Écriture du firmware en cours. Ne fermez pas cette page !",
+    license: "Licence GPL-3.0, sans garantie. Base :",
+  },
+  en: {
+    intro: "Connect your M-VAVE FM-1 via USB and flash the GAMMAWAVE // WRAITH firmware directly from Chrome or Edge using WebMIDI.",
+    warn: "Do not unplug the USB cable while writing.",
+    samples: "Note: GAMMAWAVE/JIANT repurposes user sample flash (USR1–3) to store full songs, chains and FM6 voice banks.",
+    dual: "Dual-Core AC791N + HOTRAM active: both CPU cores render the 6 synth tracks + HEARTH/BLAST/PLASMA/FLUX distortions and VOWEL/SCREAM filters in real time. (Hold REC on power-up to force single-core mode).",
+    install: "⚡ INSTALL GAMMAWAVE v1.0-GW TO FM-1", other: "日本語 / FR",
+    flashTitle: "WEBMIDI FIRMWARE UPLOADER (M-VAVE FM-1)",
+    previewTitle: "GAMMAWAVE // WRAITH — LIVE BROWSER DSP PREVIEW",
+    synPlay: "▶ PLAY SEQ", synStop: "■ STOP", synDice: "🎲 DICE MUTATE",
+    firstTitle: "Coming from another custom firmware? Return to official V15 first",
+    firstText: "Writing straight over another custom firmware (Felucca, baudgirl, etc.) can prevent startup. Return to official V15 below first, then install GAMMAWAVE. If your FM-1 already runs official V15, JIANT, or GAMMAWAVE, go right ahead.",
+    firstStock: "Return to official V15 first",
+    firstOk: "Before installing, the installer checks the connected FM-1's firmware automatically.",
+    checking: "Checking the FM-1's firmware…",
+    otherfw: "This FM-1 runs a firmware that is neither official V15 nor JIANT/GAMMAWAVE: nothing was written. Return to official V15 first below. Found: ",
+    editor: "🎛️ Open Web Studio Editor (Live USB)",
+    editorMock: "🧪 Try Web Studio Editor (Mock Device Simulator)",
+    verLabel: "Version:", verOld: "You can install the latest release or roll back to an earlier build.", latest: "latest", manual: "Manual:",
+    direct: "Connect the USB cable directly to the computer. No probe or Transporter is needed.",
+    brick: "If an install is interrupted by power loss, hardware recovery uses:",
+    beta: "GAMMAWAVE // WRAITH FM-1 is a custom firmware release (GPL-3.0). Use it at your own risk.",
+    back: "Get official FM-1 V15 from M-VAVE and select the unmodified FM-1.fwsc. Validated locally in your browser.",
+    stockTitle: "Return to official V15", stockFile: "Official FM-1.fwsc", stockGo: "Back up and return to official V15",
+    stockBackup: "Current music, saved music, sound banks and settings are backed up first.",
+    stockRecovery: "Resume an interrupted update: I already saved a complete backup to this computer",
+    stockValid: "Official V15 verified ✓", stockConfirm: "Has the complete backup file been saved to this computer? Continue to return to official V15.",
+    stockNeedBackup: "An update loader cannot export a backup. Only select resume if you already saved a complete backup.",
+    stockUnsupported: "This firmware does not support complete backups. Install the current firmware first.",
+    backup: "Saving complete backup ", stockError: "Cannot validate official firmware: ",
+    nomidi: "This browser does not support WebMIDI. Open this page in Chrome or Edge.", loadfail: "Could not load: ",
+    start: "Starting", verify: "Verifying", loader: "Switching to update mode", write: "Writing",
+    reboot: "Restarting", done: "✓ GAMMAWAVE installation complete!", stopped: "Stopped. Replug the USB cable and press Install again.",
+    error: "Error: ",
+    denied: "MIDI (SysEx) access was not allowed. Allow MIDI in the site settings (address bar) and press Install again.",
+    blocked: "MIDI is blocked for this site. Click the icon left of the address bar → Site settings → MIDI devices → Allow, then reload.",
+    notfound: "FM-1 not found. Check the USB data cable, close other MIDI apps, and press Install again.",
+    model: "The connected device is not an FM-1.",
+    lost: "The USB connection was lost. Replug it and press Install again.",
+    noloader: "The FM-1 in update mode was not found. Replug the USB cable and press Install again.",
+    noreturn: "The FM-1 did not come back automatically. Power-cycle it.",
+    mismatch: "Written, but the FM-1 reports another version: ",
+    badpkg: "The file to install is damaged. Reload the page.",
+    leave: "Writing firmware. Do not close the page.",
+    license: "GPL-3.0, no warranty. Base:",
+  },
+  ja: {
+    intro: "FM-1 を USB で接続し、Chrome または Edge から WebMIDI 経由で GAMMAWAVE // WRAITH ファームウェアを直接書き込みます。",
+    warn: "書き込み中は USB ケーブルを抜かないでください。",
+    samples: "注意: GAMMAWAVE/JIANT はユーザーサンプル領域 (USR1–3) を曲データと FM6 バンクの保存に使用します。",
+    dual: "デュアルコア AC791N + HOTRAM 有効: 2つのコアで6トラックと新ディストーション (HEARTH/BLAST/PLASMA/FLUX)・新フィルター (VOWEL/SCREAM) を処理します。",
+    install: "⚡ GAMMAWAVE v1.0-GW をインストール", other: "FR / EN",
+    flashTitle: "WEBMIDI ファームウェアインストーラー (M-VAVE FM-1)",
+    previewTitle: "GAMMAWAVE // WRAITH — ブラウザ内蔵シンセ＆オシロスコープ試聴",
+    synPlay: "▶ シーケンス再生", synStop: "■ 停止", synDice: "🎲 DICE 生成",
+    firstTitle: "他のカスタムファームウェアから入れる場合は、先に公式V15へ戻してください",
+    firstText: "インストールの前に、接続された FM-1 のファームウェアを自動で確認します。公式V15 か JIANT/GAMMAWAVE のときだけ書き込みます。",
+    firstStock: "先に公式V15へ戻す",
+    firstOk: "プローブ不要、USBケーブルのみで安全に書き込みます。",
+    checking: "FM-1 のファームウェアを確認中…",
+    otherfw: "公式V15 でも JIANT/GAMMAWAVE でもないファームウェアが入っています。先に公式V15に戻してください: ",
+    editor: "🎛️ Web Studio エディタを開く (実機接続)",
+    editorMock: "🧪 Web Studio エディタを試す (シミュレーター)",
+    verLabel: "バージョン:", verOld: "以前のバージョンにも戻せます。", latest: "最新", manual: "マニュアル:",
+    direct: "USB ケーブルはパソコンに直接つないでください。",
+    brick: "万一起動しなくなった場合の復旧ツール:",
+    beta: "GAMMAWAVE // WRAITH FM-1 は GPL-3.0 のカスタムファームウェアです。自己責任でお使いください。",
+    back: "M-VAVEから公式FM-1 V15を取得し、FM-1.fwscを選んでください。",
+    stockTitle: "公式V15に戻す", stockFile: "公式FM-1.fwsc", stockGo: "バックアップして公式V15へ戻す",
+    stockBackup: "現在の曲・音色バンク・設定を先にパソコンへ保存します。",
+    stockRecovery: "更新中断の再開：全体バックアップはすでにパソコンへ保存済み",
+    stockValid: "公式V15を確認しました ✓", stockConfirm: "全体バックアップファイルを保存しましたか？ 続けると公式V15へ戻します。",
+    stockNeedBackup: "書き込みモードからはバックアップできません。",
+    stockUnsupported: "このファームウェアは全体バックアップに未対応です。",
+    backup: "全体バックアップ保存中 ", stockError: "公式ファイルを確認できません: ",
+    nomidi: "このブラウザでは使えません。Chrome か Edge で開いてください。", loadfail: "読み込めませんでした: ",
+    start: "開始します", verify: "確認中", loader: "書き込みモードに切り替え中", write: "書き込み中",
+    reboot: "再起動中", done: "✓ 完了しました！", stopped: "途中で止まりました。USB を挿し直してもう一度押してください。",
+    error: "エラー: ",
+    denied: "MIDI（SysEx）の使用が許可されませんでした。",
+    blocked: "このサイトでは MIDI がブロックされています。アドレスバー左のアイコンから MIDI を許可してください。",
+    notfound: "FM-1 が見つかりません。USB ケーブルと他の MIDI アプリを確認してください。",
+    model: "接続されている機器は FM-1 ではありません。",
+    lost: "USB の接続が切れました。",
+    noloader: "書き込みモードの FM-1 が見つかりません。",
+    noreturn: "FM-1 が戻ってきません。電源を入れ直してください。",
+    mismatch: "書き込みは終わりましたが、別のバージョンを報告しています: ",
+    badpkg: "ファイルが壊れています。",
+    leave: "書き込み中です。ページを閉じないでください。",
+    license: "GPL-3.0、無保証。ソース:",
+  },
+};
+const LANGS = ["fr", "en", "ja"];
+let lang = (() => {
+  const l = (navigator.language || "fr").toLowerCase();
+  return l.startsWith("ja") ? "ja" : l.startsWith("en") ? "en" : "fr";
+})();
+const t = (k) => (TEXT[lang] && TEXT[lang][k]) || TEXT.en[k] || k;
+let lastKey = null, lastArg = "";
+function applyLang() {
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-t]").forEach((e) => { e.textContent = t(e.dataset.t); });
+  $("lang").textContent = t("other");
+  if (lastKey) $("status").textContent = t(lastKey) + lastArg;
+}
+$("lang").addEventListener("click", () => {
+  lang = LANGS[(LANGS.indexOf(lang) + 1) % LANGS.length];
+  applyLang();
+});
+$("pal-toggle").addEventListener("click", () => {
+  const cur = document.documentElement.dataset.palette === "wraith" ? "gamma" : "wraith";
+  document.documentElement.dataset.palette = cur;
+  $("pal-toggle").textContent = "THEME: " + cur.toUpperCase();
+  drawCurve();
+});
+applyLang();
+const sayK = (k, arg = "") => { lastKey = k; lastArg = arg; $("status").textContent = t(k) + arg; };
+const say = (txt) => { lastKey = null; $("status").textContent = txt; };
+const log = (t) => { $("log").textContent += t + "\n"; };
+let image = null;
+const meta = {"version": "v1.0-GW", "product": "FM-1_900", "pkg": "../../firmware/felucca-v1.0-GW.fwsc", "versions": [{"version": "v1.0-GW", "pkg": "../../firmware/felucca-v1.0-GW.fwsc"}]};
+
+let writing = false, stock = null, stockFileEpoch = 0;
+const lockInstaller = (on) => { writing = on; $("ver").disabled = on; $("go").disabled = on || !image; $("stock-go").disabled = on || !stock; if ($("stock-direct")) $("stock-direct").disabled = on || !stock; $("stock-file").disabled = on; $("stock-recovery").disabled = on; };
+window.addEventListener("beforeunload", (e) => { if (writing) { e.preventDefault(); e.returnValue = t("leave"); } });
+
+const versions = meta.versions && meta.versions.length ? meta.versions : [{ version: meta.version, pkg: meta.pkg }];
+let loadEpoch = 0;
+function fillVersions() {
+  const sel = $("ver"), at = sel.selectedIndex;
+  sel.textContent = "";
+  versions.forEach((v, i) => { const o = document.createElement("option"); o.value = i;
+    o.textContent = i ? v.version : `${v.version} (${t("latest")})`; sel.appendChild(o); });
+  sel.selectedIndex = at > 0 ? at : 0;
+}
+async function loadVersion(i) {
+  const v = versions[i] || versions[0], epoch = ++loadEpoch;
+  image = null; $("go").disabled = true;
+  try {
+    const r = await fetch(v.pkg);
+    if (!r.ok) throw new Error(`${v.pkg}: HTTP ${r.status}`);
+    const pkg = new Uint8Array(await r.arrayBuffer());
+    if (epoch !== loadEpoch) return;
+    if (productOf(pkg) !== meta.product) { sayK("badpkg"); return; }
+    image = logicalImage(pkg);
+    say(`GAMMAWAVE // WRAITH FM-1 (${v.version}) — Ready to flash (${pkg.length.toLocaleString()} bytes)`);
+    $("go").disabled = writing;
+  } catch (e) { if (epoch === loadEpoch) sayK("loadfail", e.message); }
+}
+fillVersions();
+$("lang").addEventListener("click", fillVersions);
+$("ver").addEventListener("change", () => { if (!writing) loadVersion(+$("ver").value); });
+(async () => {
+  if (!navigator.requestMIDIAccess) { sayK("nomidi"); return; }
+  await loadVersion(0);
+  try {
+    const sr = await fetch("../../firmware/FM-1.fwsc");
+    if (sr.ok) {
+      const sbytes = new Uint8Array(await sr.arrayBuffer());
+      stock = await validateStockPackage(sbytes);
+      lockInstaller(writing);
+    }
+  } catch (_) {}
+})();
+
+async function midiRefused(e) {
+  let state = "";
+  try { state = (await navigator.permissions.query({ name: "midi", sysex: true })).state; } catch (_) {}
+  log(`midi: ${e && e.name} ${state}`);
+  sayK(state === "denied" ? "blocked" : "denied");
+}
+function isJiantInfo(a) {
+  const z = a.indexOf(0); if (z < 0) return false;
+  const version = String.fromCharCode(...a.slice(0, z));
+  if (!/^FELUCCA /i.test(version)) return false;
+  let pos = z + 1; const engines = a[pos]; pos += 5;
+  for (let i = 0; i < engines; i++) { const end = a.indexOf(0, pos); if (end < 0) return false; pos = end + 1; }
+  const ntrk = a[pos], ext = a.slice(pos + 1);
+  for (let i = 0; i + 2 < ext.length; i++) if (ext[i] === 0x4A && ext[i + 1] === 1 && ext[i + 2] === 1) return true;
+  return ntrk === 6 && /^FELUCCA v(0\.|1\.0-GW)/i.test(version);
+}
+async function fwKind(up) {
+  const dev = await up.find((id) => !/^ota-/i.test(id.model));
+  if (!dev) return { kind: "none" };
+  const text = dev.id.text;
+  if (text === "FM-1_015") { dev.link.close(); return { kind: "stock", text }; }
+  if (!/^FM-1_9\d\d$/.test(text)) { dev.link.close(); return { kind: "other", text }; }
+  const input = dev.link.input, output = dev.link.output; dev.link.close();
+  const link = new BackupConnection(input, output);
+  try { return isJiantInfo(await link.request([1, []], { timeout: 2000 })) ? { kind: "jiant", text } : { kind: "other", text }; }
+  catch (e) { return { kind: "other", text: text + " (no answer)" }; }
+  finally { link.close(); }
+}
+$("first-stock").addEventListener("click", () => { $("stock").open = true; $("stock").scrollIntoView({ behavior: "smooth" }); });
+
+$("go").addEventListener("click", async () => {
+  if (writing) return;
+  lockInstaller(true);
+  let midi;
+  try { midi = await navigator.requestMIDIAccess({ sysex: true }); }
+  catch (e) { await midiRefused(e); lockInstaller(false); return; }
+  try {
+    const up = new Updater(midi, log);
+    const total = 74 + 1167;
+    const step = (k, a) => {
+      log(`${k} ${a ?? ""}`);
+      if (k === "start") sayK("start");
+      if (k === "verify") { sayK("verify"); $("bar").value = (a / total) * 100; }
+      if (k === "loader") sayK("loader");
+      if (k === "write") { sayK("write"); $("bar").value = ((74 + a) / total) * 100; }
+      if (k === "reboot") sayK("reboot");
+      if (k === "done") { $("bar").value = 100; sayK("done"); }
+    };
+    const ota = await up.find((id) => /^ota-/i.test(id.model));
+    if (ota) {
+      ota.link.close();
+      sayK((await up.resume(image, step, meta.product)) ? "done" : "stopped");
+    } else {
+      sayK("checking");
+      const fw = await fwKind(up);
+      log(`firmware: ${fw.kind} ${fw.text || ""}`);
+      if (fw.kind === "none") { sayK("notfound"); lockInstaller(false); return; }
+      if (fw.kind === "other") { sayK("otherfw", fw.text); $("stock").open = true; lockInstaller(false); return; }
+      await up.install(image, meta.product, step);
+    }
+  } catch (e) {
+    if (e && e.code && TEXT[lang][e.code]) sayK(e.code, e.detail || "");
+    else sayK("error", e && e.message);
+    log(String(e && e.stack || e));
+  }
+  lockInstaller(false);
+});
+
+$("stock-file").addEventListener("change", async () => {
+  const epoch = ++stockFileEpoch, file = $("stock-file").files[0]; stock = null; lockInstaller(false);
+  if (!file) return;
+  try {
+    if (file.size !== STOCK_V15_SIZE) throw new Error("FM-1 V15 / FM-1.fwsc");
+    const verified = await validateStockPackage(new Uint8Array(await file.arrayBuffer()));
+    if (epoch !== stockFileEpoch) return;
+    stock = verified; sayK("stockValid"); lockInstaller(false);
+  } catch (e) { if (epoch === stockFileEpoch) sayK("stockError", e.message); }
+});
+function saveArchive(archive) {
+  const url = URL.createObjectURL(new Blob([JSON.stringify(archive)], {type:"application/json"}));
+  const a = document.createElement("a"); a.href = url; a.download = `GammaWave-backup-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+function archiveInfo(a) {
+  let pos = a.indexOf(0); if (pos < 0) throw new Error("Invalid INFO");
+  const version = String.fromCharCode(...a.slice(0,pos)); pos++;
+  const engines = a[pos]; pos += 5;
+  for (let i = 0; i < engines; i++) { const end = a.indexOf(0,pos); if (end < 0) throw new Error("Invalid INFO"); pos = end + 1; }
+  const ext = a.slice(pos + 1);
+  const supported = /^FELUCCA /i.test(version) && ext[0] === 16 && ext[1] === 0x55 && ext[2] === 1 &&
+    ext[4] === 0x4d && ext[5] === 1 && ext[8] === 0x42 && ext[9] === 1 && (ext[10] & 1);
+  return {version,supported};
+}
+$("stock-go").addEventListener("click", async () => {
+  if (!stock || writing) return;
+  const selected = stock; lockInstaller(true);
+  let link = null;
+  try {
+    let midi;
+    try { midi = await navigator.requestMIDIAccess({sysex:true}); } catch (e) { await midiRefused(e); return; }
+    const up = new Updater(midi, log);
+    const step = (k, n) => { log(`${k} ${n ?? ""}`); if (["start","verify","loader","write","reboot","done"].includes(k)) sayK(k); if (k === "done") $("bar").value = 100; };
+    const loader = await up.find(id => id.model === "ota-FM-1");
+    if (loader) {
+      loader.link.close();
+      if (!$("stock-recovery").checked) { sayK("stockNeedBackup"); return; }
+      if (!confirm(t("stockConfirm"))) return;
+      sayK(await up.resume(selected.image, step, selected.product) ? "done" : "stopped");
+    } else {
+      const device = await up.find(id => id.model === "FM-1");
+      if (!device) { sayK("notfound"); return; }
+      const input = device.link.input, output = device.link.output; device.link.close();
+      link = new BackupConnection(input, output);
+      const info = archiveInfo(await link.request([1,[]]));
+      if (!info.supported) { sayK("stockUnsupported"); return; }
+      const archive = await captureBackup((r,o) => link.request(r,o), info.version,
+        (done,total) => sayK("backup", `${Math.round(done / Math.max(1,total) * 100)}%`));
+      saveArchive(archive); link.close(); link = null;
+      if (!confirm(t("stockConfirm"))) return;
+      await up.install(selected.image, selected.product, step);
+    }
+  } catch (e) {
+    if (e.code && TEXT[lang][e.code]) sayK(e.code,e.detail || ""); else sayK("error",e.message);
+    log(String(e.stack || e));
+  } finally { if (link) link.close(); lockInstaller(false); }
+});
+$("stock-direct").addEventListener("click", async () => {
+  if (!stock || writing) return;
+  const selected = stock; lockInstaller(true);
+  try {
+    let midi;
+    try { midi = await navigator.requestMIDIAccess({sysex:true}); } catch (e) { await midiRefused(e); return; }
+    const up = new Updater(midi, log);
+    const total = 74 + 1167;
+    const step = (k, a) => {
+      log(`${k} ${a ?? ""}`);
+      if (k === "start") sayK("start");
+      if (k === "verify") { sayK("verify"); $("bar").value = (a / total) * 100; }
+      if (k === "loader") sayK("loader");
+      if (k === "write") { sayK("write"); $("bar").value = ((74 + a) / total) * 100; }
+      if (k === "reboot") sayK("reboot");
+      if (k === "done") { $("bar").value = 100; sayK("done"); }
+    };
+    const loader = await up.find(id => /^ota-/i.test(id.model));
+    if (loader) {
+      loader.link.close();
+      sayK(await up.resume(selected.image, step, selected.product) ? "done" : "stopped");
+    } else {
+      await up.install(selected.image, selected.product, step);
+    }
+  } catch (e) {
+    if (e && e.code && TEXT[lang][e.code]) sayK(e.code, e.detail || ""); else sayK("error", e && e.message);
+    log(String(e && e.stack || e));
+  } finally { lockInstaller(false); }
+});
+
+/* ============================================================================
+ * GAMMAWAVE // WRAITH — Interactive Browser DSP Preview & Thermal Scope
+ * Mirrors firmware/src/fx.c (DT_HEARTH, DT_BLAST, DT_PLASMA, DT_FLUX) & SVF
+ * ============================================================================ */
+const DTYPE_NAMES = ["SOFT", "HARD", "FOLD", "CRUSH", "RECT", "HEARTH", "BLAST", "PLASMA", "FLUX"];
+const PRESET_CFG = [
+  { name: "INGOT SUB",  dtype: 5, ftype: 0, drive: 76, cut: 48, res: 42, base: 36, notes: [36,36,48,36, 0,39,36,43, 36,36,48,36, 41,0,39,36] },
+  { name: "WORM REESE", dtype: 6, ftype: 5, drive: 92, cut: 68, res: 84, base: 38, notes: [38,38,38,50, 38,41,41,38, 36,36,48,36, 37,37,49,37] },
+  { name: "SCREAM 303", dtype: 5, ftype: 5, drive: 88, cut: 80, res: 112,base: 45, notes: [45,45,57,45, 0,48,45,55,  45,0,57,52,  45,48,0,50] },
+  { name: "HEARTH LD",  dtype: 5, ftype: 0, drive: 96, cut: 94, res: 64, base: 57, notes: [57,0,60,64,  57,69,64,60,  55,0,59,62,  64,60,57,0] },
+  { name: "PLASMA CORE",dtype: 7, ftype: 4, drive: 98, cut: 86, res: 88, base: 40, notes: [40,52,40,0,  40,55,52,40,  43,55,43,0,  41,53,48,40] },
+  { name: "WRAITH PAD", dtype: 6, ftype: 4, drive: 64, cut: 72, res: 76, base: 48, notes: [48,55,60,63, 48,55,60,67,  46,53,58,62, 44,51,56,60] },
+  { name: "BLACK CHOIR",dtype: 5, ftype: 4, drive: 58, cut: 78, res: 96, base: 50, notes: [50,57,62,65, 50,57,62,69,  48,55,60,64, 45,52,57,61] },
+  { name: "GEIGER BIT", dtype: 8, ftype: 5, drive: 108,cut: 92, res: 90, base: 48, notes: [48,0,60,48,  63,48,0,55,   48,60,67,48, 58,55,48,0] },
+];
+
+let seqNotes = PRESET_CFG[0].notes.slice();
+let curStep = 0, playing = false, actx = null, scriptNode = null;
+let ph1 = 0, ph2 = 0, subPh = 0, lpf1 = 0, bpf1 = 0, lpf2 = 0, bpf2 = 0, env = 0, curFreq = 110;
+let stepTimer = 0;
+const scopeBuf = new Float32Array(460);
+
+function distShapeJS(x, type, drive01) {
+  const g = 1 + drive01 * 7.0;
+  let u = x * g;
+  switch (type | 0) {
+    case 0: return u / (1 + Math.abs(u)); // SOFT
+    case 1: return Math.max(-1, Math.min(1, u)); // HARD
+    case 2: { // FOLD
+      let f = ((u + 1) % 4 + 4) % 4 - 2;
+      return Math.abs(f) - 1;
+    }
+    case 3: return Math.round(Math.max(-1, Math.min(1, u)) * 4) / 4; // CRUSH
+    case 4: return Math.abs(Math.max(-1, Math.min(1, u))) * 1.4 - 0.35; // RECT
+    case 5: { // HEARTH: asymmetric warm tube + HF sparks + sub weight
+      const b = u + 0.18 * u * u;
+      const sat = b / (1 + Math.abs(b));
+      const spk = Math.sin(u * 2.4) * 0.22 * drive01;
+      return Math.max(-1, Math.min(1, sat * 0.88 + spk));
+    }
+    case 6: { // BLAST: WRAITH 4-stage sinusoidal wavefolder
+      let w = x * (1 + drive01 * 3.5);
+      for (let s = 0; s < 4; s++) w = Math.sin(w * 1.85);
+      return w;
+    }
+    case 7: { // PLASMA: Singularity envelope-warped AM saturation
+      const sat = u / (1 + 0.7 * Math.abs(u));
+      const mod = Math.cos(u * 3.2 * (0.4 + drive01));
+      return sat * (0.65 + 0.35 * mod);
+    }
+    default: { // FLUX: thermal drift + Geiger bit-starve
+      const q = Math.round(u * 6) / 6;
+      const t = q / (1 + 0.8 * Math.abs(q));
+      return t + 0.14 * Math.sin(u * 9.0);
+    }
+  }
+}
+
+function drawCurve() {
+  const cv = $("curve-cv"), ctx = cv.getContext("2d");
+  const w = cv.width, h = cv.height;
+  const dtype = +$("syn-dtype").value;
+  const drive = +$("syn-drive").value / 127;
+  const isWraith = document.documentElement.dataset.palette === "wraith";
+  ctx.fillStyle = "#040406";
+  ctx.fillRect(0, 0, w, h);
+  ctx.strokeStyle = "#222028";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(0, h / 2); ctx.lineTo(w, h / 2);
+  ctx.moveTo(w / 2, 0); ctx.lineTo(w / 2, h);
+  ctx.stroke();
+
+  ctx.strokeStyle = isWraith ? "#ff6088" : "#ff9424";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  for (let px = 0; px < w; px++) {
+    const x = (px / (w - 1)) * 2 - 1;
+    const y = distShapeJS(x, dtype, drive);
+    const py = h / 2 - y * (h * 0.42);
+    if (px === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+  $("curve-label").textContent = `TRANSFER CURVE // ${DTYPE_NAMES[dtype] || "HEARTH"}`;
+}
+
+function renderStepButtons() {
+  const box = $("seq-steps");
+  box.textContent = "";
+  seqNotes.forEach((n, i) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "step-cell" + (n > 0 ? " on" : "") + (playing && i === curStep ? " now" : "");
+    b.title = `Step ${i + 1}`;
+    b.addEventListener("click", () => {
+      seqNotes[i] = seqNotes[i] ? 0 : (PRESET_CFG[+$("syn-preset").value].base + [0, 3, 7, 10, 12][i % 5]);
+      renderStepButtons();
+    });
+    box.appendChild(b);
+  });
+}
+
+function drawScope() {
+  const cv = $("scope-cv"), ctx = cv.getContext("2d");
+  const w = cv.width, h = cv.height;
+  const isWraith = document.documentElement.dataset.palette === "wraith";
+  ctx.fillStyle = "rgba(4, 4, 6, 0.38)";
+  ctx.fillRect(0, 0, w, h);
+  ctx.strokeStyle = "#1d1b22";
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, h / 2); ctx.lineTo(w, h / 2); ctx.stroke();
+
+  const grad = ctx.createLinearGradient(0, 0, 0, h);
+  if (isWraith) {
+    grad.addColorStop(0, "#78f0b8");
+    grad.addColorStop(0.5, "#ff6088");
+    grad.addColorStop(1, "#78f0b8");
+  } else {
+    grad.addColorStop(0, "#60e4ff");
+    grad.addColorStop(0.5, "#ff9424");
+    grad.addColorStop(1, "#60e4ff");
+  }
+  ctx.strokeStyle = grad;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  for (let x = 0; x < w; x++) {
+    const y = h / 2 - scopeBuf[x] * (h * 0.42);
+    if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+  if (playing) requestAnimationFrame(drawScope);
+}
+
+function startSynth() {
+  if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+  if (actx.state === "suspended") actx.resume();
+  const sr = actx.sampleRate;
+  scriptNode = actx.createScriptProcessor(1024, 0, 2);
+  const stepSamples = Math.floor(sr * (60 / 122) / 4);
+  scriptNode.onaudioprocess = (e) => {
+    const L = e.outputBuffer.getChannelData(0);
+    const R = e.outputBuffer.getChannelData(1);
+    const dtype = +$("syn-dtype").value;
+    const ftype = +$("syn-ftype").value;
+    const drive = +$("syn-drive").value / 127;
+    const cutNorm = +$("syn-cut").value / 127;
+    const resNorm = +$("syn-res").value / 127;
+
+    for (let i = 0; i < L.length; i++) {
+      if (stepTimer <= 0) {
+        stepTimer = stepSamples;
+        curStep = (curStep + 1) & 15;
+        const note = seqNotes[curStep];
+        if (note > 0) {
+          curFreq = 440 * Math.pow(2, (note - 69) / 12);
+          env = 1.0;
+        }
+        setTimeout(renderStepButtons, 0);
+      }
+      stepTimer--;
+      env *= 0.99935;
+
+      ph1 = (ph1 + curFreq / sr) % 1;
+      ph2 = (ph2 + (curFreq * 1.007) / sr) % 1;
+      subPh = (subPh + (curFreq * 0.5) / sr) % 1;
+
+      const saw1 = ph1 * 2 - 1;
+      const saw2 = ph2 * 2 - 1;
+      const sub = Math.sin(subPh * Math.PI * 2) * 0.45;
+      let raw = (saw1 * 0.45 + saw2 * 0.45 + sub) * env;
+
+      // SVF filter with VOWEL & SCREAM modes
+      const fc = Math.min(0.42, 0.015 + Math.pow(cutNorm + env * 0.35, 2.2) * 0.38);
+      const damp = Math.max(0.06, 1.0 - resNorm * 0.9);
+      const hp = raw - lpf1 - damp * bpf1;
+      bpf1 += fc * hp;
+      lpf1 += fc * bpf1;
+
+      let flt = lpf1;
+      if (ftype === 1) flt = hp;
+      else if (ftype === 2) flt = bpf1;
+      else if (ftype === 4) { // VOWEL dual formant peak
+        const hp2 = raw - lpf2 - 0.15 * bpf2;
+        bpf2 += Math.min(0.45, fc * 2.15) * hp2;
+        lpf2 += Math.min(0.45, fc * 2.15) * bpf2;
+        flt = lpf1 * 0.5 + bpf1 * 0.85 + bpf2 * 0.7;
+      } else if (ftype === 5) { // SCREAM self-oscillating folded resonance
+        const scream = Math.sin(bpf1 * (2.2 + resNorm * 4.5));
+        flt = lpf1 * 0.75 + scream * (0.35 + resNorm * 0.55);
+      }
+
+      const shaped = distShapeJS(flt, dtype, drive) * 0.38;
+      L[i] = shaped;
+      R[i] = shaped;
+      if (i < scopeBuf.length) scopeBuf[i] = shaped * 1.8;
+    }
+  };
+  scriptNode.connect(actx.destination);
+  playing = true;
+  $("syn-play").textContent = t("synStop");
+  renderStepButtons();
+  drawScope();
+}
+
+function stopSynth() {
+  if (scriptNode) { scriptNode.disconnect(); scriptNode = null; }
+  playing = false;
+  $("syn-play").textContent = t("synPlay");
+  renderStepButtons();
+}
+
+$("syn-play").addEventListener("click", () => { if (playing) stopSynth(); else startSynth(); });
+$("syn-dice").addEventListener("click", () => {
+  const p = PRESET_CFG[+$("syn-preset").value];
+  const scale = [0, 1, 3, 5, 7, 8, 10, 12];
+  seqNotes = seqNotes.map((_, i) => (i % 4 === 0 || Math.random() < 0.62)
+    ? p.base + scale[Math.floor(Math.random() * scale.length)]
+    : 0);
+  $("syn-cut").value = 35 + Math.floor(Math.random() * 85);
+  $("syn-res").value = 40 + Math.floor(Math.random() * 82);
+  $("syn-drive").value = 45 + Math.floor(Math.random() * 78);
+  updateSynthLabels();
+  renderStepButtons();
+  drawCurve();
+});
+$("syn-preset").addEventListener("change", () => {
+  const p = PRESET_CFG[+$("syn-preset").value];
+  $("syn-dtype").value = p.dtype;
+  $("syn-ftype").value = p.ftype;
+  $("syn-drive").value = p.drive;
+  $("syn-cut").value = p.cut;
+  $("syn-res").value = p.res;
+  seqNotes = p.notes.slice();
+  updateSynthLabels();
+  renderStepButtons();
+  drawCurve();
+});
+function updateSynthLabels() {
+  $("v-drive").textContent = Math.round(+$("syn-drive").value * 100 / 127) + "%";
+  $("v-cut").textContent = Math.round(+$("syn-cut").value * 100 / 127) + "%";
+  $("v-res").textContent = Math.round(+$("syn-res").value * 100 / 127) + "%";
+}
+["syn-dtype", "syn-ftype", "syn-drive", "syn-cut", "syn-res"].forEach((id) => {
+  $(id).addEventListener("input", () => { updateSynthLabels(); drawCurve(); });
+});
+updateSynthLabels();
+renderStepButtons();
+drawCurve();
+drawScope();
+</script>
+</body>
+</html>
