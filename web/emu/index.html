@@ -94,7 +94,7 @@ footer small { font-size: 11px; opacity: .8; }
 <p class="keys">
   <span><kbd>Z</kbd>–<kbd>'</kbd> <kbd>Q</kbd>–<kbd>O</kbd> keys</span>
   <span><kbd>1</kbd>–<kbd>=</kbd> FX … REC</span>
-  <span><kbd>[</kbd> <kbd>]</kbd> OCT</span>
+  <span><kbd>[</kbd> <kbd>]</kbd> OCT− OCT+ (on any keyboard layout, AltGr too)</span>
   <span><kbd>↑</kbd> <kbd>↓</kbd> SELECT</span>
   <span><kbd>←</kbd> <kbd>→</kbd> ALGORITHM</span>
   <span><kbd>Shift</kbd>-click holds a button (e.g. <kbd>Shift</kbd>+<kbd>OCT-</kbd> then <kbd>ARP</kbd> = Solar Macros, <kbd>PLAY</kbd> = 49-Genre Gen, <kbd>HOME</kbd> = 3D Visualizer)</span>
@@ -350,10 +350,16 @@ const KEYMAP = {};
   .forEach((c, i) => KEYMAP[c] = { btn: B[[...ROW1, ...ROW2][i]] });
 Object.assign(KEYMAP, { BracketLeft: { btn: B["OCT-"] }, BracketRight: { btn: B["OCT+"] } });
 const ARROWS = { ArrowUp: [EN.SELECT, 1], ArrowDown: [EN.SELECT, -1], ArrowRight: [EN.ALGORITHM, 1], ArrowLeft: [EN.ALGORITHM, -1] };
+// [ and ] by the character typed, wherever the layout puts them: on AZERTY they are AltGr + 5 and AltGr + °, and the
+// key under them (Digit5, Minus) is EDIT / REC by position, so the character wins (and AltGr, reported as Ctrl + Alt
+// on Windows, does not hide them)
+const CHAR_BTN = { "[": B["OCT-"], "]": B["OCT+"] };
 addEventListener("keydown", (e) => {
-  if (!node || e.metaKey || e.ctrlKey || e.altKey || e.target.closest?.(".hit.knob")) return;
+  const ch = CHAR_BTN[e.key];
+  if (!node || e.metaKey || e.target.closest?.(".hit.knob")) return;
+  if (ch === undefined && (e.ctrlKey || e.altKey || e.getModifierState?.("AltGraph"))) return;
   if (ARROWS[e.code]) { const [r, n] = ARROWS[e.code]; turn(knobs.find((k) => k.role === r), n); e.preventDefault(); return; }
-  const m = KEYMAP[e.code];
+  const m = ch !== undefined ? { btn: ch } : KEYMAP[e.code];
   if (!m) return;
   e.preventDefault();
   if (e.repeat) return;
