@@ -146,9 +146,9 @@ static void layer_masks(void)
 {
     uint32_t m = !layer_allowed() || (ui.ly && (ui.ly_t0 & LY_DEAD)) ? 0u
                : ui.ly ? ly_bit(ui.ly) : layer_bits() & ~fm1_in.buttons;
-    if (ui.confirm == CF_DICE_ALL && gp.view && !ui.menu)   /* (TAKES v2) OCT+ held on the reel: the keys are the
-                                                         * take layer's (gen_layer), silent */
-        m |= 1u << panel.btn[B_OCTUP];
+    if (ui.confirm == CF_DICE_ALL && !ui.menu)          /* (TAKES v2) the GEN screen, every page: OCT+ held, the keys are
+                                                         * the take layer's (gen_layer); GLO held, G4 its UNDO; silent */
+        m |= 1u << panel.btn[B_OCTUP] | 1u << panel.btn[B_GLO];
     kb_mask = m;
     perf_mask = m & ly_bit(LAYER_FX);
     fx_lock_on = (uint8_t)(fx_lock && !ui.ly && layer_allowed());

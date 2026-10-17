@@ -300,9 +300,11 @@ static uint32_t step_leds(void)
 
 /* 1: the keys show a map of their own (NAME, a layer's map: SCL's scale, FX; the DRUM grid), lit or
  * dark; 0: the keys held and the notes playing, over the idle glow */
+static int gen_keys_own(void);                         /* (gen_reel.c: OCT+ held on the GEN screen, the take layer) */
+static uint32_t gen_layer_leds(uint32_t *br);
 static int keys_own(void)
 {
-    return (name_on() && !ui.menu) || ui.layer || grid_on();
+    return (name_on() && !ui.menu) || ui.layer || grid_on() || gen_keys_own();
 }
 
 /* Discussion #127 (1.2): MENU > SCALE LEDS ON, the keys of the selected track's scale (ROOT, SCALE), bit k = key k, as
@@ -345,7 +347,8 @@ static uint32_t key_leds(uint32_t *br)                 /* (*br: a layer's keys t
     uint32_t c;
     if (br)
         *br = 0;
-    c = name_on() && !ui.menu ? name_leds() : ui.layer ? layer_leds(br) : grid_on() ? grid_leds() :
+    c = name_on() && !ui.menu ? name_leds() : ui.layer ? layer_leds(br) : gen_keys_own() ? gen_layer_leds(br) :
+        grid_on() ? grid_leds() :
                  (fm1_in.notes & ~kb_layer) | play_leds() | step_leds() | voice_leds();
     return c;
 }
@@ -2226,22 +2229,28 @@ static void ui_input_frame(void)
             gen_layer(lkeys);                           /* (TAKES v2) OCT+ held on the reel: the keys */
             gen_take_poll();
             {   /* (TAKES v2) EDIT on the reel: delete the take (held: the takes not kept), a question first; on the SET
-                 * page, the entry */
+                 * page, the entry (held: nothing) */
                 static uint32_t ed_t0;
                 uint32_t e = btn_hold(&ed_t0, B_EDIT, now, 1);
-                if (gp.view == 2u && e == BT_TAP) set_delete();
+                if (gp.view == 2u) { if (e == BT_TAP) set_delete(); }
                 else if (gp.view && (e == BT_TAP || e == BT_HOLD)) gen_reel_edit(e == BT_HOLD);
             }
-            {   /* (TAKES v2) REC on the reel: the SET (its own tap: in a dialog the REC layer is dead); SAVE: a take's
-                 * code typed (the NAME screen) */
+            if (gl.down_oct && (pressed & ~((1u << panel.btn[B_OCTUP]) | (1u << panel.btn[B_OCTDN]))))
+                gl.used = 1;                            /* (TAKES v2) a button with OCT+ down: no load when it is let go */
+            {   /* (TAKES v2) REC: a SET recorded while playing (its own tap: in a dialog the REC layer is dead); SAVE on
+                 * the reel: KEEP, with OCT+ held: a take's code typed (the NAME screen) */
                 static uint32_t rc_t0, sv_t0;
-                if (btn_hold(&rc_t0, B_REC, now, 0) == BT_TAP && gp.view) gen_reel_rec();
-                if (btn_hold(&sv_t0, B_SAVE, now, 0) == BT_TAP && gp.view == 1u) gen_code_enter();
+                uint32_t sv;
+                if (btn_hold(&rc_t0, B_REC, now, 0) == BT_TAP && gp.view != 2u) gen_reel_rec();
+                sv = btn_hold(&sv_t0, B_SAVE, now, 0);
+                if (sv == BT_TAP && gp.view == 1u) {
+                    if (gl.down_oct) gen_code_enter();
+                    else gen_reel_keep(0);
+                } else if (gl.down_oct && ((fm1_in.buttons >> panel.btn[B_SAVE]) & 1u) && gp.view == 1u) {
+                    gl.used = 1;                        /* (SAVE down with OCT+: its tap comes after OCT+ is let go) */
+                }
             }
-            if (home == BT_TAP && gp.view) {            /* (1.0-GW) HOME on the reel: back to the settings */
-                gp.view = gp.view == 2u ? 1u : 0u;      /* (v2: the SET page: back to the reel) */
-                ui.force = 1;
-            } else if (home == BT_TAP) {                /* (0.7.0) HOME: done (OCT- too) */
+            if (home == BT_TAP) {                       /* (0.7.0) HOME: done, from any GEN page (OCT-: back) */
                 ui.confirm = 0;
                 ui.force = 1;
                 go_home();
