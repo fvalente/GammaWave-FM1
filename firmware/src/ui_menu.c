@@ -278,14 +278,16 @@ static void menu_head(void)
  *                   CLOSE is in the header: the four would not fit in S (cv_key_row drops words, from the last)
  * Drawn in two bands (the canvas holds 124 rows) split in a gap between two rows; while the tabs slide only their
  * strip (24..58) is drawn again */
-static const uint16_t MTAB_ICON[MTAB_COUNT] = {ICON_X_EYE, ICON_X_KNOB, ICON_X_SPEAKER, ICON_X_COG};
+static const uint16_t MTAB_ICON[MTAB_COUNT] = {ICON_X_EYE, ICON_X_KNOB, ICON_X_SPEAKER, ICON_X_COG, ICON_X_SONG};
 #define MT_Y 29                                        /* the tab bar */
 #define MT_H 24
-#define MT_IW 32                                       /* a cushion with its icon alone (the icon centred in it) */
-#define MT_NX 28                                       /* the name's pen in the one shown; 10 px after it */
+#define MT_IW 28                                       /* a cushion with its icon alone (the icon centred in it; 1.1.1-GW:
+                                                        * 28, was 32: five tabs, GEN the fifth) */
+#define MT_NX 25                                       /* the name's pen in the one shown; 10 px after it (1.1.1-GW: was 28) */
 #define MT_X0 6
 #define MT_X1 234
-#define MT_GAP 8                                       /* between two tabs, always (the bar centred in MT_X0..MT_X1) */
+#define MT_GAP 4                                       /* between two tabs, always (the bar centred in MT_X0..MT_X1; 1.1.1-GW:
+                                                        * 4, was 8) */
 #define MT_ONE 64                                      /* mt.pos per tab */
 #define MP_Y 59                                        /* the rows' panel */
 #define MP_PAD 3
@@ -442,6 +444,8 @@ static void draw_menu(void)
     sig = ui.menu * 7u + ui.menu_sel * 131u + settings.palette * 1009u + settings.lowcut * 7919u + settings_hold * 3511u +
           settings_leds * 6151u + ui_prefs * 4099u + ui_style * 257u + song.rec * 65537u + song.sel * 13u +
           ui_rec_prefs * 92821u + ui_scr * 131071u +          /* (#157: SCREEN OFF's value redraws its row) */
+          midi_out_mode * 524287u + ui_load * 8191u + ui_sel_home * 127u +   /* (1.1.1-GW: MIDI OUT, LOAD, SELECT ON HOME
+                                                                * redraw their rows too: they did not) */
           (ui.menu == 2 ? ui.menu_scroll * 48611u : 0u) +
           (ui.menu == 2 ? (song.cpu_q8 >> 3) * 7741u + load_diag.peak * 3329u + load_diag.late * 1931u +
                           load_diag.shed * 2671u : 0u) +

@@ -54,6 +54,15 @@ static int motion_valid(const motion_store_t *m)
     return 1;
 }
 static int motion_enabled(const track_t *t) { return (motion.on >> trk_index(t)) & 1u; }
+/* (1.1.1-GW) track t has an automation event (not a lock) for parameter id */
+static int motion_has(const track_t *t, uint32_t id)
+{
+    uint32_t i, k = trk_index(t);
+    for (i = 0; i < motion.count; i++)
+        if (MOTION_TRK(&motion.event[i]) == k && MOTION_ID(&motion.event[i]) == id && !(motion.event[i].param & MOTION_LOCK))
+            return 1;
+    return 0;
+}
 static uint32_t motion_count(const track_t *t)
 {
     uint32_t i, n = 0, k = trk_index(t);

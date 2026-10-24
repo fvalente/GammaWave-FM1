@@ -873,6 +873,9 @@ is index 4, id 4, kind 0, value 2 (`02 40`), min 0 (`00 40`), max 3 (`03 40`), "
 `F0 7D 46 4C 49 0E 01 40 F7` sets COUNT-IN to 1 BAR and answers `F0 7D 46 4C 49 00 0E 01 40 F7` (1.1).
 `F0 7D 46 4C 48 12 F7` answers `F0 7D 46 4C 48 12 7F F7` (no index 18; before SCREEN OFF: none past 16, `11`; 1.2 before SCALE LEDS: none past 15, `10`; 1.1 firmware: none past 14, `0F`; 1.0.5: none past 11, `0C`).
 
+SELECT ON HOME (id 21, 1.1.1-GW, issue #3; the GEN tab, the fifth: tab index 4 "GEN"): GENERATOR (0, the default and
+older settings) or TEMPO (1): what SELECT alone does on HOME. Applied at once.
+
 **USB SERIAL (id 11).** The menu applies it when it closes; a MENU_SET applies it about 200 ms after its reply
 (`usb_serial_apply`), so the reply leaves first (if the device shows the MENU at that moment: when it closes).
 A change (ON <-> OFF; setting the value it already has does nothing) re-enumerates the whole device: it drops off

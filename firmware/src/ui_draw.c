@@ -603,8 +603,14 @@ static void draw_column(uint32_t c, const char *label, const char *val, const ch
             gw_disc(kcx, kcy, kr - 2, bake_fill);
             gw_orbit_ring(kcx, kcy, kr - 3, kr - 3, mot || hot ? T_ACCENT : T_LINE, 0);
             knob(kx, ky, kr, KNOB_SMALL_COV, KNOB_SMALL_ANG, r_cl, 0, 1000, kc_arc);
-            cv_line(kcx, kcy, px1, py1, hot ? T_ACCENT : T_TEXT);
-            cv_pset(kcx, kcy, T_MID);
+            if (mot) {                                  /* (1.1.1-GW) automated: an "A" on an accent disc in the knob */
+                gw_disc(kcx, kcy, kr - 4, T_ACCENT);
+                cv_text_on(kcx - (text_w(&AF_S, "A") >> 1), kcy - AF_S_CAP_Y - (AF_S_CAP_H >> 1), &AF_S, "A", T_INK,
+                           T_ACCENT);
+            } else {
+                cv_line(kcx, kcy, px1, py1, hot ? T_ACCENT : T_TEXT);
+                cv_pset(kcx, kcy, T_MID);
+            }
         }
         if (!strip && label[0]) {
             /* MENU > LARGE on a list / graph page or a layer (LK_LABEL): the label in M where it fits the card (its
@@ -621,8 +627,9 @@ static void draw_column(uint32_t c, const char *label, const char *val, const ch
                 lx = ix + cv_icon_in(ix, cy, 0, chh, ICON_CELL, ic,   /* its ink on the label's line */
                                      mot ? (hot ? T_ACCENT : T_THEME) : lc, T_SURF) + ICON_GAP;
             }
-            else if (mot)                               /* the label from x 19 (5 + 12 + 2) */
-                lc = hot ? T_ACCENT : T_THEME;          /* no room for MOTION's icon: the label says it */
+            if (mot && !hot)                            /* (1.1.1-GW, issue #2: values that moved by themselves went
+                                                         * unnoticed) the label in the theme colour too */
+                lc = T_THEME;
             if (hot && T_ACCENT == T_MID) {             /* MONO: no colour tells the hot knob: its label inverted, */
                 int32_t b[4], w;                        /* the chip 2 px round its ink (M: 3 above, 2 below) */
                 text_ink(lf, label, b);
@@ -634,6 +641,16 @@ static void draw_column(uint32_t c, const char *label, const char *val, const ch
                 cv_text_fit(lx, ly, lf, label, T_INK, T_ACCENT, max_lx - lx);
             } else
                 cv_text_fit(lx, ly, lf, label, lc, T_SURF, max_lx - lx);
+            if (mot && !gw_rotary) {                    /* (1.1.1-GW) and an "A" chip after it, in the accent: this
+                                                         * value is automated (it moves on its own while it plays;
+                                                         * a card with its knob: the "A" in the knob) */
+                int32_t ax = lx + lw + 3, aw = text_w(&AF_S, "A") + 5;
+                if (ax + aw <= max_lx + 1) {
+                    cv_rrect(ax, cy - 2, aw, chh + 4, 2, T_ACCENT, T_SURF);
+                    GFX_HOOK_ALIGN(ax, cy - 2, ax + aw, cy + chh + 2, AL_HV, "card AUTOMATION chip");
+                    cv_text_on(ax + 3, ly, &AF_S, "A", T_INK, T_ACCENT);
+                }
+            }
         }
         if (kid >= 0)                                   /* "[OCT+]": the keycap (accent: it would act; DIM: it would not) */
             x = cv_keycap(5, 20, (uint32_t)kid, vc == T_ACCENT || vc == T_DIM ? vc : T_KEY, T_INK, T_SURF);

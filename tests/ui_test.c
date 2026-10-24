@@ -1928,6 +1928,41 @@ static int test_display_preferences(void)
  * same tab and row; the tabs slide with ANIM ON (only their strip drawn again), snap with ANIM OFF */
 static void wdt_ms(void) { fm1_ms++; }
 static void wdt_key(void) { fm1_ms++; if (fm1_ms % 50u == 0u) fm1_in.notes = 1u; }   /* a key pressed after a moment */
+/* (1.1.1-GW) the issues: #3 MENU > GEN > SELECT ON HOME (GENERATOR as ever, or TEMPO); #2 / #10 a knob move recorded:
+ * the header says it the first time (and which REC chord clears it), its card draws the "A" (card_mot) */
+static int test_issues_111(void)
+{
+    int bad = 0, ok;
+    int16_t bpm;
+    ui_power_on();
+    go_home(); frames(16);
+    fm1_ms += 1200u;
+    ui_sel_home = 1;
+    bpm = song.g[G_BPM];
+    turn(EN_SELECT, 3);
+    ok = song.g[G_BPM] > bpm && ui.confirm != CF_DICE_ALL && ui.home;
+    ui_sel_home = 0;
+    fm1_ms += 1200u;
+    turn(EN_SELECT, 1);
+    ok &= ui.confirm == CF_DICE_ALL;
+    bad += check("#3 SELECT ON HOME: TEMPO turns the BPM (no generator); GENERATOR (the default) opens it", ok);
+    ui_power_on();
+    go_title("ENV"); frames(16);
+    song.rec = 1u << song.sel;
+    song.playing = 1;
+    ui.msg[0] = 0;
+    turn(EN_K2, 2);                                     /* ENV's KNOB 2: DEC */
+    ok = motion_has(TSEL, P_DEC) && str_eq(ui.msg, "AUTOMATED. REC+ENV CLR");
+    ui.msg[0] = 0;
+    turn(EN_K2, 2);                                     /* (once: not said again) */
+    ok &= !ui.msg[0];
+    song.rec = 0;
+    song.playing = 0;
+    ui.force = 1; frames(48);
+    ok &= (card_mot >> 1) & 1u;                         /* (the DEC card drawn with its "A") */
+    bad += check("#2 a knob move recorded: AUTOMATED. REC+ENV CLR once, its card marked", ok);
+    return bad;
+}
 static int test_menu_tabs(void)
 {
     int bad = 0, ok = 1;
@@ -1958,10 +1993,10 @@ static int test_menu_tabs(void)
             }
     }
     ui_prefs = 0;
-    bad += check("MENU tabs: DISPLAY CONTROL AUDIO SYSTEM (6 6 6 6 rows), 1..6 each in a run, fit the page; tab gaps constant (S, LARGE)",
-                 ok && MTAB_COUNT == 4u && str_eq(MTAB_NAME[0], "DISPLAY") && mtab_rows(MTAB_DISPLAY) == 6u &&
-                 mtab_rows(MTAB_CONTROL) == 6u && mtab_rows(MTAB_AUDIO) == 6u && mtab_rows(MTAB_SYSTEM) == 6u);   /* (0.6.58: INIT SYSTEM;
-                                                                         * 0.6.72: MIDI OUT in CONTROL) */
+    bad += check("MENU tabs: DISPLAY CONTROL AUDIO SYSTEM GEN (6 6 6 6 1 rows), 1..6 each in a run, fit the page; tab gaps constant (S, LARGE)",
+                 ok && MTAB_COUNT == 5u && str_eq(MTAB_NAME[0], "DISPLAY") && mtab_rows(MTAB_DISPLAY) == 6u &&
+                 mtab_rows(MTAB_CONTROL) == 6u && mtab_rows(MTAB_AUDIO) == 6u && mtab_rows(MTAB_SYSTEM) == 6u &&
+                 mtab_rows(MTAB_GEN) == 1u);   /* (0.6.58: INIT SYSTEM; 0.6.72: MIDI OUT in CONTROL; 1.1.1-GW: GEN) */
 
     ui_power_on();
     hold(B_HOME);
@@ -1977,8 +2012,9 @@ static int test_menu_tabs(void)
     turn(EN_ALGO, 1); ok &= ui.menu_sel == MI_LOWCUT && menu_tab() == MTAB_AUDIO;
     turn(EN_ALGO, -1); ok &= ui.menu_sel == MI_LATCH;   /* (back at the row left there) */
     turn(EN_ALGO, -1); ok &= ui.menu_sel == MI_LEDS;
-    turn(EN_ALGO, -1); ok &= ui.menu_sel == MI_SERIAL && menu_tab() == MTAB_SYSTEM;   /* (wraps) */
-    turn(EN_ALGO, 1); ok &= ui.menu_sel == MI_LEDS;
+    turn(EN_ALGO, -1); ok &= ui.menu_sel == MI_SELHOME && menu_tab() == MTAB_GEN;   /* (wraps; 1.1.1-GW: GEN last) */
+    turn(EN_ALGO, -1); ok &= ui.menu_sel == MI_SERIAL && menu_tab() == MTAB_SYSTEM;
+    turn(EN_ALGO, 1); turn(EN_ALGO, 1); ok &= ui.menu_sel == MI_LEDS;
     bad += check("MENU: ALGORITHM steps between the tabs and wraps, each tab back at its last row", ok && ui.menu == 1);
     turn(EN_ALGO, 1); turn(EN_PRESET, -1);            /* CONTROL: from FX LATCH up to KNOB ACCEL */
     ok = ui.menu_sel == MI_ACCEL;
@@ -9973,6 +10009,7 @@ int main(void)
     bad += test_favorites();
     bad += test_display_preferences();
     bad += test_menu_tabs();
+    bad += test_issues_111();
     bad += test_information();
     bad += test_chain();
     bad += test_product_ux();

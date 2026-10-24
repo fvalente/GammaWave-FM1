@@ -96,6 +96,9 @@ static void prefs_update(void)
 #define PREF_SCALE_LEDS (0x40u << 8)
 #define ui_load (favorites.factory[15][26])    /* (JIANT 0.6.30) LOAD (voice.c sys_load): 0 FULL, 1 LITE, 2 ECO; a byte no
                                                 * engine uses, 0 in older settings (0.6.29's 6 LITE: 1, LITE) */
+#define ui_sel_home (favorites.factory[15][22])     /* (1.1.1-GW, issue #3) MENU > GEN > SELECT ON HOME: 0 GENERATOR (older
+                                                    * settings, as ever), 1 TEMPO (SELECT alone on HOME sets the BPM; the
+                                                    * generator is HOME held + SELECT, OCT- + PLAY); a byte no engine uses */
 #define midi_out_mode (favorites.factory[15][24])   /* (JIANT 0.6.72) MENU > MIDI OUT (seq.c MO_*): 0 KEYS (older settings,
                                                 * as ever), 1 CLOCK, 2 ALL, 3 OFF; a byte no engine uses */
 #define PREF_SIX (0x80u << 8)                  /* (JIANT 0.6.18) MENU > TRACKS 6: all six tracks play; clear (the
@@ -188,7 +191,7 @@ static struct {
     uint8_t hot_col, hot_t;      /* column whose knob was just turned (drawn white) */
     uint8_t menu;                /* 0 off, 1 list, 2 about + credits (HOME held) */
     uint8_t menu_sel;            /* MENU: the row (menu_items.c MI_*; its tab MI_TAB), kept while the device runs */
-    uint8_t menu_row[4];         /* MENU: the row last picked in each tab, from its first (ALGORITHM comes back to it) */
+    uint8_t menu_row[5];         /* MENU: the row last picked in each tab, from its first (ALGORITHM comes back to it) */
     uint16_t menu_scroll;        /* continuous ABOUT + CREDITS position, pixels */
     uint32_t menu_sig, home_t0;  /* HOME press time (btn_hold) */
     uint8_t force;               /* full redraw pending */

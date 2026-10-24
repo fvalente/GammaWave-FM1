@@ -1,11 +1,11 @@
 # POCKET GAMMAWAVE (GW-1) — User Manual
 
-**Firmware v1.1-GW for the M-VAVE FM-1 · [gammawaveaudio.com](https://gammawaveaudio.com/) · [Buy GammaWave VST](https://shadowtune.itch.io/gammawave)**
+**Firmware v1.1.1-GW for the M-VAVE FM-1 · [gammawaveaudio.com](https://gammawaveaudio.com/) · [Buy GammaWave VST](https://shadowtune.itch.io/gammawave)**
 
 > *Versión en español: [MANUAL.es.md](MANUAL.es.md).*
 
 This manual is for musicians who have just installed Pocket GammaWave (GW-1) and want to know how to play it, build songs with it
-and, above all, **save their work without losing anything**. It follows the firmware as it is in v1.1-GW: every
+and, above all, **save their work without losing anything**. It follows the firmware as it is in v1.1.1-GW: every
 button, knob and message is named exactly as the device shows it.
 
 If you only read one chapter, read [12. Saving and loading](#12-saving-and-loading). What GW-1 adds to the firmware it
@@ -89,7 +89,7 @@ The names below are the ones the firmware uses (the HARDWARE CALIBRATION screen 
 
 | Control | What it does |
 | --- | --- |
-| **SELECT** (encoder) | Alone: **scrolls through the pages of the section you are in** (EDIT's pages on an EDIT page, FX's on an FX page …), one a detent, no wrap; on **HOME** it opens the **GENERATOR** (as HOME + SELECT). With a button held, that button's **dice**: **HOME** + SELECT the **GENERATOR**, **EDIT** + SELECT the sound, **SEQ** + SELECT the sequence, **LFO** + SELECT the LFO, **FX** + SELECT the effects. **GLO** + SELECT: the tempo. Any other page button + SELECT: its pages. |
+| **SELECT** (encoder) | Alone: **scrolls through the pages of the section you are in** (EDIT's pages on an EDIT page, FX's on an FX page …), one a detent, no wrap; on **HOME** it opens the **GENERATOR** (as HOME + SELECT; with MENU > GEN > SELECT ON HOME TEMPO it turns the tempo instead). With a button held, that button's **dice**: **HOME** + SELECT the **GENERATOR**, **EDIT** + SELECT the sound, **SEQ** + SELECT the sequence, **LFO** + SELECT the LFO, **FX** + SELECT the effects. **GLO** + SELECT: the tempo. Any other page button + SELECT: its pages. |
 | **ALGORITHM** (encoder) | Selects the track from any page: T1–T4, or T1–T6 with TRACKS 6. In the MENU: switches tabs. |
 | **PRESETS** (encoder) | On HOME, PRESETS and the sound pages: browses sounds (every engine's factory presets, then your user presets). On step pages (STEP, COMP, PATTERN, AUTOMATION, SHIFT): moves the step cursor. On list pages (USER, PROJECT, ARRANGE, TOOLS, AUTO LIST): moves the selection. **Hold a page button and turn SELECT** (or PRESETS) to jump straight through that button's pages. |
 | **KNOB 1–4** | The four cards (columns) on screen. With a layer held, the layer's own knobs. Turning fast sweeps the whole range, slowly fine-tunes (MENU > KNOB ACCEL turns this off). |
@@ -513,7 +513,10 @@ of different lengths turn against each other.
 
 Press **REC** anywhere (not on STEP while stopped): the track is armed and the transport starts. What you play is
 recorded into the pattern, quantized to its steps, overdubbing. Knob moves on the selected track are recorded as
-**automation**. MENU > AUDIO has the **CLICK** (OFF / REC / ON), **CLICK LEVEL** and **COUNT-IN** (OFF, 1 BAR, 2 BARS).
+**automation**: from then on that value moves by itself as the pattern plays. The first time a knob gets automation the
+header says so, with the REC chord that clears it (`AUTOMATED. REC+ENV CLR`: hold REC and press ENV), and its card
+shows an **A** (in the card's knob on the GAMMA look, a chip after the label on the others). SEQ held + F4 (CLR AUTO)
+clears all of the track's automation; SEQ > AUTOMATION's PLAY OFF keeps it but stops it playing. MENU > AUDIO has the **CLICK** (OFF / REC / ON), **CLICK LEVEL** and **COUNT-IN** (OFF, 1 BAR, 2 BARS).
 
 ### Pattern pages
 
@@ -1333,6 +1336,7 @@ closes it (settings are saved then).
 | SYSTEM | CALIBRATION | OCT+ opens HARDWARE CALIBRATION (teach each button and knob) |
 | SYSTEM | INIT SYSTEM | OCT+ asks, then everything back to zero for a new song (as SAVE > TOOLS > NEW PROJECT; UNDO brings the music back) |
 | SYSTEM | ABOUT | OCT+ opens: version, QR code, AUDIO LOAD (NOW, PEAK, LATE, SHED since power-on) and credits (scroll with PRESETS, OCT− back). OCT+ there opens the visualizer (see [17](#17-gw-1-additions)) |
+| GEN | SELECT ON HOME | **GENERATOR** (default): SELECT alone on HOME opens the generator; TEMPO: it turns the tempo instead (the generator is still HOME held + SELECT, or OCT− + PLAY) |
 
 If you hear clicks, open ABOUT and look at **LATE** (audio blocks that came too late) and **SHED** (voices the guard
 faded): a photo of that screen helps when you report a problem.

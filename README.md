@@ -38,7 +38,7 @@
 
 ---
 
-## What's in Pocket GammaWave (`v1.1-GW`)
+## What's in Pocket GammaWave (`v1.1.1-GW`)
 
 - **GammaWave HUD** on the FM-1's 240×240 screen, in the GAMMA palette (default), plus THERMAL and WRAITH palettes:
   - **HOME**: the selected track's filter response curve drawn over a 28-bar audio-reactive spectrum display, the Hearth sun with an orbiting moon, and the T1–T6 track strip.
@@ -132,7 +132,7 @@ Some synth tracks run on the FM-1's second core, with per-block checksums and a 
 
 *Pocket GammaWave uses the FM-1's user sample flash (`USR1–3`) to store 8 multi-section songs and the 32-voice FM6 user bank. Back up any custom WAV samples from stock firmware before flashing.*
 
-You can also download the package from the **[Releases page](https://github.com/fvalente/GammaWave-FM1/releases)** (`felucca-1.0-GW.fwsc` — the build tooling keeps Felucca's file name).
+You can also download the package from the **[Releases page](https://github.com/fvalente/GammaWave-FM1/releases)** (named `felucca-<version>.fwsc`, e.g. `felucca-1.1-GW.fwsc` — the build tooling keeps Felucca's file name).
 
 ---
 
@@ -143,7 +143,7 @@ See **[BUILDING.md](BUILDING.md)** for the toolchain (JieLi clang, the AC79 SDK 
 ```bash
 ./build.sh                                                       # build/felucca.fwsc (needs JIELI_TOOLCHAIN and AC79_SDK)
 sh web/emu/build.sh                                              # the WebAssembly emulator in build/emu (needs emcc)
-python3 web/make_site.py build/felucca.fwsc v1.1-GW build/site   # the Web Studio + USB installer
+python3 web/make_site.py build/felucca.fwsc v1.1.1-GW build/site   # the Web Studio + USB installer
 ```
 
 On Windows, `tools/build_windows.py` drives the same build inside WSL2 Ubuntu (edit its toolchain paths first).
@@ -166,6 +166,21 @@ On Windows, `tools/build_windows.py` drives the same build inside WSL2 Ubuntu (e
 - The MUTATE jump enters the page properly (sequencer mode and page state follow).
 - Generated DRUM kits are tuned around their own pitch again (TUNE was set about an octave flat).
 - ABOUT: the QR code no longer covers the license line.
+
+### `v1.1.1-GW` — from the issues (2026-10-24)
+
+- **Automation you can see** (issues #2, #10: "the values keep changing by themselves"). A knob moved while its track
+  is armed and playing is recorded as automation, as before, but nothing on the screen said so. Now:
+  - the first time a knob gets automation, the header says it and which REC chord clears it
+    (`AUTOMATED. REC+ENV CLR`);
+  - an automated knob's card shows an **A**: in its knob on the GAMMA look, as a chip after the label on the others.
+    The old marker, a tiny motion icon in the theme colour, was easy to miss.
+- **MENU > GEN > SELECT ON HOME** (issue #3): **GENERATOR** (the default, as before) or **TEMPO**, which makes SELECT
+  alone on HOME turn the tempo. The generator stays on HOME held + SELECT and OCT− + PLAY. GEN is a new, fifth MENU
+  tab; the tab bar's cushions are a little narrower so five fit.
+- **Fixed on the way:** the MENU's MIDI OUT and LOAD rows did not redraw their value when it changed (the menu's redraw
+  check left them out).
+- README: the download's file name.
 
 ### `v1.1-GW` — the songwriter (2026-10-24)
 

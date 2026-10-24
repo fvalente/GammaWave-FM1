@@ -37,6 +37,7 @@ static void led_clear(uint8_t *nl, uint32_t id)
 
 static const uint8_t FAM_BTN[FAM_COUNT] = {B_HOME, B_ENV, B_LFO, B_FX, B_SCL, B_EDIT, B_GLO, B_SAVE,
                                            B_ARP, B_SEQ, B_GLO};   /* GLO: mixer + global settings; REC is transport */
+static void motion_capture_ui(track_t *t, uint32_t id, int16_t v);   /* (1.1.1-GW: below, by rec_clear_auto) */
 
 static uint32_t cur_fam(void) { return ui.home ? FAM_HOME : cur_page()->fam; }
 
@@ -500,7 +501,7 @@ static void tracks_edit(uint32_t slot, int32_t steps)
         break;
     }
     *vp = (int16_t)clamp(*vp + accel(EN_K1 + slot, steps, d->max - d->min), d->min, d->max);
-    motion_capture(t, (uint32_t)(vp - t->p), *vp);
+    motion_capture_ui(t, (uint32_t)(vp - t->p), *vp);
 }
 
 /* SEQ > STEP's piano roll (not the DRUM grid, whose white keys stay its steps): where step recording writes */
@@ -1108,7 +1109,7 @@ static void edit_param(uint32_t slot, int32_t steps)
         settings_save();
         return;
     }
-    if (pg->scope != SC_GLOBAL) motion_capture(TSEL, (uint32_t)(vp - TSEL->p), *vp);
+    if (pg->scope != SC_GLOBAL) motion_capture_ui(TSEL, (uint32_t)(vp - TSEL->p), *vp);
 }
 
 /* OCT+ on an action page: the picked action. A load stays picked (browse and load again); the others
@@ -1230,6 +1231,30 @@ static uint32_t oct_taps(uint32_t pressed, int here)
     return tap;
 }
 
+/* (1.1.1-GW, issue #2: "the values keep changing by themselves") a knob turned with the track armed: as before, its
+ * move recorded (motion_capture); the first time a parameter gets automation on the track the header says so, and
+ * which REC chord clears it ("AUTOMATED. REC+ENV CLR"; the card shows an "A" from then on, ui_draw.c draw_column) */
+static void motion_capture_ui(track_t *t, uint32_t id, int16_t v)
+{
+    int fresh = rec_on(t) && t == TSEL && motion_param(id) && !motion_has(t, id);
+    motion_capture(t, id, v);
+    if (fresh && motion_has(t, id)) {
+        static const uint8_t BB[] = {B_FX, B_EDIT, B_ENV, B_LFO, B_SCL, B_ARP};
+        uint32_t i, k, f, b = 6u;
+        if (id == P_LEVEL || id == P_PAN)
+            b = 7u;                                     /* (REC + GLO: the levels and pans) */
+        for (i = 0; i < NPAGES && b == 6u; i++)        /* (the part whose REC chord clears it: rec_clear_auto's map) */
+            for (k = 0; k < 4u; k++)
+                if (PAGES[i].id[k] == id && (PAGES[i].scope == SC_TRACK || PAGES[i].scope == SC_ENGINE))
+                    for (f = 0; f < 6u; f++)
+                        if (FAM_BTN[PAGES[i].fam] == BB[f] && !(f == 1u && id == P_DIST)) { b = f; break; }
+        if (b == 6u && id == P_DIST)
+            b = 0u;
+        ui_say("AUTOMATED. REC+", b < 6u ? (b == 0u ? "FX CLR" : b == 1u ? "EDIT CLR" : b == 2u ? "ENV CLR" :
+                                           b == 3u ? "LFO CLR" : b == 4u ? "SCL CLR" : "ARP CLR")
+                                         : b == 7u ? "GLO CLR" : "PAGE CLR");
+    }
+}
 /* (JIANT) REC held, then a page button: that part's automation goes, both kinds (the knob moves and the
  * step locks), the stored values stay. FX: the selected track's FX and SLICER and the punch-in lane; EDIT ENV LFO SCL
  * ARP: the selected track's parameters of those pages; GLO: every track's LEVEL and PAN. No dialog (SEQ + REC, which
@@ -2396,7 +2421,11 @@ static void ui_input_frame(void)
                                                          * (0.6.69) on HOME, as before: DICE EVERYTHING? (once a turn) */
         static uint32_t hd_ms;
         if (!ui.home) page_scroll(s);
-        else if (!ui.confirm && (!hd_ms || fm1_ms - hd_ms > 400u)) {
+        else if (ui_sel_home & 1u) {                    /* (1.1.1-GW, issue #3) MENU > GEN > SELECT ON HOME TEMPO: as
+                                                         * GLO + SELECT (the generator: HOME held + SELECT, OCT- + PLAY) */
+            song.g[G_BPM] = (int16_t)clamp(song.g[G_BPM] + accel(EN_SELECT, s, 200), GP[G_BPM].min, GP[G_BPM].max);
+            ui.bpm_t = 40;
+        } else if (!ui.confirm && (!hd_ms || fm1_ms - hd_ms > 400u)) {
             if (chain_busy()) ui_message("STOP TO EDIT");
             else { confirm_open(CF_DICE_ALL, song.sel); gen_open(); }
         }
@@ -2433,7 +2462,7 @@ static void ui_input_frame(void)
             int16_t *vp;
             const param_desc_t *d = home_param(k, &vp);
             *vp = (int16_t)param_turn(d, *vp, accel(EN_K1 + k, s, d->fmt == F_ENUM ? 0 : d->max - d->min));
-            motion_capture(TSEL, (uint32_t)(vp - TSEL->p), *vp);
+            motion_capture_ui(TSEL, (uint32_t)(vp - TSEL->p), *vp);
         } else {
             edit_param(k, s);
         }
