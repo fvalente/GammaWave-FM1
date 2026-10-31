@@ -33,6 +33,7 @@ static struct {
     int32_t dw_m;                        /* .. the read points' offset by them now (Q8 samples) */
     int32_t dt1, dt2, rt1, rt2;          /* .. (0.6.86) the resonant TONE (delay loop) and FILT (reverb input) filters */
     int32_t cd_cur, cw_cur, dm_cur;      /* .. the chorus's DEPTH, its side's width, the delay's MIX as they are (glide) */
+    int32_t ph_s[4], ph_y;               /* .. (QG-1) the PHASER's four all-pass states and its feedback */
     int32_t rpre_s;                      /* .. the even sample, averaged with the odd one into the line */
     uint16_t comb_i[4], ap_i[2];
     int32_t comb_lp[4];
@@ -1019,6 +1020,23 @@ static inline int32_t cho_ens(const int16_t *buf, uint32_t w, uint32_t ph, int32
     *sd = a - b;
     return ((a + b + c) * 21845) >> 15;                 /* (x2 / 3 each: the sum at x2, as the one tap was) */
 }
+/* (QG-1) CHORUS > TYPE PHASER: four first-order all-passes (H = (a + z^-1) / (1 + a z^-1)) swept together by the chorus's
+ * LFO, their notches ~200 Hz .. ~3 kHz at DEPTH 100 %, a little feedback; out x + the chain (the notches inside the bus,
+ * the same x2 as the ensemble), *sd stage 2 - stage 4 (the sides moving apart). No line, no taps: lighter than it */
+static inline int32_t cho_phaser(int32_t x, uint32_t ph, int32_t depth, int32_t *sd)
+{
+    int32_t a = 900 + (int32_t)(((uint32_t)(osc_sine(ph) + 32768) >> 1) * (uint32_t)depth >> 15) - 32767, y2 = 0, k;
+    int32_t v = x + ((fx.ph_y * 18000) >> 15);
+    for (k = 0; k < 4; k++) {
+        int32_t s = fx.ph_s[k], w = clamp(v - ((a * s) >> 15), -(1 << 20), 1 << 20);
+        v = ((a * w) >> 15) + s;
+        fx.ph_s[k] = w;
+        if (k == 1) y2 = v;
+    }
+    fx.ph_y = v;
+    *sd = y2 - v;
+    return x + v;
+}
 
 /* process the three buses for one block; sends in, wet stereo-equal out */
 /* (0.6.14) the buses' gate: their feedback (the delay's low-pass, ROOM's combs, CLOUD's grains) rounds to a small
@@ -1108,6 +1126,7 @@ static inline __attribute__((always_inline)) void fx_buses(const int32_t *cho_in
     if (dig && fb2 > 32767) fb2 = 32767;
     if (png && dl > (DLY_LEN - DLY_EDGE) / 2u) dl = (DLY_LEN - DLY_EDGE) / 2u;   /* (1.2.1-GW: DLY_EDGE, was 4) */
     int32_t cho = sys_load != LOAD_ECO;                /* (0.6.30) LOAD ECO: no chorus */
+    int32_t phz = song.g[G_CTYPE] == 1, pdep = song.g[G_CDEPTH] * 96;   /* (QG-1) the PHASER, its sweep */
     int32_t cs = song.g[G_CSTER], cw = 80 + wd / 2;    /* (0.6.9) the chorus's side: 0 as before, - to mono, + ~2x */
     cw = cs >= 0 ? cw + cs * 2 : (cw * (64 + cs)) >> 6;
     uint32_t dr = dl + (wd && !png ? div_samples(3) * (uint32_t)wd / 127u : 0u);   /* the right echo: up to 1/32 later */
@@ -1166,7 +1185,8 @@ static inline __attribute__((always_inline)) void fx_buses(const int32_t *cho_in
         fx.cd_cur += dcd; fx.cw_cur += dcw; fx.dm_cur += ddm;
         if (cho) {
             int32_t sd;
-            y += cho_ens(cho_buf, fx.cho_w, fx.cho_ph, fx.cd_cur, &sd);
+            y += phz ? cho_phaser(cho_buf[fx.cho_w & (CHO_LEN - 1u)], fx.cho_ph, pdep, &sd)
+                     : cho_ens(cho_buf, fx.cho_w, fx.cho_ph, fx.cd_cur, &sd);
             sd = (sd * fx.cw_cur) >> 7;
             side += sd;
         }
@@ -1688,6 +1708,9 @@ static __attribute__((noinline)) void fx_trip(uint32_t c1, uint32_t n)
         dly_buf[i] = 0;
     for (i = 0; i < CHO_LEN; i++)
         cho_buf[i] = 0;
+    for (i = 0; i < 4u; i++)
+        fx.ph_s[i] = 0;
+    fx.ph_y = 0;
     for (i = 0; i < RPRE_LEN; i++)
         rpre_buf[i] = 0;
     for (i = 0; i < CL_LEN; i++)

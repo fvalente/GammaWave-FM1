@@ -1166,8 +1166,10 @@ static uint16_t heat_col(int32_t v)
     static const uint16_t H[7]  = {0x069Fu, 0x59FFu, 0xB19Cu, 0xF146u, 0xFBC0u, 0xFEA0u, 0xFFFFu};
     static const uint16_t HG[7] = {0x131Au, 0x4116u, 0xA8E4u, 0xEA20u, 0xFC80u, 0xFFE6u, 0xFFFFu};
     static const uint16_t HW[7] = {0x2092u, 0x611Au, 0xB8EEu, 0xF9CAu, 0xFD94u, 0x7FEFu, 0xFFFFu};
+    static const uint16_t HQ[7] = {0x1047u, 0x2ADBu, 0x06FFu, 0xD959u, 0xFCA2u, 0xFF51u, 0xFFFFu};   /* QUANTUM: vacuum indigo, blue, cyan, magenta, amber, gold, white */
     const uint16_t *R = settings.palette == UI_GAMMA_INDEX ? HG :
-                        settings.palette == UI_WRAITH_INDEX ? HW : H;
+                        settings.palette == UI_WRAITH_INDEX ? HW :
+                        settings.palette == UI_QUANTUM_INDEX ? HQ : H;
     int32_t k;
     v = clamp(v, 0, 256);
     if (!ux.chamfer)

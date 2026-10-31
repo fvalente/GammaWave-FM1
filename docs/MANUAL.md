@@ -1,10 +1,10 @@
-# POCKET GAMMAWAVE (GW-1) — User Manual
+# QUANTUM GAMMAWAVE (QG-1) — User Manual
 
 **Firmware v1.2.1-GW for the M-VAVE FM-1 · [gammawaveaudio.com](https://gammawaveaudio.com/) · [Buy GammaWave VST](https://shadowtune.itch.io/gammawave)**
 
 > *Versión en español: [MANUAL.es.md](MANUAL.es.md).*
 
-This manual is for musicians who have just installed Pocket GammaWave (GW-1) and want to know how to play it, build songs with it
+This manual is for musicians who have just installed Quantum GammaWave (QG-1) [fork of Pocket GammaWave] and want to know how to play it, build songs with it
 and, above all, **save their work without losing anything**. It follows the firmware as it is in v1.2.1-GW: every
 button, knob and message is named exactly as the device shows it.
 
@@ -320,6 +320,8 @@ muted. On the **MIXER**, asleep tracks are greyed and say OFF.
 | G5 | erases the punch-in lane |
 | Black keys 1–6 (F#3 G#3 A#3 C#4 D#4 F#4) | mute T1–T6 while held |
 | A#4 | which tracks the note effects touch: ALL / SYN / DRM |
+| G#4 / F#5 | VIBRATO (±½ semitone, ~5 Hz) / DIVE (two octaves down over a beat): on the notes, recorded in the lane |
+| C#5 / D#5 | GATE (each 1/16 shut for its second half; DEPTH: how much) / SWEEP (the low-pass down and back up over a bar) |
 | **Knobs** | FILTER, CRUSH, THROW, DEPTH |
 
 **GLO — mix**
@@ -1130,6 +1132,9 @@ Effects that act while their key is held and go back exactly when you let go.
 - **Knobs** while FX is held: **FILTER** (left low-pass, right high-pass), **CRUSH**, **THROW** (sends the dry mix into
   the delay and reverb), **DEPTH** (the REPEAT's level).
 - **Black keys 1–6**: mute T1–T6 while held (not saved).
+- **(QG-1) The other black keys**: **G#4** VIBRATO and **F#5** DIVE act on the notes like the effects above (A#4
+  chooses the tracks; recorded in the punch-in lane; an older firmware ignores those steps). **C#5** GATE and **D#5**
+  SWEEP act on the master like LPF / HPF (GATE ramps, no clicks; KNOB 4 DEPTH sets how far it shuts).
 
 **The punch-in lane**: each section has a lane of 64 steps of 1/16 (4 bars). With **REC armed and playing** (not
 during a song), the **note effects (D4–F5)** you hold are recorded into it, one per step (REPEAT, LPF, HPF and the mutes

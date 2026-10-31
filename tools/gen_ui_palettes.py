@@ -57,6 +57,9 @@ PALETTES = [
     ("GAMMA",  (10, 10, 12),    (28, 26, 24),    (248, 242, 230), (255, 136, 36),  (96, 228, 255)),
     # WRAITH (by ShadowTune): Spectral Crimson-Rose + Bio-Luminescent Cyan-Mint on dark obsidian-plum modules
     ("WRAITH", (10, 8, 12),     (28, 20, 30),    (246, 238, 250), (255, 96, 132),  (80, 236, 212)),
+    # QUANTUM (Quantum GammaWave, v1.3-QG): deep quantum indigo, Cherenkov cyan values, the Hearth amber for the one
+    # active thing (GAMMA's colours swapped onto a cold vacuum)
+    ("QUANTUM", (6, 6, 18),     (20, 20, 44),    (236, 240, 255), (56, 220, 255),  (255, 168, 32)),
 ]
 BW = "MONO"
 BW_GREY = (82, 82, 82)             # MONO's one mid grey (RGB565 10/20/10): DIM LINE RAISE LANE
@@ -197,6 +200,7 @@ def main():
                 f"#define UI_JIANT_INDEX {names.index('THERMAL')}u          /* THERMAL: thermal camera */",
                 f"#define UI_GAMMA_INDEX {names.index('GAMMA')}u          /* GAMMAWAVE FM: default Bakelite Amber + Cherenkov */",
                 f"#define UI_WRAITH_INDEX {names.index('WRAITH')}u         /* WRAITH Specimen Scan */",
+                f"#define UI_QUANTUM_INDEX {names.index('QUANTUM')}u        /* QUANTUM: the default (Quantum GammaWave) */",
                 f"#define UI_BW_GREY 0x{to565(BW_GREY):04x}u          /* MONO's one grey: DIM LINE RAISE LANE */",
                 f"#define UI_PAL_TAG {PAL_TAG}u          /* stored id = UI_PAL_TAG + index; below 20: an old id */"]
         out += [f"#define UI_{k}_PCT {v}" for k, v in PCT.items()] + [f"#define UI_RAISE_PCT {RAISE_PCT}   /* SURF -> TEXT */"]

@@ -254,14 +254,14 @@
 <main>
   <header class="hero">
     <div class="topbar">
-      <span class="tag-pill">POCKET GAMMAWAVE // GW-1 // DUAL-CORE AC791N</span>
+      <span class="tag-pill">QUANTUM GAMMAWAVE // QG-1 // DUAL-CORE AC791N</span>
       <div class="controls-top">
         <button class="btn-ghost" id="pal-toggle" type="button">THEME: GAMMA</button>
         <button class="btn-ghost" id="lang" type="button"></button>
       </div>
     </div>
-    <h1>POCKET GAMMAWAVE // GW-1</h1>
-    <div class="subtitle">Solar Hearth. Spectrogram Filter. 4-Track Tape. — Custom Firmware &amp; Web Studio for M-VAVE FM-1</div>
+    <h1>QUANTUM GAMMAWAVE // QG-1</h1>
+    <div class="subtitle">Solar Hearth. Spectrogram Filter. 4-Track Tape. — Custom Synthesizer &amp; Groovebox Firmware for M-VAVE FM-1 (Fork of Pocket GammaWave)</div>
     <p data-t="intro" style="margin-bottom:8px"></p>
     <div class="nav-links">
       <a class="nav-btn" href="../editor/" data-t="editor"></a>
@@ -368,7 +368,16 @@
     <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin:18px 0 10px">
       <label class="small"><span data-t="verLabel"></span> <select id="ver"></select></label>
       <button id="go" disabled data-t="install"></button>
+      <button id="verify" class="secondary" type="button" data-t="verifyOnly"></button>
     </div>
+    <fieldset id="preflight" class="small" style="border:1px solid var(--border);padding:8px 12px;margin:0 0 10px">
+      <legend data-t="pfTitle"></legend>
+      <label><input type="checkbox" class="pf"> <span data-t="pf1"></span></label><br>
+      <label><input type="checkbox" class="pf"> <span data-t="pf2"></span></label><br>
+      <label><input type="checkbox" class="pf"> <span data-t="pf3"></span></label><br>
+      <label><input type="checkbox" class="pf"> <span data-t="pf4"></span></label>
+    </fieldset>
+    <p class="small" id="pkg-hash"></p>
     <p class="small" data-t="verOld"></p>
 
     <progress id="bar" max="100" value="0"></progress>
@@ -408,11 +417,11 @@
       <a href="https://github.com/kurogedelic/FM-1-transporter" target="_blank" rel="noopener" style="color:var(--theme)">FM-1-transporter</a></p>
     <p data-t="beta"></p>
     <p><span data-t="manual"></span>
-      <a href="https://github.com/fvalente/GammaWave-FM1/blob/main/docs/MANUAL.md" target="_blank" rel="noopener" style="color:var(--accent)">English</a> ·
-      <a href="https://github.com/fvalente/GammaWave-FM1/blob/main/docs/MANUAL.es.md" target="_blank" rel="noopener" style="color:var(--accent)">Español</a></p>
-    <p><strong>GAMMAWAVE // WRAITH FM-1</strong> (<a href="https://gammawaveaudio.com/" target="_blank" rel="noopener" style="color:var(--theme)">gammawaveaudio.com</a> · <a href="https://shadowtune.itch.io/gammawave" target="_blank" rel="noopener" style="color:var(--accent)">Buy GammaWave VST</a> · <a href="https://github.com/fvalente/GammaWave-FM1" target="_blank" rel="noopener" style="color:var(--accent)">GitHub Source</a>): Built on <a href="https://github.com/juanjiant-bit/JIANT" target="_blank" rel="noopener" style="color:inherit">JIANT FM</a> &amp; <a href="https://github.com/hugelton/Felucca" target="_blank" rel="noopener" style="color:inherit">Felucca</a> by Leo Kuroshita (@kurogedelic), <a href="https://hugelton.com" target="_blank" rel="noopener" style="color:inherit">Hügelton Instruments</a>, with SLOOP song arranger by isod89 &amp; GammaWave/Wraith industrial DSP.<br>
+      <a href="https://github.com/Guillel51/Quantum-GammaWave/blob/main/docs/MANUAL.md" target="_blank" rel="noopener" style="color:var(--accent)">English</a> ·
+      <a href="https://github.com/Guillel51/Quantum-GammaWave/blob/main/docs/MANUAL.es.md" target="_blank" rel="noopener" style="color:var(--accent)">Español</a></p>
+    <p><strong>QUANTUM GAMMAWAVE FM-1</strong> (<a href="https://gammawaveaudio.com/" target="_blank" rel="noopener" style="color:var(--theme)">gammawaveaudio.com</a> · <a href="https://shadowtune.itch.io/gammawave" target="_blank" rel="noopener" style="color:var(--accent)">Buy GammaWave VST</a> · <a href="https://github.com/Guillel51/Quantum-GammaWave" target="_blank" rel="noopener" style="color:var(--accent)">GitHub Source</a>): Built on <a href="https://github.com/juanjiant-bit/JIANT" target="_blank" rel="noopener" style="color:inherit">JIANT FM</a> &amp; <a href="https://github.com/hugelton/Felucca" target="_blank" rel="noopener" style="color:inherit">Felucca</a> by Leo Kuroshita (@kurogedelic), <a href="https://hugelton.com" target="_blank" rel="noopener" style="color:inherit">Hügelton Instruments</a>, with SLOOP song arranger by isod89 &amp; GammaWave/Wraith industrial DSP.<br>
       FM6 engine: msfa from Dexed (Google Inc., Pascal Gauthier, Apache-2.0). Package includes JieLi AC79 SDK files (uboot.boot, cfg_tool.bin, eq_cfg_hw.bin under Apache-2.0). <a href="../../firmware/LICENSING.md" style="color:var(--accent)">Licences</a>: <a href="../../firmware/LICENSE" style="color:var(--accent)">GPL-3.0</a>, <a href="../../firmware/LICENSES/Apache-2.0.txt" style="color:var(--accent)">Apache-2.0</a>, <a href="../../firmware/LICENSES/" style="color:var(--accent)">all</a>.<br>
-      <span data-t="license"></span> <a href="https://github.com/fvalente/GammaWave-FM1" target="_blank" rel="noopener" style="color:var(--theme)">fvalente/GammaWave-FM1 (GPL-3.0)</a></p>
+      <span data-t="license"></span> <a href="https://github.com/Guillel51/Quantum-GammaWave" target="_blank" rel="noopener" style="color:var(--theme)">fvalente/GammaWave-FM1 (GPL-3.0)</a></p>
   </footer>
 </main>
 <script type="module">
@@ -424,7 +433,7 @@ const TEXT = {
     warn: "Ne débranchez pas le câble USB pendant l'écriture du firmware.",
     samples: "Note : GAMMAWAVE/JIANT utilise la mémoire flash des samples utilisateurs (USR1–3) pour sauvegarder vos morceaux complets et banques FM6.",
     dual: "Architecture Dual-Core AC791N + HOTRAM activée : les 2 cœurs processeur calculent les 6 pistes synthé + distorsions HEARTH/BLAST/PLASMA/FLUX et filtres VOWEL/SCREAM en temps réel. (Maintenez REC au démarrage pour forcer le mode 1 cœur).",
-    install: "⚡ INSTALLER GAMMAWAVE v1.2.1-GW SUR FM-1", other: "EN / 日本語",
+    install: "⚡ INSTALLER QUANTUM GAMMAWAVE v1.3-QG SUR FM-1", other: "EN / 日本語",
     flashTitle: "INSTALLATION WEBMIDI DU FIRMWARE (M-VAVE FM-1)",
     previewTitle: "GAMMAWAVE // WRAITH — PRÉÉCOUTE SYNTHÉ & SCOPE DANS LE NAVIGATEUR",
     synPlay: "▶ JOUER SÉQUENCE", synStop: "■ STOP", synDice: "🎲 MUTATION DICE",
@@ -439,7 +448,7 @@ const TEXT = {
     verLabel: "Version du package :", verOld: "Vous pouvez installer la dernière version GammaWave ou revenir à une version précédente.", latest: "dernière", manual: "Manuel :",
     direct: "Branchez le câble USB directement à l'ordinateur. Aucun programmateur externe requis.",
     brick: "En cas de coupure d'alimentation durant le flash, la récupération matérielle utilise :",
-    beta: "GAMMAWAVE // WRAITH FM-1 est distribué sous licence GPL-3.0 sans garantie. Utilisez-le sous votre propre responsabilité.",
+    beta: "QUANTUM GAMMAWAVE FM-1 est distribué sous licence GPL-3.0 sans garantie. Utilisez-le sous votre propre responsabilité.",
     back: "Téléchargez le fichier officiel FM-1 V15 (FM-1.fwsc) chez M-VAVE. La validation se fait localement dans votre navigateur.",
     stockTitle: "Retourner au firmware officiel V15 (avec sauvegarde complète)", stockFile: "Fichier officiel FM-1.fwsc", stockGo: "Sauvegarder et restaurer V15 officiel",
     stockPreload: "✓ FM-1.fwsc (officiel V15, vérifié) est inclus sur ce site et déjà préchargé.", stockLocal: "📥 Télécharger FM-1.fwsc (officiel V15, copie de ce site)",
@@ -451,7 +460,7 @@ const TEXT = {
     stockNeedBackup: "Impossible de sauvegarder depuis le mode bootloader. Cochez la reprise uniquement si vous avez déjà une sauvegarde.",
     stockUnsupported: "Ce firmware ne supporte pas la sauvegarde complète. Installez d'abord la version actuelle.",
     backup: "Sauvegarde complète en cours ", stockError: "Fichier officiel invalide : ",
-    nomidi: "WebMIDI non supporté par ce navigateur. Ouvrez cette page dans Chrome, Edge ou Brave.", loadfail: "Impossible de charger le firmware : ",
+    nomidi: "Web MIDI non disponible dans ce contexte (HTTPS ou http://localhost requis avec Chrome, Edge ou Brave ; file:// est bloqué).", loadfail: "Impossible de charger le firmware : ",
     start: "Démarrage…", verify: "Vérification de l'image…", loader: "Passage en mode mise à jour (OTA)…", write: "Écriture Flash en cours…",
     reboot: "Redémarrage du FM-1…", done: "✓ Installation GAMMAWAVE terminée avec succès !", stopped: "Interrompu. Rebranchez le câble USB et cliquez à nouveau sur Installer.",
     error: "Erreur : ",
@@ -464,6 +473,7 @@ const TEXT = {
     noreturn: "Le FM-1 n'a pas redémarré automatiquement. Éteignez-le puis rallumez-le.",
     mismatch: "Écriture terminée, mais le FM-1 annonce une autre version : ",
     badpkg: "Le package firmware est endommagé. Rechargez la page.",
+    nohash: "Ce package n'a pas de SHA-256 publié : rien ne sera écrit. Rechargez la page.",
     leave: "Écriture du firmware en cours. Ne fermez pas cette page !",
     license: "Licence GPL-3.0, sans garantie. Base :",
   },
@@ -472,7 +482,7 @@ const TEXT = {
     warn: "Do not unplug the USB cable while writing.",
     samples: "Note: GAMMAWAVE/JIANT repurposes user sample flash (USR1–3) to store full songs, chains and FM6 voice banks.",
     dual: "Dual-Core AC791N + HOTRAM active: both CPU cores render the 6 synth tracks + HEARTH/BLAST/PLASMA/FLUX distortions and VOWEL/SCREAM filters in real time. (Hold REC on power-up to force single-core mode).",
-    install: "⚡ INSTALL GAMMAWAVE v1.2.1-GW TO FM-1", other: "日本語 / FR",
+    install: "⚡ INSTALL QUANTUM GAMMAWAVE v1.3-QG TO FM-1", other: "日本語 / FR",
     flashTitle: "WEBMIDI FIRMWARE UPLOADER (M-VAVE FM-1)",
     previewTitle: "GAMMAWAVE // WRAITH — LIVE BROWSER DSP PREVIEW",
     synPlay: "▶ PLAY SEQ", synStop: "■ STOP", synDice: "🎲 DICE MUTATE",
@@ -485,9 +495,24 @@ const TEXT = {
     editor: "🎛️ Open Web Studio Editor (Live USB)",
     editorMock: "🧪 Try Web Studio Editor (Mock Device Simulator)",
     verLabel: "Version:", verOld: "You can install the latest release or roll back to an earlier build.", latest: "latest", manual: "Manual:",
+    verifyOnly: "🔎 Verify only (nothing is written)", pfTitle: "Before installing (all four, required)",
+    pf1: "The FM-1 is connected straight to the computer with a USB data cable (no hub).",
+    pf2: "The computer is on mains power and will not sleep; the FM-1 is charged.",
+    pf3: "Every other app that uses MIDI (DAW, editor, other tabs) is closed.",
+    pf4: "I will not unplug while writing. If it is cut off, I reconnect and press INSTALL again: the update loader finishes the write.",
+    hashOk: "Package SHA-256 verified ✓ ", badhash: "The package does not match its published SHA-256: nothing will be written. Reload the page. ",
+    nohash: "This package has no published SHA-256: nothing will be written. Reload the page.",
+    vNone: "Verify: no FM-1 found (USB data cable? another app using MIDI?)",
+    vLoader: "Verify: the FM-1 is in update mode (an earlier install was cut off). INSTALL finishes the write.",
+    vStock: "Verify: official V15 (FM-1_015). This package can be installed. ",
+    vJiant: "Verify: GAMMAWAVE/JIANT firmware ", vOther: "Verify: another custom firmware: return to official V15 first. Found: ",
+    vSame: " — same identity as this package (a reinstall or another version).", vCan: " — this package can be installed over it.",
+    bkSaving: "Backing up the FM-1 before writing ", bkSaved: "The backup file was downloaded. Keep it: restore it from the Web Studio if anything goes wrong. Write the firmware now?",
+    bkNone: "This firmware cannot export a backup. Its songs and sounds may be lost. Write anyway?",
+    cancelled: "Cancelled: nothing was written.",
     direct: "Connect the USB cable directly to the computer. No probe or Transporter is needed.",
     brick: "If an install is interrupted by power loss, hardware recovery uses:",
-    beta: "GAMMAWAVE // WRAITH FM-1 is a custom firmware release (GPL-3.0). Use it at your own risk.",
+    beta: "QUANTUM GAMMAWAVE FM-1 is a custom firmware release (GPL-3.0). Use it at your own risk.",
     back: "Get official FM-1 V15 from M-VAVE and select the unmodified FM-1.fwsc. Validated locally in your browser.",
     stockTitle: "Return to official V15", stockFile: "Official FM-1.fwsc", stockGo: "Back up and return to official V15",
     stockPreload: "✓ FM-1.fwsc (official V15, verified) is bundled with this site and already preloaded.", stockLocal: "📥 Download FM-1.fwsc (official V15, this site's copy)",
@@ -499,7 +524,7 @@ const TEXT = {
     stockNeedBackup: "An update loader cannot export a backup. Only select resume if you already saved a complete backup.",
     stockUnsupported: "This firmware does not support complete backups. Install the current firmware first.",
     backup: "Saving complete backup ", stockError: "Cannot validate official firmware: ",
-    nomidi: "This browser does not support WebMIDI. Open this page in Chrome or Edge.", loadfail: "Could not load: ",
+    nomidi: "Web MIDI is unavailable in this context (requires HTTPS or http://localhost in Chrome, Edge, or Brave; file:// is blocked).", loadfail: "Could not load: ",
     start: "Starting", verify: "Verifying", loader: "Switching to update mode", write: "Writing",
     reboot: "Restarting", done: "✓ GAMMAWAVE installation complete!", stopped: "Stopped. Replug the USB cable and press Install again.",
     error: "Error: ",
@@ -520,7 +545,7 @@ const TEXT = {
     warn: "書き込み中は USB ケーブルを抜かないでください。",
     samples: "注意: GAMMAWAVE/JIANT はユーザーサンプル領域 (USR1–3) を曲データと FM6 バンクの保存に使用します。",
     dual: "デュアルコア AC791N + HOTRAM 有効: 2つのコアで6トラックと新ディストーション (HEARTH/BLAST/PLASMA/FLUX)・新フィルター (VOWEL/SCREAM) を処理します。",
-    install: "⚡ GAMMAWAVE v1.2.1-GW をインストール", other: "FR / EN",
+    install: "⚡ QUANTUM GAMMAWAVE v1.3-QG をインストール", other: "FR / EN",
     flashTitle: "WEBMIDI ファームウェアインストーラー (M-VAVE FM-1)",
     previewTitle: "GAMMAWAVE // WRAITH — ブラウザ内蔵シンセ＆オシロスコープ試聴",
     synPlay: "▶ シーケンス再生", synStop: "■ 停止", synDice: "🎲 DICE 生成",
@@ -535,7 +560,7 @@ const TEXT = {
     verLabel: "バージョン:", verOld: "以前のバージョンにも戻せます。", latest: "最新", manual: "マニュアル:",
     direct: "USB ケーブルはパソコンに直接つないでください。",
     brick: "万一起動しなくなった場合の復旧ツール:",
-    beta: "GAMMAWAVE // WRAITH FM-1 は GPL-3.0 のカスタムファームウェアです。自己責任でお使いください。",
+    beta: "QUANTUM GAMMAWAVE FM-1 は GPL-3.0 のカスタムファームウェアです。自己責任でお使いください。",
     back: "M-VAVEから公式FM-1 V15を取得し、FM-1.fwscを選んでください。",
     stockTitle: "公式V15に戻す", stockFile: "公式FM-1.fwsc", stockGo: "バックアップして公式V15へ戻す",
     stockPreload: "✓ FM-1.fwsc（公式V15・確認済み）はこのサイトに含まれ、読み込み済みです。", stockLocal: "📥 FM-1.fwsc をダウンロード（公式V15・このサイトのコピー）",
@@ -547,7 +572,7 @@ const TEXT = {
     stockNeedBackup: "書き込みモードからはバックアップできません。",
     stockUnsupported: "このファームウェアは全体バックアップに未対応です。",
     backup: "全体バックアップ保存中 ", stockError: "公式ファイルを確認できません: ",
-    nomidi: "このブラウザでは使えません。Chrome か Edge で開いてください。", loadfail: "読み込めませんでした: ",
+    nomidi: "Web MIDIはこのコンテキストで利用できません（HTTPSまたはlocalhostが必要、file://はブロックされます）。", loadfail: "読み込めませんでした: ",
     start: "開始します", verify: "確認中", loader: "書き込みモードに切り替え中", write: "書き込み中",
     reboot: "再起動中", done: "✓ 完了しました！", stopped: "途中で止まりました。USB を挿し直してもう一度押してください。",
     error: "エラー: ",
@@ -560,6 +585,7 @@ const TEXT = {
     noreturn: "FM-1 が戻ってきません。電源を入れ直してください。",
     mismatch: "書き込みは終わりましたが、別のバージョンを報告しています: ",
     badpkg: "ファイルが壊れています。",
+    nohash: "このパッケージには公開された SHA-256 がありません。書き込みは行いません。ページを再読み込みしてください。",
     leave: "書き込み中です。ページを閉じないでください。",
     license: "GPL-3.0、無保証。ソース:",
   },
@@ -595,10 +621,14 @@ let image = null;
 const meta = /*META*/;
 
 let writing = false, stock = null, stockFileEpoch = 0;
-const lockInstaller = (on) => { writing = on; $("ver").disabled = on; $("go").disabled = on || !image; $("stock-go").disabled = on || !stock; if ($("stock-direct")) $("stock-direct").disabled = on || !stock; $("stock-file").disabled = on; $("stock-recovery").disabled = on; };
+const preflightOk = () => [...document.querySelectorAll(".pf")].every((c) => c.checked);
+const lockInstaller = (on) => { writing = on; $("ver").disabled = on; $("go").disabled = on || !image || !preflightOk(); $("verify").disabled = on;
+  document.querySelectorAll(".pf").forEach((c) => { c.disabled = on; }); $("stock-go").disabled = on || !stock; if ($("stock-direct")) $("stock-direct").disabled = on || !stock; $("stock-file").disabled = on; $("stock-recovery").disabled = on; };
+document.querySelectorAll(".pf").forEach((c) => c.addEventListener("change", () => lockInstaller(writing)));
 window.addEventListener("beforeunload", (e) => { if (writing) { e.preventDefault(); e.returnValue = t("leave"); } });
 
-const versions = meta.versions && meta.versions.length ? meta.versions : [{ version: meta.version, pkg: meta.pkg }];
+const versions = meta.versions && meta.versions.length ? meta.versions
+  : [{ version: meta.version, pkg: meta.pkg, sha256: meta.sha256, size: meta.size }];
 let loadEpoch = 0;
 function fillVersions() {
   const sel = $("ver"), at = sel.selectedIndex;
@@ -616,16 +646,30 @@ async function loadVersion(i) {
     const pkg = new Uint8Array(await r.arrayBuffer());
     if (epoch !== loadEpoch) return;
     if (productOf(pkg) !== meta.product) { sayK("badpkg"); return; }
+    /* (QG-1) the bytes against the SHA-256 make_site.py published with them: a cut or altered download is refused */
+    const hash = await sha256hex(pkg);
+    if (epoch !== loadEpoch) return;
+    /* (QG-1) the published hash is mandatory: an old or hand-edited metadata file is refused, not trusted */
+    if (!v.sha256) { sayK("nohash"); return; }
+    if (hash !== v.sha256 || (v.size && pkg.length !== v.size)) { sayK("badhash", hash.slice(0, 16)); return; }
+    $("pkg-hash").textContent = t("hashOk") + hash;
     image = logicalImage(pkg);
-    say(`GAMMAWAVE // WRAITH FM-1 (${v.version}) — Ready to flash (${pkg.length.toLocaleString()} bytes)`);
-    $("go").disabled = writing;
+    say(`QUANTUM GAMMAWAVE FM-1 (${v.version}) — Ready to flash (${pkg.length.toLocaleString()} bytes)`);
+    lockInstaller(writing);
   } catch (e) { if (epoch === loadEpoch) sayK("loadfail", e.message); }
 }
 fillVersions();
 $("lang").addEventListener("click", fillVersions);
 $("ver").addEventListener("change", () => { if (!writing) loadVersion(+$("ver").value); });
 (async () => {
-  if (!navigator.requestMIDIAccess) { sayK("nomidi"); return; }
+  if (!navigator.requestMIDIAccess) {
+  if (location.protocol === "file:") {
+    say("Browser security restricts Web MIDI over file://. Please start a local server (double-click 'launch_browser_installer.bat') or use the online web flasher.");
+  } else {
+    sayK("nomidi");
+  }
+  return;
+}
   await loadVersion(0);
   try {
     const sr = await fetch("../../firmware/FM-1.fwsc");
@@ -663,7 +707,8 @@ async function fwKind(up) {
   if (!/^FM-1_9\d\d$/.test(text)) { dev.link.close(); return { kind: "other", text }; }
   const input = dev.link.input, output = dev.link.output; dev.link.close();
   const link = new BackupConnection(input, output);
-  try { return isJiantInfo(await link.request([1, []], { timeout: 2000 })) ? { kind: "jiant", text } : { kind: "other", text }; }
+  try { const a = await link.request([1, []], { timeout: 2000 });
+    return isJiantInfo(a) ? { kind: "jiant", text, input, output, info: a } : { kind: "other", text }; }
   catch (e) { return { kind: "other", text: text + " (no answer)" }; }
   finally { link.close(); }
 }
@@ -697,6 +742,19 @@ $("go").addEventListener("click", async () => {
       log(`firmware: ${fw.kind} ${fw.text || ""}`);
       if (fw.kind === "none") { sayK("notfound"); lockInstaller(false); return; }
       if (fw.kind === "other") { sayK("otherfw", fw.text); $("stock").open = true; lockInstaller(false); return; }
+      if (fw.kind === "jiant") {                 /* (QG-1) a backup first, always: songs, sounds, settings */
+        let ai = null;
+        try { ai = archiveInfo(fw.info); } catch (_) {}
+        if (ai && ai.supported) {
+          const bl = new BackupConnection(fw.input, fw.output);
+          try {
+            const archive = await captureBackup((r, o) => bl.request(r, o), ai.version,
+              (done, total) => sayK("bkSaving", `${Math.round(done / Math.max(1, total) * 100)}%`));
+            saveArchive(archive);
+          } finally { bl.close(); }
+          if (!confirm(t("bkSaved"))) { sayK("cancelled"); lockInstaller(false); return; }
+        } else if (!confirm(t("bkNone"))) { sayK("cancelled"); lockInstaller(false); return; }
+      }
       await up.install(image, meta.product, step);
     }
   } catch (e) {
@@ -707,6 +765,26 @@ $("go").addEventListener("click", async () => {
   lockInstaller(false);
 });
 
+$("verify").addEventListener("click", async () => {
+  if (writing) return;
+  lockInstaller(true);
+  try {
+    let midi;
+    try { midi = await navigator.requestMIDIAccess({ sysex: true }); } catch (e) { await midiRefused(e); return; }
+    const up = new Updater(midi, log);
+    const ota = await up.find((id) => /^ota-/i.test(id.model));
+    if (ota) { ota.link.close(); sayK("vLoader"); return; }
+    const fw = await fwKind(up);
+    log(`verify: ${fw.kind} ${fw.text || ""}`);
+    if (fw.kind === "none") sayK("vNone");
+    else if (fw.kind === "stock") sayK("vStock", meta.product);
+    else if (fw.kind === "jiant") {
+      let ver = ""; try { ver = archiveInfo(fw.info).version; } catch (_) {}
+      sayK("vJiant", `${fw.text} ${ver}` + t(fw.text === meta.product ? "vSame" : "vCan"));
+    } else sayK("vOther", fw.text);
+  } catch (e) { sayK("error", e && e.message); log(String(e && e.stack || e)); }
+  finally { lockInstaller(false); }
+});
 $("stock-file").addEventListener("change", async () => {
   const epoch = ++stockFileEpoch, file = $("stock-file").files[0]; stock = null; lockInstaller(false);
   if (!file) return;

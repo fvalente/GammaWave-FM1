@@ -4,7 +4,7 @@
 
 > *English version: [MANUAL.md](MANUAL.md).*
 
-Este manual es para músicos que acaban de instalar Pocket GammaWave (GW-1) y quieren saber cómo tocarlo, cómo armar temas con él
+Este manual es para músicos que acaban de instalar Quantum GammaWave (QG-1) [fork de Pocket GammaWave] y quieren saber cómo tocarlo, cómo armar temas con él
 y, sobre todo, **cómo guardar su trabajo sin perder nada**. Sigue el firmware tal como está en la v1.2.1-GW: cada
 botón, perilla y mensaje aparece nombrado exactamente como lo muestra el equipo.
 
@@ -325,6 +325,8 @@ a la derecha); apretá OCT+ para ejecutarla.
 | G5 | borra el carril de punch-in |
 | Teclas negras 1–6 (F#3 G#3 A#3 C#4 D#4 F#4) | mutean T1–T6 mientras las mantenés |
 | A#4 | a qué pistas afectan los efectos de nota: ALL / SYN / DRM |
+| G#4 / F#5 | VIBRATO (±½ semitono, ~5 Hz) / DIVE (dos octavas abajo en un tiempo): sobre las notas, se graban en el carril |
+| C#5 / D#5 | GATE (cada 1/16 cerrado en su segunda mitad; DEPTH: cuánto) / SWEEP (el pasa-bajos baja y vuelve a subir en un compás) |
 | **Perillas** | FILTER, CRUSH, THROW, DEPTH |
 
 **GLO — mezcla**
@@ -1204,6 +1206,9 @@ Efectos que actúan mientras mantenés su tecla y vuelven exactamente atrás cua
 - **Perillas** con FX mantenido: **FILTER** (izquierda pasa-bajos, derecha pasa-altos), **CRUSH**, **THROW** (manda la
   mezcla seca al delay y la reverb), **DEPTH** (el nivel del REPEAT).
 - **Teclas negras 1–6**: mutean T1–T6 mientras las mantenés (no se guarda).
+- **(QG-1) Las otras teclas negras**: **G#4** VIBRATO y **F#5** DIVE actúan sobre las notas como los efectos de arriba
+  (A#4 elige las pistas; se graban en el carril de punch-in; un firmware anterior ignora esos pasos). **C#5** GATE y
+  **D#5** SWEEP actúan sobre el master como LPF / HPF (GATE con rampa, sin clicks; la PERILLA 4 DEPTH fija cuánto cierra).
 
 **El carril de punch-in**: cada sección tiene un carril de 64 pasos de 1/16 (4 compases). Con **REC armado y sonando**
 (no durante un tema), los **efectos de nota (D4–F5)** que mantenés se graban en él, uno por paso (REPEAT, LPF, HPF y

@@ -15,6 +15,9 @@
  *                      every press (pfx_fill: snare, toms down, hats, claps, rim, rests, its own accents)
  *   F5 RANDOM          each new note: an octave, a fifth or a fourth away now and then (DRUM: +-3 semitones); and
  *                      (JIANT) the sequencer plays a step of its pattern at random now and then (seq.c seq_tick)
+ * (QG-1) G#4 VIBRATO     every voice's pitch swung +-1/2 semitone at ~5.4 Hz (one phase for every track)
+ *   F#5 DIVE           every voice's pitch falls, slow then fast, two octaves over a beat (a tape stop on the notes);
+ *                      let go, back at once. Both go into the lane (11, 12) as the others.
  * (JIANT) Quantized: an effect pressed while the transport runs goes in on the next 1/16 of the transport (clk_pos),
  * so a repeat starts on the grid; let go, at once. The lane records the presses as they were (to the nearest step).
  * Of the repeats (STUTTER, ARP) the fastest held plays. A#4 (black key 8) steps the tracks they act on: ALL,
@@ -30,6 +33,8 @@ static uint8_t pfx_in;                /* a repeat's own note-on (pfx_note lets i
 static uint8_t pfx_any;               /* a track has something running (or to put back) */
 static uint32_t pfx_blk;              /* blocks: the notes of one block were struck together */
 static uint32_t pfx_seed = 0x9E3779B9u;
+static uint32_t pfx_vph, pfx_dvn;     /* (QG-1) VIBRATO's phase; DIVE: samples since it went in */
+static int16_t pfx_vib;               /* .. their pitch this block, 1/16 semitones */
 
 /* (0.6.72) a repeat holds the track: trk_note_on drops its notes (seq.c MIDI OUT sends none of them either) */
 static int pfx_holds(const track_t *t) { return !pfx_in && (t->pfx & PFX_REP); }
@@ -122,7 +127,10 @@ static uint32_t pfx_qon;            /* (JIANT) the effects in (quantized to the 
 static int pfx_rec_ok(void);          /* seq.c: REC armed, not a song playing */
 static uint8_t pfx_rh, pfx_rs0, pfx_rst, pfx_rold;   /* recording the lane: a press on, its first step, the step being
                                                       * written and what it held before */
-/* the lane's step s: 0 none, else the effect (PF_OCTD + v - 1) */
+/* the lane's step s: 0 none, else the effect (PF_OCTD + v - 1; QG-1: 11 VIBRATO, 12 DIVE; an older firmware plays
+ * only 1..10, so a lane with them still loads there) */
+static uint32_t pfx_code(uint32_t e) { return e == PF_VIB ? 11u : e == PF_DIVE ? 12u : e - PF_OCTD + 1u; }
+static uint32_t pfx_of(uint32_t k) { return k == 11u ? PF_BIT(PF_VIB) : k == 12u ? PF_BIT(PF_DIVE) : k && k <= 10u ? PF_BIT(PF_OCTD + k - 1u) : 0u; }
 static uint32_t pfx_lane_at(uint32_t s) { return (pfx_lane[(s >> 1) & 31u] >> ((s & 1u) * 4u)) & 15u; }
 static void pfx_lane_put(uint32_t s, uint32_t v)
 {
@@ -148,7 +156,7 @@ static __attribute__((noinline)) void pfx_block(uint32_t n, uint32_t held)
     held = pfx_qon;
     if (song.playing && b >= 4u) {                      /* the lane: record, or play */
         uint32_t s16 = b / 4u, st = (pfx_lph / s16) & 63u, half = pfx_lph % s16 >= s16 / 2u;
-        uint32_t w = pfx_rec_ok() && (raw || pfx_clr) ? (raw ? (uint32_t)__builtin_ctz(raw) - PF_OCTD + 1u : 0u) : 16u;
+        uint32_t w = pfx_rec_ok() && (raw || pfx_clr) ? (raw ? pfx_code((uint32_t)__builtin_ctz(raw)) : 0u) : 16u;
         pfx_lph += n;
         if (w < 16u) {                                  /* recording, to the nearest step: a press in a step's second */
             if (!pfx_rh) {                              /* half starts at the next one */
@@ -169,8 +177,7 @@ static __attribute__((noinline)) void pfx_block(uint32_t n, uint32_t held)
             if (pfx_rh && st == pfx_rst && !half && st != pfx_rs0)
                 pfx_lane_put(st, pfx_rold);             /* let go in a step's first half: that step as it was */
             pfx_rh = 0;
-            if ((k = pfx_lane_at(st)) != 0u && k <= 10u)
-                lane = PF_BIT(PF_OCTD + k - 1u);
+            lane = pfx_of(pfx_lane_at(st));
         }
     } else if (pfx_clr) {
         memset(pfx_lane, 0, sizeof pfx_lane);
@@ -178,6 +185,13 @@ static __attribute__((noinline)) void pfx_block(uint32_t n, uint32_t held)
     if (!held && !pfx_any && !lane && !nw)
         return;
     pfx_any = 0;
+    {   /* (QG-1) VIBRATO and DIVE: one pitch for every track they act on */
+        uint32_t hl = held | lane, x;
+        pfx_vph = (hl & PF_BIT(PF_VIB)) ? pfx_vph + n * 8u : 0u;   /* (65536 * 5.4 / FS per sample: 1/65536 turns) */
+        pfx_dvn = (hl & PF_BIT(PF_DIVE)) ? (pfx_dvn < b ? pfx_dvn + n : b) : 0u;
+        x = b ? pfx_dvn * 256u / b : 0u;
+        pfx_vib = (int16_t)(((hl & PF_BIT(PF_VIB)) ? (sine_i(pfx_vph << 16) * 8) >> 15 : 0) - (int32_t)((384u * x * x) >> 16));
+    }
     for (k = 0; k < NTRK; k++) {
         track_t *t = &trk[k];
         int drum = t->engine == ENGI_DRUM;
@@ -185,7 +199,8 @@ static __attribute__((noinline)) void pfx_block(uint32_t n, uint32_t held)
         uint32_t old = t->pfx, f, rep, per = 0;
         rep = on & (PF_BIT(PF_S16) | PF_BIT(PF_S8) | PF_BIT(PF_ARP));
         per = (rep & (PF_BIT(PF_S16) | PF_BIT(PF_ARP))) ? b / 4u : b / 2u;   /* (JIANT 0.4: 1/8, 1/16; ARP 1/16) */
-        t->pfx_pit = (int16_t)(((on >> PF_OCTU) & 1u) * 192 - ((on >> PF_OCTD) & 1u) * 192);
+        t->pfx_pit = (int16_t)(((on >> PF_OCTU) & 1u) * 192 - ((on >> PF_OCTD) & 1u) * 192 +
+                               (on & (PF_BIT(PF_VIB) | PF_BIT(PF_DIVE)) ? pfx_vib : 0));
         f = ((on >> PF_RND) & 1u ? PFX_RND : 0u) | ((on >> PF_HALF) & 1u ? PFX_HALF : 0u) | (rep ? PFX_REP : 0u) |
             (on & (PF_BIT(PF_DSHT) | PF_BIT(PF_DLNG)) ? PFX_DEC : 0u) | ((on >> PF_ATK) & 1u ? PFX_ATK : 0u);
         if ((f & PFX_HALF) && !(old & PFX_HALF) && song.playing) {   /* 1/2 TEMPO: where it was */

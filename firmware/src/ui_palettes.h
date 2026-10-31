@@ -17,13 +17,15 @@ static const ui_pal_t UI_PALETTES[] = {
     {"THERMAL", 0x0000, 0x0000, 0xf79d, 0xbb9f, 0xfbc0},
     {"GAMMA", 0x0841, 0x18c3, 0xff9c, 0xfc44, 0x673f},
     {"WRAITH", 0x0841, 0x18a3, 0xf77f, 0xfb10, 0x577a},
+    {"QUANTUM", 0x0022, 0x10a5, 0xef9f, 0x3eff, 0xfd44},
 };
-#define UI_NPALETTES 13u
+#define UI_NPALETTES 14u
 #define UI_GREY_INDEX 0u
 #define UI_BW_INDEX 9u          /* MONO: black and white (src/gfx.c palette_set) */
 #define UI_JIANT_INDEX 10u          /* THERMAL: thermal camera */
 #define UI_GAMMA_INDEX 11u          /* GAMMAWAVE FM: default Bakelite Amber + Cherenkov */
 #define UI_WRAITH_INDEX 12u         /* WRAITH Specimen Scan */
+#define UI_QUANTUM_INDEX 13u        /* QUANTUM: the default (Quantum GammaWave) */
 #define UI_BW_GREY 0x528au          /* MONO's one grey: DIM LINE RAISE LANE */
 #define UI_PAL_TAG 64u          /* stored id = UI_PAL_TAG + index; below 20: an old id */
 #define UI_MID_PCT 70

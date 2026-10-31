@@ -344,6 +344,29 @@ static const preset_t ANALOG_PRESETS[] = {
      {XP(P_LRATE, 52), XP(P_LD_PIT, 2)}},
     {"DEEP DRONE", {0, 20, 50, 10, 42, 70, 20, 7}, {100, 90, 127, 110}, 0, 0, FX(10, 40, 30, 95), PAT(5),
      {XP(P_LRATE, 8), XP(P_LWAVE, 1), XP(P_LD_FLT, 20), XP(P_LD_AMP, 18)}},
+    /* (QUANTUM // QG-1) 808 and drill slides (LEGATO glide), reese, the dirty waves, the filter types as sounds of their own, and
+     * pads that move by themselves (the NOISE wander on the cutoff) */
+    {"808 BOOM", {3, 0, 0, 0, 60, 0, 40, 0}, {0, 80, 60, 40}, 0, 1, FX(25, 0, 0, 5), PAT(2),
+     {XP(P_VOICE, V_LEGATO), XP(P_GLIDE, 36)}},
+    {"DRILL SLIDE", {3, 4, 30, 0, 64, 10, 55, -12}, {0, 90, 80, 45}, 0, 1, FX(35, 0, 0, 8), PAT(14),
+     {XP(P_VOICE, V_LEGATO), XP(P_GLIDE, 58)}},
+    {"REESE QUAKE", {AW_SAW3, 24, 64, 4, 50, 50, 70, -12}, {4, 80, 110, 40}, 30, 1, FX(40, 30, 10, 15), PAT(8),
+     {XP(P_LRATE, 20), XP(P_LD_FLT, 14)}},
+    {"TUBE KEYS", {AW_TUBE, 8, 50, 0, 80, 20, 30, 12}, {0, 82, 40, 60}, 20, 0, FX(10, 30, 30, 45), PAT(6)},
+    {"FOLD LEAD", {AW_FOLD, 10, 64, 0, 92, 28, 40, 7}, {2, 72, 100, 45}, 22, 1, FX(20, 10, 45, 30), PAT(4),
+     {XP(P_LRATE, 60), XP(P_LFADE, 50), XP(P_LD_PIT, 3)}},
+    {"HYPER SAW", {AW_SAW3, 70, 64, 0, 96, 20, 15, 12}, {6, 80, 110, 55}, 10, 0, FX(0, 70, 40, 60), PAT(13)},
+    {"COMB PLUCK", {0, 6, 50, 10, 70, 80, 0, 0}, {0, 70, 0, 55}, 40, 0, FX(0, 10, 40, 40), PAT(15),
+     {XP(P_FTYPE, 3)}},
+    {"VOWEL BASS", {0, 12, 64, 0, 60, 70, 50, -12}, {0, 70, 90, 30}, 36, 1, FX(30, 0, 10, 10), PAT(8),
+     {XP(P_FTYPE, 4), XP(P_LRATE, 40), XP(P_LD_FLT, 24)}},
+    {"SCREAM LEAD", {AW_SYNC, 14, 90, 4, 76, 90, 70, 0}, {2, 70, 95, 40}, 40, 1, FX(45, 10, 40, 25), PAT(4),
+     {XP(P_FTYPE, 5)}},
+    {"QUANTUM PAD", {AW_SAW3, 36, 64, 6, 62, 30, 10, 7}, {85, 92, 115, 100}, 12, 0, FX(0, 80, 35, 90), PAT(17),
+     {XP(P_LRATE, 10), XP(P_LWAVE, 1), XP(P_LD_FLT, 18), XP(P_M1SRC, 14), XP(P_M1DST, 2), XP(P_M1AMT, 10)}},
+    {"TRAP PLUCK", {0, 10, 50, 0, 40, 30, 10, 12}, {0, 76, 0, 50}, 50, 0, FX(0, 20, 55, 40), PAT(15)},
+    {"CHERENKOV LD", {AW_RING, 20, 80, 0, 90, 30, 20, 0}, {2, 74, 90, 50}, 16, 1, FX(10, 20, 50, 40), PAT(4),
+     {XP(P_LRATE, 58), XP(P_LFADE, 60), XP(P_LD_PIT, 2)}},
 };
 
 static const engine_t ENG_ANALOG = {

@@ -24,13 +24,19 @@
 enum { PF_R8, PF_R16, PF_R32, PF_LPF, PF_HPF,
        PF_OCTD, PF_OCTU, PF_HALF, PF_DSHT, PF_DLNG, PF_S8, PF_S16, PF_ATK, PF_ARP, PF_RND,   /* the MIDI ones: pfx.c */
        PF_M1, PF_N = PF_M1 + NTRK, PF_TGT = PF_N + 1,     /* PF_TGT: A#4, the MIDI effects' tracks (pfx_tgt) */
-       PF_CLR = PF_N + 2 };                                /* PF_CLR: G5, erases the punch-in lane (pfx.c) */
+       PF_CLR = PF_N + 2,                                  /* PF_CLR: G5, erases the punch-in lane (pfx.c) */
+       /* (QG-1) the black keys left over: G#4 VIBRATO and F#5 DIVE on the notes (pfx.c), C#5 GATE and D#5 SWEEP on
+        * the master (here) */
+       PF_VIB = PF_N + 3, PF_GATE, PF_SWP, PF_DIVE, PF_END };
+#define PF_IS(e) ((e) < PF_N || ((e) >= PF_VIB && (e) < PF_END))   /* a key with an effect */
+_Static_assert(PF_END <= 32, "the PF bits in a word");
 #define PF_BIT(e) (1u << (e))
 #define PF_REPEAT 0x7u                                         /* the three REPEAT rates */
 #define PF_Q PF_REPEAT                                         /* start on the 1/16 */
 #define PF_BUF PF_REPEAT                                       /* the buffer effects */
 #define PF_MUTE (((1u << NTRK) - 1u) << PF_M1)
-#define PF_MIDI (((1u << (PF_RND + 1)) - 1u) & ~((1u << PF_OCTD) - 1u))   /* PF_OCTD .. PF_RND: on the notes (pfx.c) */
+#define PF_MIDI ((((1u << (PF_RND + 1)) - 1u) & ~((1u << PF_OCTD) - 1u)) | PF_BIT(PF_VIB) | PF_BIT(PF_DIVE))   /* PF_OCTD .. PF_RND,
+                                                                 * VIB, DIVE: on the notes (pfx.c) */
 #define PB_FRAMES SL_FR                       /* stereo frames in sl_buf (a power of 2: the mask), 371 ms at 22.05 kHz */
 _Static_assert(PB_FRAMES <= SL_FR && !(PB_FRAMES & (PB_FRAMES - 1u)), "the REPEAT loop in sl_buf");
 #define PB_MAX (2u * PB_FRAMES)               /* the longest loop, 44.1 kHz samples */
@@ -50,7 +56,7 @@ static volatile uint32_t perf_held;   /* ISR: the effects held (PF_*) */
 static volatile uint8_t perf_latch_on;   /* main: MENU > FX LATCH ON (#40): a key with FX toggles its effect */
 static volatile uint32_t perf_latched;   /* ISR: the effects latched (FX LATCH; main clears it: OCT-, the menu) */
 static volatile uint32_t perf_act;    /* ISR: .. running (a 1/16 one from its start on) */
-static uint32_t perf_ord[PF_N], perf_seq;   /* press order: the last pressed buffer effect plays */
+static uint32_t perf_ord[PF_END], perf_seq;   /* press order: the last pressed buffer effect plays */
 
 /* the ZDF state-variable filter at cutoff index i (30 Hz * 2^(i / 7), 0..63: up to 15.4 kHz), k = 1:
  * a1 a2 a3 in Q14 (tools: g = tan(pi fc / fs), a1 = 1 / (1 + g (g + k)), a2 = g a1, a3 = g a2) */
@@ -88,6 +94,9 @@ static struct {
     uint32_t cn;
     int32_t td;                        /* THROW: the share of the dry mix sent, Q15 */
     int32_t mg[NTRK];                  /* mute gains, Q15 (32768 = open) */
+    /* (QG-1) GATE: the cut now (Q15, 0 = open), the place in the 1/16 at the block's start; SWEEP: samples held */
+    int32_t gc;
+    uint32_t gph, swt;
 } pf = {.src = PF_N, .next = PF_N, .lc = PF_TOP, .mg = {[0 ... NTRK - 1] = 32768}};   /* (every track open: 0.6, six) */
 
 /* the loop length of a REPEAT at the tempo, 44.1 kHz samples; 0 = not one */
@@ -114,7 +123,7 @@ static void perf_press(uint32_t e, int down)
         pfx_tgt = (uint8_t)((pfx_tgt + 1u) % 3u);
     if (e == PF_CLR)
         pfx_clr = (uint8_t)(down ? 1u : 0u);
-    if (e >= PF_N)
+    if (!PF_IS(e))
         return;
     if (perf_latch_on) {                  /* FX LATCH: a press turns it on or off, letting go does nothing */
         if (down) {
@@ -254,6 +263,13 @@ static __attribute__((noinline)) int perf_begin(uint32_t n)
         }
         if (m < 0 && PF_TOP + m * (PF_TOP - PF_LOW) / 100 < lt)
             lt = PF_TOP + m * (PF_TOP - PF_LOW) / 100;
+        pf.swt = (pf.act & PF_BIT(PF_SWP)) ? pf.swt + n : 0u;
+        if (pf.swt) {                               /* (QG-1) SWEEP: the LPF down and back up over a bar, again */
+            uint32_t q = (pf.swt % bar) * 128u / bar;   /* (0..127: a triangle, open at both ends) */
+            int32_t sw = PF_TOP - (int32_t)((uint32_t)(PF_TOP - PF_LOW) / 64u * (q < 64u ? q : 127u - q));
+            if (sw < lt)
+                lt = sw;
+        }
         if (pf.ht) {
             t = pf.ht < bar ? pf.ht : bar;
             ht = (int32_t)((uint32_t)(PF_TOP - PF_LOW) / 64u * (t * 64u / bar));
@@ -268,6 +284,7 @@ static __attribute__((noinline)) int perf_begin(uint32_t n)
             pf.hk[k] = (int16_t)(PF_SVF[j][k] + (((PF_SVF[j < 63 ? j + 1 : 63][k] - PF_SVF[j][k]) * g) >> 8));
         }
     }
+    pf.gph = ph0;                                   /* (QG-1) GATE: the place in the 1/16 */
     pf.mute = 0;
     perf_unhush();
     for (k = 0; k < NTRK; k++)
@@ -438,8 +455,8 @@ static __attribute__((noinline)) void perf_switch(uint32_t a) { perf_buf_select(
 /* after the master level: the buffer effect, LPF, HPF, CRUSH on l / r (stereo, Q15) */
 static __attribute__((noinline)) void perf_block(int32_t *bl, int32_t *br, uint32_t n)
 {
-    uint32_t i, a = pf.act0, sh, hold;
-    int32_t c = perf_k[1], lt, ht, ct;
+    uint32_t i, a = pf.act0, sh, hold, gp = pf.P ? pf.gph % pf.P : 0u, gh = pf.P / 2u;
+    int32_t c = perf_k[1], lt, ht, ct, gd = 32768 - perf_k[3] * 327;
     if (c)
         pf.cc = c;
     ct = c ? 32768 : 0;
@@ -487,9 +504,19 @@ static __attribute__((noinline)) void perf_block(int32_t *bl, int32_t *br, uint3
                 r = pf_mix(r, pf.chr, pf.cw);
             }
         }
+        {   /* (QG-1) GATE: each 1/16 open for its first half, shut for the rest (KNOB 4 DEPTH: shut less) */
+            int32_t gt = (a & PF_BIT(PF_GATE)) && gp >= gh ? gd : 0;
+            if (++gp >= pf.P)
+                gp = 0;
+            if (gt | pf.gc) {
+                pf.gc += clamp(gt - pf.gc, -SL_SLOPE, SL_SLOPE);
+                l = mulq16(l, (uint32_t)(32768 - pf.gc) << 1);
+                r = mulq16(r, (uint32_t)(32768 - pf.gc) << 1);
+            }
+        }
         bl[i] = l;
         br[i] = r;
     }
-    pf.busy = pf.act || pf.mode != BM_NONE || pf.w || pf.la || pf.ha || pf.cw || pf.td || pf.mute || perf_k[0] ||
+    pf.busy = pf.act || pf.mode != BM_NONE || pf.w || pf.la || pf.ha || pf.cw || pf.td || pf.mute || pf.gc || perf_k[0] ||
               perf_k[1] || perf_k[2];
 }

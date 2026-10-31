@@ -82,6 +82,9 @@ static void draw_battery(int32_t bx)
 #define ROLL_BPM 4u                                     /* ui.roll[]: the four cards, then the header BPM */
 #define ROLL_Y 18                                       /* a card's value strip: rows 18..34, its figures (21..31) in the middle, */
 #define ROLL_H 17                                       /* the label (MONO's chip: to row 17) above it, the gauge (38) below */
+#define UNIT_GAP 2                                      /* (QG-1 stage 3) the value and its unit in a card: 2 px between them
+                                                         * (3 made "111" + "/133" one pixel too wide for the 57 px card, and the
+                                                         * value was ellipsised: a lint finding, not a layout) */
 static const uint8_t ROLL_EASE[17] = {0, 45, 84, 118, 147, 172, 193, 210, 223, 234, 242, 247, 251, 253, 254, 255, 255};
 
 static int roll_digit(char c) { return c >= '0' && c <= '9'; }
@@ -549,9 +552,15 @@ static void draw_column(uint32_t c, const char *label, const char *val, const ch
         key[n + 10] = (char)('A' + (gc >> 12));
     }
     key[n + 11] = 0;
-    uw = unit[0] ? text_w(&AF_S, unit) + 3 : 0;
+    uw = unit[0] ? text_w(&AF_S, unit) + UNIT_GAP : 0;
     if (text_w(vf, val) + uw > room)
         vf = &AF_S;
+    /* (QG-1 stage 3) the value matters more than its unit: when even the small font cannot hold both,
+     * the unit goes and the value is drawn whole. Before, cv_text_fit cut the value instead ("1…"). */
+    if (uw && text_w(vf, val) + uw > room) {
+        uw = 0;
+        unit = "";
+    }
     sig = (uint8_t)str_hash(str_hash(song.sel + TSEL->eng_req * 4u + ux.gen * 64u, label), unit);
     snap = ui.force || sig != ui.roll[c].sig;           /* what the value is of: label, unit, track, engine, palette */
     if (kind == LK_TALL)
@@ -648,7 +657,8 @@ static void draw_column(uint32_t c, const char *label, const char *val, const ch
                 if (ax + aw <= max_lx + 1) {
                     cv_rrect(ax, cy - 2, aw, chh + 4, 2, T_ACCENT, T_SURF);
                     GFX_HOOK_ALIGN(ax, cy - 2, ax + aw, cy + chh + 2, AL_HV, "card AUTOMATION chip");
-                    cv_text_on(ax + 3, ly, &AF_S, "A", T_INK, T_ACCENT);
+                    cv_text_on(ax + (aw - text_w(&AF_S, "A")) / 2, ly, &AF_S, "A", T_INK, T_ACCENT);   /* (QG-1 stage 3)
+                        * centred in its chip: 3 px from the left edge left the letter 1 px right of the chip's middle */
                 }
             }
         }
@@ -662,7 +672,7 @@ static void draw_column(uint32_t c, const char *label, const char *val, const ch
             x = cv_text_fit(5, 20, vf, val, vc, T_SURF, room - uw);
         if (unit[0]) {
             GFX_HOOK_ALIGN(0, 0, 0, vf == &AF_M ? 17 + AF_M.asc : 20 + AF_S.asc, AL_B, "card unit on its value's baseline");
-            cv_text_on(x + 3, 20, &AF_S, unit, T_MID, T_SURF);     /* on the value's baseline (S) */
+            cv_text_on(x + UNIT_GAP, 20, &AF_S, unit, T_MID, T_SURF);     /* on the value's baseline (S) */
         }
         if (!strip && ratio >= 0) {
             int32_t gw = COL_W - 10, fx = ratio * gw / 1000, fillw = fx < 3 ? 3 : fx;
@@ -1343,7 +1353,7 @@ static void draw_columns(void)
 #define SPL_HOLD 900u                               /* .. then shown whole, before the UI (was 1100; 0.6.51: 500 -> 900) */
 #define SPL_SY 40                                   /* the signature's canvas on the screen (240 x SIG_H + 12) */
 #define SPL_TY 186                                  /* the two lines under it */
-static const char *const SPLASH_LINES[] = {FELUCCA_VERSION, "POCKET GAMMAWAVE // GW-1"};
+static const char *const SPLASH_LINES[] = {FELUCCA_VERSION, "QUANTUM GAMMAWAVE // QG-1"};
 static uint8_t spl_anim;                            /* main.c: 1 = the signature to be written (splash_write) */
 static int32_t sig_seg(uint32_t i)                  /* segment i -> i + 1's length, px (0: a stroke starts at i + 1) */
 {
@@ -1442,6 +1452,17 @@ static void splash_sig(int32_t px, uint32_t ms)
     } else {
         gw_orbit_ring(120, 39, 30, 18, T_DIM, 1);
         gw_disc(120, 39, 12, T_TEXT);
+    }
+    /* 2b. (QG-1) the quantum shell: two electron orbits around the Hearth, written in with the signature */
+    if (prog > 64) {
+        static const int8_t ORB[2][2] = {{46, 11}, {22, 30}};
+        uint32_t k;
+        for (k = 0; k < 2u; k++) {
+            uint32_t ph = ms * (k ? 41u : 29u) + k * 21845u;
+            int32_t ex = 120 + (bg_sin(ph) * ORB[k][0] >> 15), ey = 39 + (bg_sin(ph + 16384u) * ORB[k][1] >> 15);
+            gw_orbit_ring(120, 39, ORB[k][0], ORB[k][1], mono ? T_DIM : T_LINE, 1);
+            gw_disc(ex, ey, 2, mono ? T_TEXT : k ? T_ACCENT : T_THEME);
+        }
     }
     cv_rect(18, 72, 204, 1, T_LINE);
 

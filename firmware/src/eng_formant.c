@@ -218,6 +218,11 @@ static const preset_t FORMANT_PRESETS[] = {
      {XP(P_LRATE, 10), XP(P_LWAVE, 1), XP(P_LD_SHP, 10)}},
     {"ANGEL AIR", {60, 90, 20, 12, 20, 80, 60, 30}, {95, 90, 120, 105}, 0, 0, FX(0, 85, 35, 100), PAT(5),
      {XP(P_LRATE, 8), XP(P_LWAVE, 1), XP(P_LD_SHP, 14)}},
+    /* (QUANTUM // QG-1) a talking lead, a low drone, a vocoder-like pad */
+    {"ROBO TALK", {40, 100, 90, 0, 110, 10, 80, 0}, {0, 70, 100, 35}, 0, 1, FX(15, 0, 35, 25), PAT(4)},
+    {"MONK DRONE", {5, 10, 10, -5, 60, 20, 70, 10}, {90, 90, 125, 110}, 0, 0, FX(0, 60, 20, 95), PAT(5)},
+    {"VOCODE PAD", {30, 70, 40, 0, 70, 30, 65, 20}, {70, 90, 115, 95}, 0, 0, FX(0, 75, 30, 90), PAT(5),
+     {XP(P_LRATE, 12), XP(P_LWAVE, 1), XP(P_LD_SHP, 12)}},
 };
 
 static const engine_t ENG_FORMANT = {

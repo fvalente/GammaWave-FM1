@@ -6,16 +6,23 @@
 # installs it); webapp/installer, the one people use, is the version approved in web/STABLE (a commit of main, set by
 # a PR once the preview was checked in the emulator). No web/STABLE yet: main, as before.
 name: emulator
+# (QG-1) Also on every other push and pull request that touches the firmware, the page or the tools: the emulator
+# built and smoke-tested (web/emu/emu_test.mjs) and kept as an artifact (emulator-<sha>) to download and open; only
+# main goes up to Pages.
 on:
   push:
-    branches: [main]
+    paths: ["firmware/**", "web/**", "tools/**", "tests/target_budget.txt", "tests/target_budget.py", "build.sh",
+            ".github/workflows/emulator.yml"]
+  pull_request:
+    paths: ["firmware/**", "web/**", "tools/**", "tests/target_budget.txt", "tests/target_budget.py", "build.sh",
+            ".github/workflows/emulator.yml"]
   workflow_dispatch:
 permissions:
   contents: read
   pages: write
   id-token: write
 concurrency:
-  group: pages
+  group: emulator-${{ github.ref }}
   cancel-in-progress: true
 jobs:
   build:
@@ -35,8 +42,21 @@ jobs:
           version: 6.0.11                # (the version the emulator is tested with)
       - name: the emulator
         run: sh web/emu/build.sh
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: the emulator boots, plays, saves (smoke test; the cost check relaxed for shared runners)
+        run: BENCH_MAX=1.5 node web/emu/emu_test.mjs build/emu/felucca.wasm
+      - name: the emulator as an artifact (every branch, every PR)
+        uses: actions/upload-artifact@v4
+        with:
+          name: emulator-${{ github.sha }}
+          path: build/emu
+          retention-days: 14
       # (JIANT) the installer and the web editor next to the emulator: the package needs JieLi's toolchain (downloaded)
-      # and three files of their AC79 SDK (a partial clone: only those blobs). If any of it fails the emulator still goes up
+      # and three files of their AC79 SDK (a partial clone: only those blobs). If any of it fails the emulator still
+      # goes up. (QG-1 stage 3) On every pull request too: the DSP budget and the .fwsc reader need the target
+      # compiler, and a PR is exactly where a render loop or the package reader can regress.
       - name: JieLi toolchain and SDK files (cached)
         uses: actions/cache@v4
         with:
@@ -47,6 +67,10 @@ jobs:
       - name: JieLi toolchain and SDK files
         id: tc
         continue-on-error: true
+        env:
+          # (QG-1 stage 3) the reviewed SHA-256 of the toolchain archive (Settings > Variables). Empty: the
+          # download still runs and prints the hash it got, so the value can be reviewed and set
+          JIELI_TOOLCHAIN_SHA256: ${{ vars.JIELI_TOOLCHAIN_SHA256 }}
         run: |
           # gitee resets connections from the runners now and then: retries with backoff; the cache above keeps them
           retry() { for d in 0 5 15 30 60; do sleep $d; "$@" && return 0; done; return 1; }
@@ -85,15 +109,40 @@ jobs:
           python3 web/fetch_prev.py "https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}" build/prev || true
           python3 web/make_site.py "$PKG" "${SV:-dev}-$SH" build/site build/prev
           cp -r build/site/webapp build/site/firmware build/emu/
+      # (QG-1 stage 2/3) the two checks that need the target compiler, on main and on every PR. On main the step
+      # above has just built the package; on a PR (no site, no deploy) this is the only build. Not
+      # continue-on-error: a regression here is the point of running them.
+      - name: target compiler checks (DSP budget of the render loops, the .fwsc reader on the package)
+        if: steps.tc.outcome == 'success'
+        env:
+          AC79_SDK: /home/runner/fw-AC79_AIoT_SDK
+          JIELI_TOOLCHAIN: /home/runner/.jieli/toolchain
+        run: |
+          if [ ! -s build/felucca.dis ] || [ ! -s build/felucca.fwsc ]; then python3 tools/build.py; fi
+          python3 tests/target_budget.py build/felucca.dis tests/target_budget.txt
+          node web/test_pkg_bounds.mjs build/felucca.fwsc
       - uses: actions/upload-pages-artifact@v3
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         with:
           path: build/emu
   deploy:
     needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-24.04
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      # (QG-1 stage 2) deploy-pages fails with "Get Pages site failed (404)" when Pages has never been
+      # enabled, and GitHub does not let the job's own token create the site: say what to do instead
+      - name: "Pages is enabled (Settings > Pages > Build and deployment > Source: GitHub Actions)"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if ! gh api "repos/${{ github.repository }}/pages" > /tmp/pages.json 2>/dev/null; then
+            echo "::error::GitHub Pages is not enabled for ${{ github.repository }}: deploy-pages would fail with HTTP 404. Enable it once, Settings > Pages > Build and deployment > Source: GitHub Actions (no workflow change is needed)."
+            exit 1
+          fi
+          echo "Pages: $(tr -d '\n' < /tmp/pages.json)"
       - id: deployment
         uses: actions/deploy-pages@v4

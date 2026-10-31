@@ -162,6 +162,8 @@ enum {                          /* global parameters */
     G_SLP0, G_SLP15 = G_SLP0 + 15,          /* its 16 steps (semitones) */
     G_DMOD,                     /* (0.6.86) the delay's tape drift (WOW and FLUTTER) depth (project.c: its own block, 'DM') */
     G_DTYPE, G_DPING,           /* (0.6.90) the delay's TYPE (ANALOG / DIGITAL) and PING-PONG (project.c: block 'DT') */
+    G_CTYPE,                    /* (QG-1) the CHORUS bus's TYPE: CHORUS (the ensemble) / PHASER (fx.c cho_phaser; project.c:
+                                 * bit 1 of block 'DT's TYPE byte, which a firmware before it masks off) */
     G_COUNT
 };
 #define G_SL_N (G_SLP15 + 1 - G_SLMODE)     /* the SLICER's globals (stored together: project.c, song_chain.c) */

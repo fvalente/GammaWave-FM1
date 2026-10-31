@@ -256,6 +256,11 @@ static const preset_t NOISE_PRESETS[] = {
     {"OCEAN", {NZ_ANLG, 40, 50, 30, 0, 0, 110, 0}, {100, 90, 127, 110}, 0, 0, FX(0, 30, 10, 90), PAT(5),
      {XP(P_LRATE, 6), XP(P_LWAVE, 0), XP(P_LD_AMP, 40), XP(P_LD_FLT, 12)}},
     {"DUST HAZE", {NZ_DUST, 80, 110, 45, 30, 60, 60, 0}, {80, 90, 120, 100}, 0, 0, FX(0, 40, 30, 95), PAT(5)},
+    /* (QUANTUM // QG-1) a riser (the LFO a slow saw on the filter), a counter's clicks, foam */
+    {"RISER", {NZ_ANLG, 60, 40, 90, 0, 0, 80, 0}, {120, 90, 127, 60}, 20, 0, FX(0, 30, 40, 80), PAT(5),
+     {XP(P_LRATE, 4), XP(P_LWAVE, 2), XP(P_LD_FLT, 40)}},
+    {"GEIGER CNT", {NZ_DUST, 10, 90, 60, 64, 30, 30, 0}, {0, 60, 100, 40}, 0, 0, FX(0, 0, 25, 30), PAT(5)},
+    {"QUANTUM FOAM", {NZ_DUST, 50, 100, 85, 90, 95, 85, 20}, {30, 90, 115, 90}, 12, 0, FX(10, 50, 45, 90), PAT(5)},
 };
 
 static const engine_t ENG_NOISE = {

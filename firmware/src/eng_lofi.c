@@ -583,6 +583,11 @@ static const preset_t LOFI_PRESETS[] = {
     /* (GAMMAWAVE / WRAITH) glitch & radioactive byte/float patches */
     {"DATAMOSH", {2, 6, 68, 48, 84, 32, 45, 0}, {0, 75, 100, 45}, 0, 1, FX(25, 15, 35, 25), PAT(4)},
     {"GEIGER BIT", {3, 5, 96, 80, 72, 48, 85, 40}, {0, 65, 90, 35}, 0, 1, FX(35, 0, 30, 20), PAT(2)},
+    /* (QUANTUM // QG-1, appended: the stored numbers stay) a chip arp, crushed keys, a vibrato pulse, a staircase pad */
+    {"CHIP ARP", {0, 0, 32, 0, 127, 0, 0, 0}, {0, 55, 60, 30}, 0, 0, FX(0, 0, 35, 20), PAT(13)},
+    {"CRUSH KEYS", {2, 0, 96, 60, 90, 10, 20, 0}, {0, 60, 80, 40}, 0, 0, FX(10, 10, 30, 30), PAT(6)},
+    {"VIB PULSE", {0, 0, 64, 0, 120, 40, 0, 0}, {0, 60, 90, 40}, 0, 1, FX(0, 0, 40, 25), PAT(4)},
+    {"STEP PAD", {4, 0, 64, 20, 100, 10, 0, 0}, {40, 90, 110, 80}, 0, 0, FX(0, 40, 40, 60), PAT(5)},
 };
 
 static const engine_t ENG_LOFI = {

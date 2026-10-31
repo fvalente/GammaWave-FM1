@@ -355,6 +355,16 @@ static __attribute__((noinline)) void drum_side_add(int32_t *y, int32_t *out, ui
         d2[i] += (o * a) >> 6;
     }
 }
+/* (QG-1) the voice's plain output loop (no IMAGE, no SEND) on its own, as drum_side_add: drum_render keeps no loop
+ * of the hit's but PUNCH's boost */
+static __attribute__((noinline)) void drum_add(const int32_t *y, int32_t *out, uint32_t n, const vmod_t *m)
+{
+    uint32_t i;
+    for (i = 0; i < n; i++) {                            /* x1.25 */
+        int32_t s = y[i];
+        out[i] += voice_amp(s + (s >> 2), m, i) << 1;
+    }
+}
 /* (0.6.81) .. its pan moving (IMAGE turned): both sides fed, each ramped across the block (only while it slews) */
 static __attribute__((noinline)) void drum_side_ramp(int32_t *y, int32_t *out, uint32_t n, const vmod_t *m,
                                                      const int32_t *g, int32_t *d2, int32_t a)
@@ -369,6 +379,21 @@ static __attribute__((noinline)) void drum_side_ramp(int32_t *y, int32_t *out, u
         sr[i] += (o * gr) >> (6 + CTL_LOG2);
         d2[i] += (o * a) >> 6;
     }
+}
+
+/* (QG-1) the hit out: into the part, and its side and bus when IMAGE / SEND (0.6.48: the same loop). Once a block, out of
+ * drum_render so that it keeps only PUNCH's loop */
+static __attribute__((noinline)) void drum_out(uint32_t lane, int32_t *y, int32_t *out, uint32_t n, const vmod_t *m)
+{
+    int32_t *d2, g[4], a;
+    if (dx_xon && drum_side_of(lane, g, &d2, &a)) {
+        if (g[0] != g[1] || g[2] != g[3])
+            drum_side_ramp(y, out, n, m, g, d2, a);
+        else
+            drum_side_add(y, out, n, m, g[0] ? dx_sl : g[2] ? dx_sr : dx_dump, g[0] | g[2], d2, a);
+        return;
+    }
+    drum_add(y, out, n, m);
 }
 
 static void drum_render(track_t *t, voice_t *v, int32_t *out, uint32_t n, const vmod_t *m)
@@ -450,20 +475,7 @@ static void drum_render(track_t *t, voice_t *v, int32_t *out, uint32_t n, const 
     if (pb0 != 4096 || pb1 != 4096)                      /* (0.6.16: DRV and the knee on the kit's sum, drum_bus) */
         for (i = 0; i < n; i++)
             y[i] = (y[i] * (pb0 + (((pb1 - pb0) * (int32_t)i) >> CTL_LOG2))) >> 12;
-    {
-        int32_t *d2, g[4], a;
-        if (dx_xon && drum_side_of((uint32_t)v->s[0], g, &d2, &a)) {   /* (0.6.48) IMAGE, SEND: the same loop */
-            if (g[0] != g[1] || g[2] != g[3])
-                drum_side_ramp(y, out, n, m, g, d2, a);
-            else
-                drum_side_add(y, out, n, m, g[0] ? dx_sl : g[2] ? dx_sr : dx_dump, g[0] | g[2], d2, a);
-            return;
-        }
-    }
-    for (i = 0; i < n; i++) {                            /* x1.25 */
-        int32_t s = y[i];
-        out[i] += voice_amp(s + (s >> 2), m, i) << 1;
-    }
+    drum_out((uint32_t)v->s[0], y, out, n, m);
 }
 
 /* (JIANT 0.6.16) the kit's sum, once a block (voice.c track_render): DRV x1..x4 into the soft clip, its level kept,
