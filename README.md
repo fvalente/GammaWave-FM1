@@ -1,20 +1,20 @@
-# POCKET GAMMAWAVE (GW-1) — M-VAVE FM-1 Firmware & Web Studio
+# QUANTUM GAMMAWAVE (QG-1) — M-VAVE FM-1 Synthesizer & Groovebox Firmware
 
-**GammaWave-style HUD · Hearth macros · Wraith ribbon · VOWEL & SCREAM filters · 49-genre song generator (incl. Trap ATL, UK Drill, Dark Trap, Rage Trap) · Web Studio** — the open-source hardware & browser companion to the **[GammaWave desktop synthesizer](https://gammawaveaudio.com/)**.
+**Quantum GammaWave (QG-1)** is an advanced open-source firmware and Web Studio for the **M-VAVE FM-1 multitrack FM synthesizer and groovebox**. It is a major evolution and fork of [Pocket GammaWave (GW-1)](https://github.com/fvalente/GammaWave-FM1) by Leo Kuroshita / Hügelton Instruments, built upon [JIANT FM](https://github.com/juanjiant-bit/JIANT) and [Felucca](https://github.com/hugelton/Felucca), and companion to the **[GammaWave desktop synthesizer](https://gammawaveaudio.com/)**.
 
 [![Buy GammaWave VST](https://img.shields.io/badge/BUY%20GAMMAWAVE%20VST-shadowtune.itch.io%2Fgammawave-ffb800?style=for-the-badge)](https://shadowtune.itch.io/gammawave)
 [![Official Website](https://img.shields.io/badge/OFFICIAL%20SITE-gammawaveaudio.com-00d4ff?style=for-the-badge)](https://gammawaveaudio.com/)
-[![Emulator](https://img.shields.io/badge/EMULATOR-fvalente.github.io%2FGammaWave--FM1-ff5500?style=for-the-badge)](https://fvalente.github.io/GammaWave-FM1/)
-[![Web Studio](https://img.shields.io/badge/WEB%20STUDIO-webapp%2Feditor-ff5500?style=for-the-badge)](https://fvalente.github.io/GammaWave-FM1/webapp/editor/)
-[![USB Web Installer](https://img.shields.io/badge/USB%20INSTALLER-Flash%20FM--1-00e5a3?style=for-the-badge)](https://fvalente.github.io/GammaWave-FM1/webapp/installer/)
+[![Emulator](https://img.shields.io/badge/EMULATOR-guillel51.github.io%2FQuantum--GammaWave-ff5500?style=for-the-badge)](https://guillel51.github.io/Quantum-GammaWave/)
+[![Web Studio](https://img.shields.io/badge/WEB%20STUDIO-webapp%2Feditor-ff5500?style=for-the-badge)](https://guillel51.github.io/Quantum-GammaWave/webapp/editor/)
+[![USB Web Installer](https://img.shields.io/badge/USB%20INSTALLER-Flash%20FM--1-00e5a3?style=for-the-badge)](https://guillel51.github.io/Quantum-GammaWave/webapp/installer/)
 [![License: GPL-3.0-only](https://img.shields.io/badge/license-GPL--3.0--only-blue.svg?style=for-the-badge)](LICENSE)
 
 > **Like the sound and workflow?** The full **[GammaWave desktop synth](https://shadowtune.itch.io/gammawave)** is a dual-oscillator hybrid (subtractive, FM, granular) with the Hearth saturation engine, a 7-engine filter, 3-layer granular FX, 32-voice polyphony and full DAW automation — VST3 and Standalone on Windows, macOS and Linux, plus AU on macOS.
 > - **Buy the desktop plugin:** <https://shadowtune.itch.io/gammawave>
 > - **Official website:** <https://gammawaveaudio.com/>
-> - **Try the firmware in your browser (emulator):** <https://fvalente.github.io/GammaWave-FM1/>
-> - **Web Studio (editor, demo songs, tape lanes):** <https://fvalente.github.io/GammaWave-FM1/webapp/editor/>
-> - **USB web installer:** <https://fvalente.github.io/GammaWave-FM1/webapp/installer/>
+> - **Try the firmware in your browser (emulator):** <https://guillel51.github.io/Quantum-GammaWave/>
+> - **Web Studio (editor, demo songs, tape lanes):** <https://guillel51.github.io/Quantum-GammaWave/webapp/editor/>
+> - **USB web installer:** <https://guillel51.github.io/Quantum-GammaWave/webapp/installer/>
 
 ---
 
@@ -38,7 +38,7 @@
 
 ---
 
-## What's in Pocket GammaWave (`v1.2.1-GW`)
+## What's in Pocket GammaWave (`v1.3-QG`)
 
 - **GammaWave HUD** on the FM-1's 240×240 screen, in the GAMMA palette (default), plus THERMAL and WRAITH palettes:
   - **HOME**: the selected track's filter response curve drawn over a 28-bar audio-reactive spectrum display, the Hearth sun with an orbiting moon, and the T1–T6 track strip.
@@ -57,7 +57,7 @@
   - On the MUTATE page **OCT−** freezes the current mutation and **OCT+** keeps it as the new pattern.
 - **Hearth macros** — **`[OCT−] + [ARP]`** steps through six drive/filter macros (`1/6 HEARTH GRAVITY` … `6/6 SOLAR ECLIPSE!`); macros 4–6 switch the filter to SCREAM or VOWEL, and 6 also raises the master DUCK and PUNCH. `[OCT−] + [GLO]` takes a macro back.
 - **Hidden visualizer** — **`[OCT−] + [HOME]`** (or MENU > ABOUT, then OCT+): four animated scenes, `1/4 SUPERNOVA`, `2/4 WRAITH 3D`, `3/4 WARP TUNNEL`, `4/4 MATRIX FFT`, which pulse while the sequencer plays. **OCT+** (or PRESETS / ALGORITHM) changes scene, **OCT−** leaves.
-- **Web Studio** (browser, [webapp/editor](https://fvalente.github.io/GammaWave-FM1/webapp/editor/)) — edits the FM-1 live over Web MIDI, or runs on its own in simulator mode:
+- **Web Studio** (browser, [webapp/editor](https://guillel51.github.io/Quantum-GammaWave/webapp/editor/)) — edits the FM-1 live over Web MIDI, or runs on its own in simulator mode:
   - four instant demo songs and its own 49-genre generator (the same genre list; its patterns are generated in the browser and won't match the device's for the same seed);
   - **4 tape lanes (T1–T4)**: DUMP a track's pattern into a lane, layer and bounce lanes, mute and clear them — they hold note patterns, not recorded audio;
   - **EXPORT .WAV**: renders the current song and the tape lanes to a 16-bit **44.1 kHz** stereo WAV for your DAW;
@@ -124,8 +124,13 @@ Some synth tracks run on the FM-1's second core, with per-block checksums and a 
 
 ## Installing on M-VAVE FM-1 hardware
 
+> **(QG-1)** Web installer with SHA-256 check, pre-flight checklist, *verify only* and an automatic backup over
+> GammaWave/JIANT; one-click launchers in `tools/install/` (`install-fm1.sh`, `.command`, `.bat`); CLI `tools/fm1_install.py
+> --verify-only / --sha256`. Recovery guide (es): [docs/INSTALL.es.md](docs/INSTALL.es.md). Emulator while coding:
+> `python3 tools/emu_dev.py` (rebuilds on every change and reloads the page).
+
 1. **Open the USB web installer** in Chrome, Edge or Opera (it needs Web MIDI):
-   **<https://fvalente.github.io/GammaWave-FM1/webapp/installer/>**
+   **<https://guillel51.github.io/Quantum-GammaWave/webapp/installer/>**
 2. Connect the **M-VAVE FM-1** with a USB data cable and switch it on.
 3. **Coming from another custom firmware (Felucca, baudgirl, etc.)?** Click **Return to official V15 first** (which also backs up your flash), then click **Install**.
 4. **Coming from official V15, JIANT, or an earlier Pocket GammaWave build?** Click **Install** directly. Don't unplug the cable until flashing completes.
@@ -143,7 +148,7 @@ See **[BUILDING.md](BUILDING.md)** for the toolchain (JieLi clang, the AC79 SDK 
 ```bash
 ./build.sh                                                       # build/felucca.fwsc (needs JIELI_TOOLCHAIN and AC79_SDK)
 sh web/emu/build.sh                                              # the WebAssembly emulator in build/emu (needs emcc)
-python3 web/make_site.py build/felucca.fwsc v1.2.1-GW build/site   # the Web Studio + USB installer
+python3 web/make_site.py build/felucca.fwsc v1.3-QG build/site   # the Web Studio + USB installer
 ```
 
 On Windows, `tools/build_windows.py` drives the same build inside WSL2 Ubuntu (edit its toolchain paths first).

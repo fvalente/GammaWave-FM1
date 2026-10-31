@@ -7,7 +7,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>POCKET GAMMAWAVE // GW-1 — FM-1 Web Studio Workstation</title>
+<title>QUANTUM GAMMAWAVE // QG-1 — FM-1 Web Studio Workstation</title>
 <style>
   /* Fukiai: Hügelton Instruments' icon font (MIT, FUKIAI-LICENSE.txt). Icons are text in .ic spans;
      they stay hidden until the face has loaded (html.fk), so a missing font never shows boxes. */
@@ -24,6 +24,7 @@
     --plasma: #a855f7;
     --glow: rgba(255, 148, 36, 0.22);
     --cyan-glow: rgba(96, 228, 255, 0.22);
+    /* Web Studio console palette */ --gw-c0: #090b11; --gw-c1: #232738; --gw-c2: #ffffff; --gw-c3: #040608; --gw-c4: #ff385c; --gw-c5: #0b0d14; --gw-c6: #111522; --gw-c7: #040507; --gw-c8: #262b3d; --gw-c9: #060609; --gw-c10: #1f2433; --gw-c11: #07080d;
   }
   :root[data-theme="wraith"] {
     --bg: #050809;
@@ -234,8 +235,8 @@
   .grid { display: grid; grid-template-columns: repeat(16, minmax(0, 1fr)); gap: 4px; margin: 8px 0 14px; }
   @media (max-width: 600px) { .grid { grid-template-columns: repeat(8, minmax(0, 1fr)); } }
   .grid button {
-    background: #090b11; color: var(--fg); border: 1px solid var(--line);
-    border-top: 3px solid #232738;
+    background: var(--gw-c0); color: var(--fg); border: 1px solid var(--line);
+    border-top: 3px solid var(--gw-c1);
     padding: 4px 3px; min-width: 0; height: 56px;
     display: flex; flex-direction: column; justify-content: flex-start; gap: 2px;
     text-align: left; overflow: hidden; font-size: 10px; line-height: 1.15;
@@ -251,7 +252,7 @@
   }
   .grid button.on .n { color: var(--accent); opacity: 1; }
   .grid button.acc {
-    border-color: var(--accent); border-top: 3px solid #ffffff;
+    border-color: var(--accent); border-top: 3px solid var(--gw-c2);
     background: linear-gradient(180deg, rgba(96, 228, 255, 0.32), rgba(255, 148, 36, 0.22));
   }
   .grid button.acc .x { font-weight: 800; color: var(--accent); }
@@ -273,10 +274,10 @@
     font-size: 15px; font-weight: 800; line-height: 1; padding: 3px 9px;
     background: var(--raise); color: var(--fg); border-radius: 3px;
   }
-  .strip.sel .num { background: var(--accent); color: #040608; }
+  .strip.sel .num { background: var(--accent); color: var(--gw-c3); }
   .strip .snd { font-size: 11px; font-weight: 700; color: var(--theme); line-height: 1.3; width: 100%; text-align: center; overflow-wrap: anywhere; min-height: 2.6em; }
   .strip .rec { font-size: 11px; color: var(--dim); }
-  .strip .rec.on { color: #ff385c; font-weight: 800; text-shadow: 0 0 8px rgba(255, 56, 92, 0.5); }
+  .strip .rec.on { color: var(--gw-c4); font-weight: 800; text-shadow: 0 0 8px rgba(255, 56, 92, 0.5); }
   .strip .rec:not(.on) .ic { visibility: hidden; }
   .strip input.fader { writing-mode: vertical-lr; direction: rtl; width: 28px; height: 150px; }
   .strip .v { font-size: 11px; white-space: nowrap; color: var(--accent); font-weight: 700; }
@@ -285,10 +286,10 @@
   .strip button { width: 100%; padding: 3px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .strip button.selb:disabled { opacity: 1; background: none; color: var(--accent); border: 0; }
   #sysinfo th { padding-right: 16px; }
-  /* POCKET GAMMAWAVE // GW-1 Live 240x240 Hardware Screen & Telemetry Deck */
+  /* QUANTUM GAMMAWAVE // QG-1 Live 240x240 Hardware Screen & Telemetry Deck */
   .gw-deck {
     display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: stretch;
-    background: linear-gradient(135deg, #0b0d14 0%, #111522 100%);
+    background: linear-gradient(135deg, var(--gw-c5) 0%, var(--gw-c6) 100%);
     border: 1px solid var(--line); border-top: 2px solid var(--accent);
     padding: 14px; margin: 12px 0;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
@@ -299,7 +300,7 @@
   .gw-console select { max-width: 100%; min-width: 0; text-overflow: ellipsis; }
   .gw-console .bar { flex-wrap: wrap; }
   .gw-bezel {
-    background: #040507; border: 2px solid #262b3d; border-radius: 8px;
+    background: var(--gw-c7); border: 2px solid var(--gw-c8); border-radius: 8px;
     padding: 10px 12px 8px; display: flex; flex-direction: column; align-items: center; gap: 6px;
     box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.9), 0 0 20px rgba(96, 228, 255, 0.1);
   }
@@ -310,7 +311,7 @@
   .gw-bezel-top span.led { color: var(--accent); }
   #gw-lcd {
     width: 240px; height: 240px; image-rendering: pixelated;
-    background: #060609; border: 1px solid #1f2433;
+    background: var(--gw-c9); border: 1px solid var(--gw-c10);
     cursor: pointer; touch-action: none;
   }
   .gw-console {
@@ -320,14 +321,14 @@
     display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: 8px;
   }
   .gw-stat {
-    background: #07080d; border: 1px solid var(--line); border-left: 3px solid var(--theme);
+    background: var(--gw-c11); border: 1px solid var(--line); border-left: 3px solid var(--theme);
     padding: 6px 10px;
   }
   .gw-stat.cyan { border-left-color: var(--accent); }
   .gw-stat .k { font-size: 9.5px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.08em; }
   .gw-stat .val { font-size: 13px; font-weight: 800; color: var(--fg); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .gw-macros {
-    background: #07080d; border: 1px solid var(--line); padding: 7px 10px;
+    background: var(--gw-c11); border: 1px solid var(--line); padding: 7px 10px;
   }
   .gw-macros-title { font-size: 10px; font-weight: 800; letter-spacing: 0.09em; color: var(--accent); text-transform: uppercase; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
   [hidden] { display: none !important; }
@@ -336,13 +337,13 @@
 <body>
 <main>
   <button class="lang" id="lang"></button>
-  <h1>POCKET GAMMAWAVE — FM-1 Web Studio Workstation</h1>
+  <h1>QUANTUM GAMMAWAVE — FM-1 Web Studio Workstation</h1>
   <p class="dim" style="margin:0 0 8px;display:flex;flex-wrap:wrap;gap:8px;align-items:center"><a href="../installer/" style="color:var(--accent);font-weight:700" data-t="installer"></a> &nbsp;|&nbsp; <span>WAVE 1 &amp; 2 • SPECTROGRAM FILTER • SOLAR HEARTH • 4-TRACK ANALOG TAPE (.WAV) • MODULAR FX RACK</span> &nbsp;|&nbsp; <a href="https://shadowtune.itch.io/gammawave" target="_blank" rel="noopener" style="background:linear-gradient(90deg,#ffb800,#ff5500);color:#050608;font-weight:900;padding:2px 10px;border-radius:3px;text-decoration:none;letter-spacing:0.05em">🔥 BUY GAMMAWAVE VST (PC/Mac) ↗</a> <a href="https://gammawaveaudio.com/" target="_blank" rel="noopener" style="border:1px solid var(--accent);color:var(--accent);font-weight:800;padding:1px 8px;border-radius:3px;text-decoration:none;letter-spacing:0.04em">🌐 GAMMAWAVEAUDIO.COM ↗</a></p>
   <!-- always visible: connection, version, sync mode, the tabs and (Sound / Sequencer / Tracks) the track selector -->
   <header class="top">
     <div class="bar">
       <button id="connect" data-t="connect" data-ic="port_usb_c"></button>
-      <button type="button" class="gw-btn-sec" id="gw-sim-btn" title="Run built-in FM-1 hardware simulator in browser">⚡ SIMULATE GW-1</button>
+      <button type="button" class="gw-btn-sec" id="gw-sim-btn" title="Run built-in FM-1 hardware simulator in browser (No hardware required)">⚡ SIMULATE QG-1</button>
       <button type="button" class="gw-btn-sec" id="gw-pal-btn" title="Switch Workstation & LCD Theme (GAMMA / WRAITH)">🎨 PALETTE: GAMMA</button>
       <span id="version" class="dim"></span>
       <span id="live" class="dim"></span>
@@ -361,10 +362,10 @@
     <div class="trackbar" id="trackbar" hidden><span class="dim" data-t="track"></span><span class="seg" id="trackbtns" role="group"></span></div>
   </header>
 
-  <!-- POCKET GAMMAWAVE // GW-1 Live 240x240 Hardware Screen HUD & Telemetry Console -->
-  <section class="gw-deck" id="gw-deck" aria-label="Pocket GammaWave Hardware Telemetry Deck">
+  <!-- QUANTUM GAMMAWAVE // QG-1 Live 240x240 Hardware Screen HUD & Telemetry Console -->
+  <section class="gw-deck" id="gw-deck" aria-label="Quantum GammaWave Hardware Telemetry Deck">
     <div class="gw-bezel">
-      <div class="gw-bezel-top"><span>POCKET GAMMAWAVE // GW-1</span><span class="led" id="gw-lcd-mode-lbl">● HOME // FORGE</span></div>
+      <div class="gw-bezel-top"><span>QUANTUM GAMMAWAVE // QG-1</span><span class="led" id="gw-lcd-mode-lbl">● HOME // FORGE</span></div>
       <canvas id="gw-lcd" width="240" height="240" title="Click to cycle Hardware 240×240 LCD Screen (HOME / WAVES / SEQ / TAPE / FX RACK / SPLASH / SECRET VIZ)"></canvas>
       <div class="bar" style="margin:2px 0 0;gap:3px;justify-content:center">
         <button type="button" class="gw-btn-sec" style="padding:2px 5px;font-size:9px" data-lcd-view="auto">AUTO</button>
@@ -380,7 +381,7 @@
     </div>
     <div class="gw-console">
       <div>
-        <h2 style="margin-bottom:6px">POCKET GAMMAWAVE // GW-1 — LIVE SOLAR &amp; 4-TRACK TAPE TELEMETRY</h2>
+        <h2 style="margin-bottom:6px">QUANTUM GAMMAWAVE // QG-1 — LIVE SOLAR &amp; 4-TRACK TAPE TELEMETRY</h2>
         <div class="gw-telem-grid">
           <div class="gw-stat cyan"><div class="k">ACTIVE TRACK</div><div class="val" id="gw-st-trk">TRK 1 // READY</div></div>
           <div class="gw-stat"><div class="k">WAVE 1 / WAVE 2</div><div class="val" id="gw-st-eng">ANALOG : SOLAR BASS</div></div>
@@ -413,7 +414,7 @@
           <label>GENRE
             <select id="gw-gen-genre" style="font-weight:700;color:var(--theme)">
               <option value="0">🎲 RANDOM (50% MUTANT A+B)</option>
-              <optgroup label="🔥 POCKET GAMMAWAVE / WRAITH &amp; TRAP / DRILL">
+              <optgroup label="🔥 QUANTUM GAMMAWAVE / WRAITH &amp; TRAP / DRILL">
                 <option value="1" selected>1. GAMMAWAVE (Solar Industrial)</option>
                 <option value="2">2. WRAITHWAVE (Spectral Witch)</option>
                 <option value="3">3. TRAP ATL (Atlanta 808 + Hat Rolls)</option>
@@ -1988,6 +1989,7 @@ function makeMockDevice(opt = {}) {
     ...Array.from({ length: 16 }, () => D("PITCH", F.SEMI, -24, 24, 0)),
     D("MOD", F.PCT, 0, 127, 0),                       /* (0.6.86) G_DMOD 66: the delay's tape drift (WOW, FLUTTER) */
     E("TYPE", ["ANALOG", "DIGITAL"], 0), E("PING", ["OFF", "ON"], 0),   /* (0.6.90) G_DTYPE 67, G_DPING 68 */
+    E("TYPE", ["CHORUS", "PHASER"], 0),                /* (QG-1) G_CTYPE 69: the chorus bus's ensemble / PHASER */
   ];
   const NONE = D("-", F.INT, 0, 0, 0);
   const RATIO = [".5", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "14", "16"];
@@ -1996,19 +1998,48 @@ function makeMockDevice(opt = {}) {
     { name: "ANALOG", titles: ["OSC", "FLT"], edit: [E("WAVE", ["SAW", "SQR", "TRI", "SIN", "PWM", "SYNC", "RING", "SAW3", "TUBE", "FOLD"], 0), D("DETUNE", F.INT, 0, 127, 10, null, "ct"), D("MIX", F.PCT, 0, 127, 64),
         D("NOISE", F.PCT, 0, 127, 0), D("CUT", F.CUTOFF, 0, 127, 90), D("RES", F.PCT, 0, 127, 30), D("DRIVE", F.PCT, 0, 127, 0), D("INT", F.SEMI, -24, 24, 0)],   /* (JIANT 0.4: INT, osc 2's interval, was KTR) */
       presets: [
-        P("INGOT SUB", [1, 4, 48, 0, 38, 42, 76, -12], [0, 58, 95, 22], 1, 2), P("WORM REESE", [7, 28, 72, 6, 56, 68, 84, -12], [6, 75, 110, 40], 1, 8),
-        P("GRAVE GROWL", [5, 18, 96, 10, 48, 86, 95, -12], [2, 68, 85, 35], 1, 1), P("HEARTH LD", [4, 16, 68, 4, 88, 52, 72, 7], [4, 76, 105, 55], 1, 4),
-        P("WRAITH PAD", [7, 34, 80, 14, 62, 60, 45, 12], [75, 92, 112, 98], 0, 5), P("SCREAM 303", [0, 2, 16, 0, 44, 114, 92, 0], [0, 52, 15, 25], 1, 1),
-        P("SAW LEAD", [0, 12, 64, 0, 90, 30, 10, 12], [4, 70, 100, 50], 1, 4), P("SOFT PAD", [0, 20, 64, 4, 60, 10, 0, 0], [80, 90, 110, 95], 0, 5),
-        P("SQR BASS", [1, 0, 0, 0, 50, 70, 40, 0], [0, 60, 40, 30], 1, 2), P("PWM STR", [4, 8, 40, 0, 75, 20, 0, 0], [60, 80, 110, 85], 0, 5),
-        P("ACID", [0, 0, 0, 0, 50, 100, 25, 0], [0, 55, 20, 30], 1, 1), P("SINE KEY", [3, 6, 50, 0, 127, 0, 0, 0], [2, 80, 30, 70], 0, 6),
-        P("RAVE", [4, 30, 64, 0, 85, 20, 30, 7], [20, 80, 110, 60], 1, 13), P("SUB BASS", [3, 0, 0, 0, 40, 0, 20, 0], [0, 60, 100, 20], 1, 8),
-        P("PLUCK", [0, 8, 50, 0, 30, 40, 0, 0], [0, 88, 0, 60], 0, 3), P("BRASS", [0, 10, 64, 0, 45, 20, 10, 0], [35, 70, 90, 45], 0, 6),
-        P("WIND", [0, 0, 0, 90, 30, 90, 0, 0], [60, 90, 60, 80], 0, 5), P("STRINGS", [0, 25, 64, 0, 70, 10, 0, 0], [70, 90, 115, 90], 0, 5),
-        P("SYNC LEAD", [5, 11, 90, 0, 82, 30, 10, 0], [2, 70, 100, 40], 1, 4), P("RING BELL", [6, 18, 100, 0, 110, 20, 0, 0], [0, 92, 0, 80], 0, 7),
-        P("FAT BASS", [7, 9, 64, 0, 62, 45, 20, -12], [0, 62, 60, 25], 1, 2),
-        /* (1.2-GW) Ambient & Keys */
-        P("EVOLVE PAD", [7, 46, 64, 4, 58, 22, 0, 0], [92, 90, 112, 100], 0, 5), P("SOLINA", [7, 30, 70, 0, 88, 8, 0, 0], [50, 90, 118, 82], 0, 5), P("DEEP DRONE", [0, 20, 50, 10, 42, 70, 20, 7], [100, 90, 127, 110], 0, 5)] },
+        P("SAW LEAD", [0,  12,  64,  0,  90,  30,  10,  12], [4,  70,  100,  50], 1, 4),
+        P("SOFT PAD", [0,  20,  64,  4,  60,  10,  0,  0], [80,  90,  110,  95], 0, 5),
+        P("SQR BASS", [1,  0,  0,  0,  50,  70,  40,  0], [0,  60,  40,  30], 1, 2),
+        P("PWM STR", [4,  8,  40,  0,  75,  20,  0,  0], [60,  80,  110,  85], 0, 5),
+        P("ACID", [0,  0,  0,  0,  50,  100,  25,  0], [0,  55,  20,  30], 1, 1),
+        P("SINE KEY", [3,  6,  50,  0,  127,  0,  0,  0], [2,  80,  30,  70], 0, 6),
+        P("RAVE", [4,  30,  64,  0,  85,  20,  30,  7], [20,  80,  110,  60], 1, 13),
+        P("SUB BASS", [3,  0,  0,  0,  40,  0,  20,  0], [0,  60,  100,  20], 1, 8),
+        P("PLUCK", [0,  8,  50,  0,  30,  40,  0,  0], [0,  88,  0,  60], 0, 3),
+        P("BRASS", [0,  10,  64,  0,  45,  20,  10,  0], [35,  70,  90,  45], 0, 6),
+        P("WIND", [0,  0,  0,  90,  30,  90,  0,  0], [60,  90,  60,  80], 0, 5),
+        P("STRINGS", [0,  25,  64,  0,  70,  10,  0,  0], [70,  90,  115,  90], 0, 5),
+        P("SYNC LEAD", [5,  11,  90,  0,  82,  30,  10,  0], [2,  70,  100,  40], 1, 4),
+        P("RING BELL", [6,  18,  100,  0,  110,  20,  0,  0], [0,  92,  0,  80], 0, 7),
+        P("FAT BASS", [7,  9,  64,  0,  62,  45,  20,  -12], [0,  62,  60,  25], 1, 2),
+        P("INGOT SUB", [3,  4,  48,  8,  44,  38,  65,  -12], [0,  64,  95,  28], 1, 2),
+        P("WORM REESE", [7,  18,  64,  12,  56,  62,  75,  -12], [8,  85,  110,  48], 1, 8),
+        P("GRAVE GROWL", [5,  22,  96,  16,  48,  84,  90,  -12], [2,  68,  80,  35], 1, 1),
+        P("HEARTH LD", [0,  14,  64,  10,  86,  45,  60,  7], [4,  76,  100,  52], 1, 4),
+        P("WRAITH PAD", [4,  24,  64,  18,  64,  42,  25,  12], [75,  95,  112,  98], 0, 5),
+        P("SCREAM 303", [0,  0,  0,  4,  42,  114,  80,  0], [0,  52,  15,  26], 1, 1),
+        P("SOLAR BASS", [7,  11,  64,  6,  54,  68,  72,  -12], [0,  62,  85,  32], 1, 14),
+        P("PDRESO ACID", [5,  16,  82,  4,  46,  108,  64,  0], [0,  56,  25,  28], 1, 14),
+        P("BITSINE ARP", [6,  14,  70,  8,  88,  36,  35,  12], [0,  74,  40,  52], 0, 15),
+        P("SINGULARITY", [5,  24,  96,  18,  52,  88,  95,  -12], [4,  78,  92,  46], 1, 16),
+        P("PHOTOSPHERE", [4,  22,  64,  14,  78,  40,  28,  7], [48,  92,  110,  94], 0, 17),
+        P("ANALOG DRFT", [0,  19,  64,  6,  72,  32,  18,  0], [18,  84,  96,  76], 0, 15),
+        P("EVOLVE PAD", [7,  46,  64,  4,  58,  22,  0,  0], [92,  90,  112,  100], 0, 5),
+        P("SOLINA", [7,  30,  70,  0,  88,  8,  0,  0], [50,  90,  118,  82], 0, 5),
+        P("DEEP DRONE", [0,  20,  50,  10,  42,  70,  20,  7], [100,  90,  127,  110], 0, 5),
+        P("808 BOOM", [3,  0,  0,  0,  60,  0,  40,  0], [0,  80,  60,  40], 1, 2),
+        P("DRILL SLIDE", [3,  4,  30,  0,  64,  10,  55,  -12], [0,  90,  80,  45], 1, 14),
+        P("REESE QUAKE", [7,  24,  64,  4,  50,  50,  70,  -12], [4,  80,  110,  40], 1, 8),
+        P("TUBE KEYS", [8,  8,  50,  0,  80,  20,  30,  12], [0,  82,  40,  60], 0, 6),
+        P("FOLD LEAD", [9,  10,  64,  0,  92,  28,  40,  7], [2,  72,  100,  45], 1, 4),
+        P("HYPER SAW", [7,  70,  64,  0,  96,  20,  15,  12], [6,  80,  110,  55], 0, 13),
+        P("COMB PLUCK", [0,  6,  50,  10,  70,  80,  0,  0], [0,  70,  0,  55], 0, 15),
+        P("VOWEL BASS", [0,  12,  64,  0,  60,  70,  50,  -12], [0,  70,  90,  30], 1, 8),
+        P("SCREAM LEAD", [5,  14,  90,  4,  76,  90,  70,  0], [2,  70,  95,  40], 1, 4),
+        P("QUANTUM PAD", [7,  36,  64,  6,  62,  30,  10,  7], [85,  92,  115,  100], 0, 17),
+        P("TRAP PLUCK", [0,  10,  50,  0,  40,  30,  10,  12], [0,  76,  0,  50], 0, 15),
+        P("CHERENKOV LD", [6,  20,  80,  0,  90,  30,  20,  0], [2,  74,  90,  50], 1, 4)] },
     /* 1: reserved (DIGITAL, retired: src/fm4_convert.c ENG_FM4_GONE; its sounds load as FM6, FM4 above) */
     { name: "-", titles: ["-", "-"], edit: [D("-", F.INT, 0, 7, 0), D("-", F.INT, 0, 14, 1), D("-", F.INT, 0, 14, 1),
         D("-", F.INT, 0, 14, 1), D("-", F.PCT, 0, 127, 60), D("-", F.INT, 0, 127, 60), D("-", F.PCT, 0, 127, 0), NONE],
@@ -2017,24 +2048,45 @@ function makeMockDevice(opt = {}) {
         E("WAVE2", ["-", "SAW", "SQR", "PLS", "DSIN", "SPLS", "RSAW", "RTRI", "RTRP"], 0), D("DCW", F.PCT, 0, 127, 60), D("ENV", F.PCT, 0, 127, 64),
         D("DETUNE", F.INT, 0, 127, 0, null, "ct"), E("LINE", ["MIX", "RING"], 0), D("SUB", F.PCT, 0, 127, 0), D("FB", F.PCT, 0, 127, 0)],
       presets: [
-        P("PLASMA CORE", [5, 6, 88, 96, 16, 1, 80, 92], [0, 66, 75, 32], 1, 1), P("WARP REESE", [0, 2, 76, 68, 28, 0, 90, 64], [8, 78, 108, 45], 1, 8),
-        P("CRYPT BELL", [7, 4, 92, 74, 19, 1, 20, 48], [0, 98, 0, 96], 0, 7), P("WITCHFIRE", [4, 8, 82, 85, 22, 1, 55, 78], [18, 84, 96, 72], 0, 4),
-        P("BRASS", [0, 0, 30, 90, 0, 0, 0, 0], [8, 70, 90, 40], 0, 6), P("ORGAN", [3, 0, 40, 0, 0, 0, 0, 0], [0, 127, 127, 30], 0, 6),
-        P("STRING", [0, 4, 50, 40, 12, 0, 0, 0], [40, 90, 100, 70], 0, 5), P("RESO", [5, 0, 60, 60, 0, 0, 0, 0], [0, 70, 30, 60], 0, 1),
-        P("BELL", [6, 0, 80, 50, 0, 0, 0, 0], [0, 95, 0, 90], 0, 7), P("WIRE", [4, 7, 70, 40, 7, 0, 0, 0], [10, 80, 80, 60], 0, 4),
-        P("GROWL", [0, 0, 70, 80, 0, 0, 40, 55], [2, 70, 90, 40], 1, 4), P("FB BASS", [1, 0, 45, 60, 0, 0, 70, 35], [0, 60, 60, 25], 1, 2),
-        /* (1.2-GW) Ambient & Keys */
-        P("CRYSTAL PAD", [3, 0, 50, 70, 20, 0, 20, 0], [85, 90, 110, 100], 0, 5), P("HAZE STRINGS", [0, 7, 40, 60, 30, 0, 10, 0], [70, 90, 115, 90], 0, 5)] },
+        P("BRASS", [0,  0,  30,  90,  0,  0,  0,  0], [8,  70,  90,  40], 0, 6),
+        P("ORGAN", [3,  0,  40,  0,  0,  0,  0,  0], [0,  127,  127,  30], 0, 6),
+        P("STRING", [0,  4,  50,  40,  12,  0,  0,  0], [40,  90,  100,  70], 0, 5),
+        P("RESO", [5,  0,  60,  60,  0,  0,  0,  0], [0,  70,  30,  60], 0, 1),
+        P("BELL", [6,  0,  80,  50,  0,  0,  0,  0], [0,  95,  0,  90], 0, 7),
+        P("WIRE", [4,  7,  70,  40,  7,  0,  0,  0], [10,  80,  80,  60], 0, 4),
+        P("GROWL", [0,  0,  70,  80,  0,  0,  40,  55], [2,  70,  90,  40], 1, 4),
+        P("FB BASS", [1,  0,  45,  60,  0,  0,  70,  35], [0,  60,  60,  25], 1, 2),
+        P("PLASMA CORE", [5,  4,  82,  90,  14,  1,  65,  78], [0,  68,  85,  36], 1, 2),
+        P("WARP REESE", [0,  5,  76,  65,  22,  0,  85,  64], [6,  82,  105,  48], 1, 8),
+        P("CRYPT BELL", [6,  7,  88,  70,  9,  1,  20,  48], [0,  96,  0,  92], 0, 7),
+        P("WITCHFIRE", [4,  6,  74,  55,  18,  0,  40,  70], [45,  90,  110,  88], 0, 5),
+        P("CRYSTAL PAD", [3,  0,  50,  70,  20,  0,  20,  0], [85,  90,  110,  100], 0, 5),
+        P("HAZE STRINGS", [0,  7,  40,  60,  30,  0,  10,  0], [70,  90,  115,  90], 0, 5),
+        P("QBIT KEYS", [3,  6,  60,  50,  8,  0,  10,  0], [0,  85,  40,  60], 0, 6),
+        P("PD EPIANO", [6,  3,  55,  60,  6,  0,  0,  0], [0,  88,  30,  65], 0, 6),
+        P("PD 808", [3,  0,  20,  30,  0,  0,  90,  20], [0,  80,  60,  40], 1, 2),
+        P("ION SWEEP", [5,  4,  70,  80,  16,  0,  30,  40], [60,  90,  110,  90], 0, 5)] },
     { name: "LOFI", titles: ["CHIP", "TONE"], edit: [E("CHIP", ["4BIT", "4B/2", "8BIT", "1BIT", "STEP"], 0), E("WAVE", ["PLS", "TRI", "SAW", "NOIS", "WRAM", "BYTE", "FLOAT"], 0), D("DUTY", F.INT, 0, 127, 64),
         D("CRUSH", F.PCT, 0, 127, 0), D("CUT", F.CUTOFF, 0, 127, 110), D("VIB", F.PCT, 0, 127, 0), D("BEND", F.PCT, 0, 127, 0), D("MASK", F.PCT, 0, 127, 0)],   /* (JIANT 0.4: CUT BEND MASK) */
       presets: [
-        P("DATAMOSH", [3, 5, 88, 68, 92, 32, 96, 110], [0, 64, 95, 35], 1, 1), P("GEIGER BIT", [4, 6, 56, 82, 104, 14, 54, 92], [0, 52, 70, 28], 1, 3),
-        P("BYTEBEAT", [2, 5, 4, 0, 64, 0, 0, 0], [0, 80, 110, 40], 1, 4), P("BYTE VAR", [2, 5, 64, 40, 64, 0, 0, 0], [0, 80, 110, 50], 1, 3),
-        P("BYTE BENT", [2, 5, 16, 0, 64, 24, 70, 0], [0, 80, 110, 45], 1, 4), P("PULSE LD", [0, 0, 32, 0, 127, 20, 0, 0], [0, 60, 90, 30], 1, 4),
-        P("WAVE BASS", [1, 1, 0, 0, 90, 0, 0, 0], [0, 50, 70, 20], 1, 2), P("8BIT KEYS", [2, 0, 96, 0, 110, 0, 30, 0], [0, 60, 80, 40], 0, 13),
-        P("WAVE LEAD", [0, 4, 92, 0, 110, 18, 0, 0], [0, 70, 90, 30], 1, 3), P("STEP LEAD", [4, 0, 40, 34, 127, 16, 0, 0], [0, 64, 127, 55], 1, 4),
-        P("BYTE TONE", [2, 5, 40, 0, 64, 0, 0, 80], [0, 70, 100, 40], 1, 4), P("FLOAT FM", [2, 6, 4, 0, 64, 0, 0, 0], [0, 60, 90, 40], 1, 4),
-        P("FLOAT ARP", [2, 6, 8, 0, 64, 0, 0, 0], [0, 50, 80, 50], 1, 3), P("FLOAT PAD", [2, 6, 112, 0, 40, 0, 0, 0], [60, 90, 110, 90], 1, 3)] },
+        P("BYTEBEAT", [2,  5,  4,  0,  64,  0,  0,  0], [0,  80,  110,  40], 1, 4),
+        P("BYTE VAR", [2,  5,  64,  40,  64,  0,  0,  0], [0,  80,  110,  50], 1, 3),
+        P("BYTE BENT", [2,  5,  16,  0,  64,  24,  70,  0], [0,  80,  110,  45], 1, 4),
+        P("PULSE LD", [0,  0,  32,  0,  127,  20,  0,  0], [0,  60,  90,  30], 1, 4),
+        P("WAVE BASS", [1,  1,  0,  0,  90,  0,  0,  0], [0,  50,  70,  20], 1, 2),
+        P("8BIT KEYS", [2,  0,  96,  0,  110,  0,  30,  0], [0,  60,  80,  40], 0, 13),
+        P("WAVE LEAD", [0,  4,  92,  0,  110,  18,  0,  0], [0,  70,  90,  30], 1, 3),
+        P("STEP LEAD", [4,  0,  40,  34,  127,  16,  0,  0], [0,  64,  127,  55], 1, 4),
+        P("BYTE TONE", [2,  5,  40,  0,  64,  0,  0,  80], [0,  70,  100,  40], 1, 4),
+        P("FLOAT FM", [2,  6,  4,  0,  64,  0,  0,  0], [0,  60,  90,  40], 1, 4),
+        P("FLOAT ARP", [2,  6,  8,  0,  64,  0,  0,  0], [0,  50,  80,  50], 1, 3),
+        P("FLOAT PAD", [2,  6,  112,  0,  40,  0,  0,  0], [60,  90,  110,  90], 1, 3),
+        P("DATAMOSH", [2,  6,  68,  48,  84,  32,  45,  0], [0,  75,  100,  45], 1, 4),
+        P("GEIGER BIT", [3,  5,  96,  80,  72,  48,  85,  40], [0,  65,  90,  35], 1, 2),
+        P("CHIP ARP", [0,  0,  32,  0,  127,  0,  0,  0], [0,  55,  60,  30], 0, 13),
+        P("CRUSH KEYS", [2,  0,  96,  60,  90,  10,  20,  0], [0,  60,  80,  40], 0, 6),
+        P("VIB PULSE", [0,  0,  64,  0,  120,  40,  0,  0], [0,  60,  90,  40], 1, 4),
+        P("STEP PAD", [4,  0,  64,  20,  100,  10,  0,  0], [40,  90,  110,  80], 0, 5)] },
     /* 4: reserved (SAMPLE, retired in JIANT; its sounds load as ANALOG, its PERC set as DRUM) */
     { name: "-", titles: ["-", "-"], edit: [D("-", F.INT, 0, 127, 0), D("-", F.INT, 0, 127, 0), D("-", F.INT, 0, 127, 0),
         D("-", F.INT, 0, 127, 0), D("-", F.INT, 0, 127, 0), D("-", F.INT, 0, 127, 0), D("-", F.INT, 0, 127, 0), D("-", F.INT, 0, 127, 0)],
@@ -2042,12 +2094,19 @@ function makeMockDevice(opt = {}) {
     { name: "VOICE", titles: ["VOWL", "TONE"], edit: [D("VOWEL", F.INT, 0, 127, 0), D("VOWEL2", F.INT, 0, 127, 64), D("TALK", F.TIME, 0, 127, 0),
         D("SHIFT", F.SEMI, -12, 12, 0), D("BUZZ", F.PCT, 0, 127, 64), D("BREATH", F.PCT, 0, 127, 10), D("Q", F.PCT, 0, 127, 64), D("RAND", F.PCT, 0, 127, 0)],
       presets: [
-        P("BLACK CHOIR", [16, 110, 76, -5, 82, 36, 88, 28], [78, 92, 118, 96], 0, 5), P("FERAL VOW", [112, 24, 52, -7, 118, 14, 104, 42], [0, 64, 80, 28], 1, 1),
-        P("GHOUL RIOT", [64, 127, 44, -9, 124, 30, 112, 64], [2, 68, 90, 36], 1, 4), P("SAINT GLOW", [48, 84, 92, 4, 56, 48, 76, 18], [65, 88, 112, 94], 0, 6),
-        P("CHOIR AAH", [0, 0, 0, 0, 40, 22, 60, 0], [85, 90, 115, 95], 0, 5), P("VOX LEAD", [32, 0, 0, 2, 90, 8, 72, 0], [6, 70, 105, 55], 1, 4),
-        P("WOW BASS", [95, 0, 68, 0, 100, 0, 80, 0], [0, 70, 70, 30], 1, 8), P("WHISPER", [0, 95, 88, 3, 50, 120, 50, 0], [50, 90, 110, 90], 0, 5),
-        /* (1.2-GW) Ambient & Keys */
-        P("SOFT CHOIR", [10, 40, 0, 0, 30, 40, 50, 20], [90, 90, 120, 100], 0, 5), P("ANGEL AIR", [60, 90, 20, 12, 20, 80, 60, 30], [95, 90, 120, 105], 0, 5)] },
+        P("CHOIR AAH", [0,  0,  0,  0,  40,  22,  60,  0], [85,  90,  115,  95], 0, 5),
+        P("VOX LEAD", [32,  0,  0,  2,  90,  8,  72,  0], [6,  70,  105,  55], 1, 4),
+        P("WOW BASS", [95,  0,  68,  0,  100,  0,  80,  0], [0,  70,  70,  30], 1, 8),
+        P("WHISPER", [0,  95,  88,  3,  50,  120,  50,  0], [50,  90,  110,  90], 0, 5),
+        P("BLACK CHOIR", [18,  78,  42,  -5,  76,  35,  74,  24], [70,  95,  118,  100], 0, 5),
+        P("FERAL VOW", [110,  12,  82,  -7,  118,  14,  92,  18], [0,  65,  75,  32], 1, 2),
+        P("GHOUL RIOT", [64,  120,  96,  -4,  112,  40,  88,  55], [4,  72,  90,  44], 1, 4),
+        P("SAINT GLOW", [12,  48,  28,  3,  45,  50,  62,  12], [82,  92,  115,  98], 0, 5),
+        P("SOFT CHOIR", [10,  40,  0,  0,  30,  40,  50,  20], [90,  90,  120,  100], 0, 5),
+        P("ANGEL AIR", [60,  90,  20,  12,  20,  80,  60,  30], [95,  90,  120,  105], 0, 5),
+        P("ROBO TALK", [40,  100,  90,  0,  110,  10,  80,  0], [0,  70,  100,  35], 1, 4),
+        P("MONK DRONE", [5,  10,  10,  -5,  60,  20,  70,  10], [90,  90,  125,  110], 0, 5),
+        P("VOCODE PAD", [30,  70,  40,  0,  70,  30,  65,  20], [70,  90,  115,  95], 0, 5)] },
     /* 6: reserved (TRIO, folded into ANALOG in JIANT 0.4: its sounds load as ANALOG's SYNC / RING / SAW3, core.h analog_from_trio) */
     { name: "-", titles: ["-", "-"], edit: [D("-", F.INT, 0, 127, 0), D("-", F.INT, 0, 127, 0), D("-", F.INT, 0, 127, 0),
         D("-", F.INT, 0, 127, 0), D("-", F.INT, 0, 127, 0), D("-", F.INT, 0, 127, 0), D("-", F.INT, 0, 127, 0), D("-", F.INT, 0, 127, 0)],
@@ -2056,12 +2115,16 @@ function makeMockDevice(opt = {}) {
         "TOPS", "CLARI", "REED", "STRNG", "CHAPL", "BRITE", "BASS", "FULL"], 4), D("SUB", F.INT, -8, 8, 0), D("BODY", F.INT, -8, 8, 0), D("TOP", F.INT, -8, 8, 0),
         E("PERC", ["OFF", "2ND", "3RD", "2SOFT", "3SOFT", "2SLOW", "3SLOW"], 0), D("CLICK", F.PCT, 0, 127, 40), D("DRIVE", F.PCT, 0, 127, 0), E("ROTOR", ["OFF", "SLOW", "FAST"], 1)],
       presets: [
-        P("DOOM CATH", [15, 8, 6, 4, 1, 85, 118, 1], [12, 80, 127, 75], 0, 5), P("BAKELITE", [11, 5, 4, -2, 2, 65, 88, 2], [0, 64, 120, 48], 0, 6),
-        P("FULL ORGAN", [15, 0, 0, 0, 0, 30, 20, 1], [0, 64, 127, 45], 0, 5), P("JAZZ PERC", [4, 0, 0, 0, 2, 50, 8, 1], [0, 64, 127, 40], 0, 3),
-        P("GOSPEL", [6, 0, 0, 0, 1, 60, 40, 2], [0, 64, 127, 45], 0, 6), P("SOFT FLUTE", [1, 0, -2, 0, 0, 10, 0, 1], [0, 64, 127, 55], 0, 5),
-        P("ROCK DRIVE", [7, 0, 0, 0, 0, 70, 100, 2], [0, 64, 127, 40], 0, 4),
-        /* (1.2-GW) Ambient & Keys */
-        P("DRONE ORGAN", [0, 4, 2, -4, 0, 0, 0, 1], [60, 64, 127, 90], 0, 5)] },
+        P("FULL ORGAN", [15,  0,  0,  0,  0,  30,  20,  1], [0,  64,  127,  45], 0, 5),
+        P("JAZZ PERC", [4,  0,  0,  0,  2,  50,  8,  1], [0,  64,  127,  40], 0, 3),
+        P("GOSPEL", [6,  0,  0,  0,  1,  60,  40,  2], [0,  64,  127,  45], 0, 6),
+        P("SOFT FLUTE", [1,  0,  -2,  0,  0,  10,  0,  1], [0,  64,  127,  55], 0, 5),
+        P("ROCK DRIVE", [7,  0,  0,  0,  0,  70,  100,  2], [0,  64,  127,  40], 0, 4),
+        P("DOOM CATH", [15,  6,  4,  3,  0,  45,  78,  1], [20,  85,  127,  75], 0, 5),
+        P("BAKELITE", [11,  4,  2,  -2,  3,  65,  92,  2], [2,  70,  120,  50], 0, 6),
+        P("DRONE ORGAN", [0,  4,  2,  -4,  0,  0,  0,  1], [60,  64,  127,  90], 0, 5),
+        P("QUANTUM DRAW", [9,  2,  1,  1,  2,  40,  30,  2], [0,  64,  127,  45], 0, 6),
+        P("CHAPEL SOFT", [2,  2,  -1,  0,  0,  5,  0,  1], [40,  64,  127,  80], 0, 5)] },
     /* 8: reserved (GRAIN, retired in JIANT) */
     { name: "-", titles: ["-", "-"], edit: [D("-", F.INT, 0, 127, 0), D("-", F.INT, 0, 127, 0), D("-", F.INT, 0, 127, 0),
         D("-", F.INT, 0, 127, 0), D("-", F.INT, 0, 127, 0), D("-", F.INT, 0, 127, 0), D("-", F.INT, 0, 127, 0), D("-", F.INT, 0, 127, 0)],
@@ -2073,26 +2136,43 @@ function makeMockDevice(opt = {}) {
     { name: "DRUM", titles: ["KIT", "KIT 2"], edit: [D("MORPH", F.PCT, 0, 127, 64), D("TUNE", F.PCT, 0, 127, 64),
         D("TONE", F.PCT, 0, 127, 64), D("DECAY", F.PCT, 0, 127, 64), D("NOISE", F.PCT, 0, 127, 64), D("FM ENV", F.PCT, 0, 127, 0),
         D("FOLD", F.PCT, 0, 127, 0), D("DRIVE", F.PCT, 0, 127, 0)],
-      presets: [P("DRUM-X", [64, 64, 70, 64, 64, 0, 0, 0], [0, 100, 127, 100], 0, 12)] },
+      presets: [
+        P("DRUM-X", [64,  64,  70,  64,  64,  0,  0,  0], [0,  100,  127,  100], 0, 12)] },
     { name: "NOISE", titles: ["SRC", "MOVE"], edit: [E("MODE", ["ANLG", "DUST", "LFSR", "META"], 0), D("COLOR", F.PCT, 0, 127, 64),
         D("FREQ", F.CUTOFF, 0, 127, 80), D("PEAK", F.PCT, 0, 127, 30), D("TRK", F.PCT, 0, 127, 64), D("DENSE", F.PCT, 0, 127, 0),
         D("DRIFT", F.PCT, 0, 127, 0), D("CRUSH", F.PCT, 0, 127, 0)],
       presets: [
-        P("CHERENKOV", [3, 88, 92, 95, 110, 64, 82, 48], [25, 88, 105, 84], 0, 5), P("REACTOR", [2, 24, 58, 112, 127, 96, 54, 92], [0, 72, 85, 50], 1, 1),
-        P("VOID WASH", [0, 42, 64, 116, 96, 40, 108, 28], [80, 95, 115, 96], 0, 5),
-        P("WIND", [0, 64, 70, 100, 127, 0, 70, 0], [90, 90, 110, 90], 0, 5), P("RAIN", [1, 30, 88, 80, 64, 105, 40, 0], [10, 90, 127, 70], 0, 5),
-        P("ARCADE", [2, 0, 127, 0, 127, 112, 0, 84], [0, 80, 0, 50], 0, 3), P("METAL", [3, 0, 100, 40, 100, 32, 0, 0], [0, 75, 40, 60], 0, 7),
-        /* (1.2-GW) Ambient & Keys */
-        P("OCEAN", [0, 40, 50, 30, 0, 0, 110, 0], [100, 90, 127, 110], 0, 5), P("DUST HAZE", [1, 80, 110, 45, 30, 60, 60, 0], [80, 90, 120, 100], 0, 5)] },
+        P("WIND", [0,  64,  70,  100,  127,  0,  70,  0], [90,  90,  110,  90], 0, 5),
+        P("RAIN", [1,  30,  88,  80,  64,  105,  40,  0], [10,  90,  127,  70], 0, 5),
+        P("ARCADE", [2,  0,  127,  0,  127,  112,  0,  84], [0,  80,  0,  50], 0, 3),
+        P("METAL", [3,  0,  100,  40,  100,  32,  0,  0], [0,  75,  40,  60], 0, 7),
+        P("CHERENKOV", [1,  24,  96,  92,  90,  88,  75,  36], [18,  90,  115,  88], 0, 5),
+        P("REACTOR", [3,  82,  58,  78,  110,  48,  60,  24], [35,  92,  110,  85], 1, 8),
+        P("VOID WASH", [0,  90,  52,  88,  64,  0,  95,  0], [85,  95,  118,  102], 0, 5),
+        P("OCEAN", [0,  40,  50,  30,  0,  0,  110,  0], [100,  90,  127,  110], 0, 5),
+        P("DUST HAZE", [1,  80,  110,  45,  30,  60,  60,  0], [80,  90,  120,  100], 0, 5),
+        P("RISER", [0,  60,  40,  90,  0,  0,  80,  0], [120,  90,  127,  60], 0, 5),
+        P("GEIGER CNT", [1,  10,  90,  60,  64,  30,  30,  0], [0,  60,  100,  40], 0, 5),
+        P("QUANTUM FOAM", [1,  50,  100,  85,  90,  95,  85,  20], [30,  90,  115,  90], 0, 5)] },
     { name: "FM6", titles: ["OPS", "PATCH"], edit: [D("ALG", F.INT, 0, 32, 0), D("FB", F.INT, -7, 7, 0), D("MOD", F.BIPCT, -64, 63, 0),
         D("RATIO", F.INT, -16, 16, 0), D("MEG", F.BIPCT, -64, 63, 0), D("VMOD", F.INT, -7, 7, 0), D("DETUNE", F.PCT, 0, 127, 0),
         D("SLOT", F.INT, 0, FM6.FACTORY_PK.length + 32, 0)],   /* F1..F8, then OWN (eng_fm6.c, 1.0.3) */
-      presets: [P("TINE EP", [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 127, 0], 0, 6), P("BELL", [0, 0, 0, 0, 0, 0, 0, 1], [0, 0, 127, 0], 0, 7),
-        P("FM BASS", [0, 0, 0, 0, 0, 0, 0, 2], [0, 0, 127, 0], 1, 2), P("BRASS", [0, 0, 0, 0, 0, 0, 0, 3], [0, 0, 127, 0], 0, 4),
-        P("PAD", [0, 0, 0, 0, 0, 0, 30, 4], [0, 0, 127, 0], 0, 5), P("MARIMBA", [0, 0, 0, 0, 0, 0, 0, 5], [0, 0, 127, 0], 0, 3),
-        P("ORGAN", [0, 0, 0, 0, 0, 0, 0, 6], [0, 0, 127, 0], 0, 6), P("PLUCK", [0, 0, 0, 0, 0, 0, 0, 7], [0, 0, 127, 0], 0, 13),
-        /* (1.2-GW) Ambient & Keys */
-        P("SOFT EP", [0, 0, 0, 0, 0, 0, 0, 9], [0, 0, 127, 0], 0, 6), P("REED PIANO", [0, 0, 0, 0, 0, 0, 0, 10], [0, 0, 127, 0], 0, 6), P("FM PIANO", [0, 0, 0, 0, 0, 0, 0, 11], [0, 0, 127, 0], 0, 6), P("GLASS KEYS", [0, 0, 0, 0, 0, 0, 10, 12], [0, 0, 127, 0], 0, 6), P("CRYSTAL BELL", [0, 0, 0, 0, 0, 0, 0, 13], [0, 0, 127, 0], 0, 7), P("KALIMBA", [0, 0, 0, 0, 0, 0, 0, 14], [0, 0, 127, 0], 0, 3), P("VIBES", [0, 0, 0, 0, 0, 0, 0, 15], [0, 0, 127, 0], 0, 7), P("MUSIC BOX", [0, 0, 0, 0, 0, 0, 0, 16], [0, 0, 127, 0], 0, 3), P("WARM PAD", [0, 0, 0, 0, 0, 0, 20, 17], [0, 0, 127, 0], 0, 5), P("GLASS PAD", [0, 0, 0, 0, 0, 0, 20, 18], [0, 0, 127, 0], 0, 5), P("CELESTA", [0, 0, 0, 0, 0, 0, 0, 19], [0, 0, 127, 0], 0, 7)] },
+      presets: [
+        P("TINE EP", [0,  0,  0,  0,  0,  0,  0,  0], [0,  0,  127,  0], 0, 6), P("BELL", [0,  0,  0,  0,  0,  0,  0,  1], [0,  0,  127,  0], 0, 7),
+        P("FM BASS", [0,  0,  0,  0,  0,  0,  0,  2], [0,  0,  127,  0], 1, 2), P("BRASS", [0,  0,  0,  0,  0,  0,  0,  3], [0,  0,  127,  0], 0, 4),
+        P("PAD", [0,  0,  0,  0,  0,  0,  30,  4], [0,  0,  127,  0], 0, 5), P("MARIMBA", [0,  0,  0,  0,  0,  0,  0,  5], [0,  0,  127,  0], 0, 3),
+        P("ORGAN", [0,  0,  0,  0,  0,  0,  0,  6], [0,  0,  127,  0], 0, 6), P("PLUCK", [0,  0,  0,  0,  0,  0,  0,  7], [0,  0,  127,  0], 0, 13),
+        P("SOFT EP", [0,  0,  0,  0,  0,  0,  0,  9], [0,  0,  127,  0], 0, 6),
+        P("REED PIANO", [0,  0,  0,  0,  0,  0,  0,  10], [0,  0,  127,  0], 0, 6),
+        P("FM PIANO", [0,  0,  0,  0,  0,  0,  0,  11], [0,  0,  127,  0], 0, 6),
+        P("GLASS KEYS", [0,  0,  0,  0,  0,  0,  10,  12], [0,  0,  127,  0], 0, 6),
+        P("CRYSTAL BELL", [0,  0,  0,  0,  0,  0,  0,  13], [0,  0,  127,  0], 0, 7),
+        P("KALIMBA", [0,  0,  0,  0,  0,  0,  0,  14], [0,  0,  127,  0], 0, 3),
+        P("VIBES", [0,  0,  0,  0,  0,  0,  0,  15], [0,  0,  127,  0], 0, 7),
+        P("MUSIC BOX", [0,  0,  0,  0,  0,  0,  0,  16], [0,  0,  127,  0], 0, 3),
+        P("WARM PAD", [0,  0,  0,  0,  0,  0,  20,  17], [0,  0,  127,  0], 0, 5),
+        P("GLASS PAD", [0,  0,  0,  0,  0,  0,  20,  18], [0,  0,  127,  0], 0, 5),
+        P("CELESTA", [0,  0,  0,  0,  0,  0,  0,  19], [0,  0,  127,  0], 0, 7)] },
     /* 13: reserved (SLICE, retired in JIANT) */
     { name: "-", titles: ["-", "-"], edit: [D("-", F.INT, 0, 127, 0), D("-", F.INT, 0, 127, 0), D("-", F.INT, 0, 127, 0),
         D("-", F.INT, 0, 127, 0), D("-", F.INT, 0, 127, 0), D("-", F.INT, 0, 127, 0), D("-", F.INT, 0, 127, 0), D("-", F.INT, 0, 127, 0)],
@@ -2103,29 +2183,33 @@ function makeMockDevice(opt = {}) {
      notes, 0 rest; flags 1 accent, 2 slide, 4 tie (holds the previous note) */
   const T_ = 4;
   const PATTERNS = [
-    [[45, 45, 57, 45, 0, 48, 45, 55, 45, 0, 57, 52, 45, 48, 0, 50], [1, 0, 2, 0, 0, 0, 1, 2, 0, 0, 1, 0, 0, 2, 0, 1]],
-    [[0, 36, 0, 36, 0, 36, 0, 48, 0, 36, 0, 36, 0, 39, 0, 43], [0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]],
-    [[60, 0, 67, 0, 72, 67, 0, 64, 62, 0, 69, 0, 74, 69, 0, 67], [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0]],
-    [[72, 0, 0, 74, 0, 0, 76, 0, 79, 0, 76, 0, 74, 0, 0, 0], [1, T_, 0, 2, T_, 0, 0, 0, 1, 0, 2, 0, 0, T_, T_, 0]],
-    [[60, 0, 0, 0, 0, 0, 0, 0, 57, 0, 0, 0, 55, 0, 0, 0], [0, T_, T_, T_, T_, T_, T_, 0, 0, T_, T_, 0, 0, T_, T_, 0]],
-    [[0, 0, 60, 0, 0, 63, 0, 0, 0, 0, 60, 0, 0, 65, 0, 63], [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]],
-    [[72, 0, 0, 79, 0, 0, 84, 0, 0, 0, 76, 0, 0, 0, 0, 0], [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
-    [[36, 0, 0, 0, 0, 0, 0, 36, 0, 0, 34, 0, 0, 0, 0, 0], [1, T_, T_, T_, 0, 0, 0, 0, 0, 0, 0, T_, T_, T_, 0, 0]],
-    [[60, 61, 62, 67, 64, 65, 60, 69, 68, 70, 62, 67, 72, 72, 74, 64], [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]],
-    [[60, 60, 61, 61, 62, 0, 63, 63, 64, 65, 65, 0, 66, 66, 66, 67], [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]],
-    [[60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75], [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0]],
-    [[36, 42, 42, 42, 38, 42, 36, 42, 36, 42, 42, 36, 38, 42, 46, 42], [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0]],   /* 12 BEAT (DRUM) */
-    [[48, 51, 55, 60, 63, 67, 72, 75, 48, 51, 55, 60, 63, 67, 72, 75], [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]],   /* 13 ARP */
+    [[45,45,57,45,0,48,45,55,45,0,57,52,45,48,0,50],[1,0,2,0,0,0,1,2,0,0,1,0,0,2,0,1]],
+    [[0,36,0,36,0,36,0,48,0,36,0,36,0,39,0,43],[0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0]],
+    [[60,0,67,0,72,67,0,64,62,0,69,0,74,69,0,67],[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0]],
+    [[72,0,0,74,0,0,76,0,79,0,76,0,74,0,0,0],[1,4,0,2,4,0,0,0,1,0,2,0,0,4,4,0]],
+    [[60,0,0,0,0,0,0,0,57,0,0,0,55,0,0,0],[0,4,4,4,4,4,4,0,0,4,4,0,0,4,4,0]],
+    [[0,0,60,0,0,63,0,0,0,0,60,0,0,65,0,63],[0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0]],
+    [[72,0,0,79,0,0,84,0,0,0,76,0,0,0,0,0],[1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0]],
+    [[36,0,0,0,0,0,0,36,0,0,34,0,0,0,0,0],[1,4,4,4,0,0,0,0,0,0,0,4,4,4,0,0]],
+    [[60,61,62,67,64,65,60,69,68,70,62,67,72,72,74,64],[1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0]],
+    [[60,60,61,61,62,0,63,63,64,65,65,0,66,66,66,67],[1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0]],
+    [[60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75],[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0]],
+    [[36,42,42,42,38,42,36,42,36,42,42,36,38,42,46,42],[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0]],
+    [[48,51,55,60,63,67,72,75,48,51,55,60,63,67,72,75],[1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0]],
+    [[36,36,48,36,39,36,51,48,36,36,55,36,43,41,48,39],[1,0,2,0,1,0,2,0,1,0,2,0,1,2,0,1]],
+    [[60,63,67,72,70,67,63,60,58,62,67,74,72,67,63,62],[1,0,0,1,2,0,0,0,1,0,0,1,2,0,0,0]],
+    [[48,0,0,55,0,56,0,51,48,0,60,0,58,0,55,0],[1,4,0,1,0,2,0,0,1,0,1,4,2,0,1,0]],
+    [[60,0,63,0,67,0,68,67,60,0,65,0,63,0,58,0],[1,4,0,0,1,4,2,0,1,4,0,0,1,4,2,0]]
   ];
   for (let op = 0; op < 4; op++) TP.push(D("ATK", F.TIME, 0, 127, 0), D("DEC", F.TIME, 0, 127, 0), D("SUS", F.PCT, 0, 127, 127), D("REL", F.TIME, 0, 127, 0), D("LEVEL", F.PCT, 0, 127, 127));
   TP.push(D("OFFSET", F.INT, -32, 32, 0), D("PITCH", F.SEMI, -24, 24, 0));   /* 81, 82: SHIFT (JIANT; the chord keys before) */
   for (const l of ["KICK", "SNARE", "CLAP", "HATCL", "HATOP", "TOM", "RIM", "BELL"]) TP.push(D(l, F.PCT, 0, 127, 127));   /* 83..90: DRUM lane levels */
-  TP.push(E("TYPE", ["SOFT", "HARD", "FOLD", "CRUSH", "RECT", "HEARTH", "BLAST", "PLASMA", "FLUX"], 5), D("TONE", F.BIPCT, -64, 63, 0),   /* 91, 92: DIST (GAMMAWAVE) */
+  TP.push(E("TYPE", ["SOFT", "HARD", "FOLD", "CRUSH", "RECT", "HEARTH", "BLAST", "PLASMA", "FLUX"], 0), D("TONE", F.BIPCT, -64, 63, 0),   /* 91, 92: DIST (GAMMAWAVE) */
     D("LEN", F.STEPS, 1, 16, 16), E("DIV", NDIV, 2), D("SLEW", F.PCT, 0, 127, 0));   /* 93..95: the modulation sequence */
   for (let k = 0; k < 16; k++) TP.push(D("LEVEL", F.PCT, 0, 127, 0));                     /* 96..111: its levels */
   TP.push(E("TYPE", ["LP", "HP", "BP", "COMB", "VOWEL", "SCREAM"], 0),                    /* 112: the FILTER's type (GAMMAWAVE) */
     D("CUT", F.CUTOFF, 0, 127, 127), D("RES", F.PCT, 0, 127, 0));                       /* 113, 114: the other engines' */
-  const P_COUNT = 123, G_COUNT = 69, NSTEP = 64, P_E0 = 115, G_ENGSEL = 20, P_SLCR = 45;
+  const P_COUNT = 123, G_COUNT = 70, NSTEP = 64, P_E0 = 115, G_ENGSEL = 20, P_SLCR = 45;
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   const enumOrig = (d, v) => d.fmt === F.ENUM && d.names ? aliasOf(d.names, v - d.min) + d.min : v;   /* params.c enum_orig */
   /* tracks (firmware v3): four synth parts (1.0), six (JIANT 0.6); engine / preset / p / step below are the selected track's */
@@ -2833,7 +2917,7 @@ const TEXT = {
     fm6OtherMaker: "別のメーカーの SysEx です", fm6Universal: "音色ではない汎用 SysEx です",
     fm6Factories: "ファクトリー音色",
     fm6NeedDevice: "FM-1 を接続すると 6-OP FM の音色を編集してトラックへ送れます。",
-    fm6NoFw: "このファームウェアには 6-OP FM（FM6）がありません。Pocket GammaWave の最新ファームウェアに更新すると使えます。",
+    fm6NoFw: "このファームウェアには 6-OP FM（FM6）がありません。Quantum GammaWave の最新ファームウェアに更新すると使えます。",
     motion: "オートメーション", motionOn: "再生", motionClear: "オートメーションを消去", motionConfirm: "選択トラックのオートメーションを消しますか？", chance: "確率 %", ratchet: "ラチェット", motionStep: "ステップ", motionParam: "パラメーター", motionValue: "値",
     backupTitle: "全体バックアップ", backupExport: "バックアップ保存", backupImport: "バックアップ復元", backupHelp: "現在の曲・A〜D・音色バンク・設定を、このパソコンへ保存。", backupOld: "全体バックアップには対応版への更新が必要です。", backupConfirm: "全体バックアップを復元しますか？ 現在の曲と保存データを置き換えます。USBを抜かないでください。", backupWorking: "バックアップ処理中 ", backupDone: "バックアップを保存しました", backupRestored: "全体バックアップを復元しました",
     deviceDisplay: "本体の画面",
@@ -2869,9 +2953,9 @@ const TEXT = {
     foot: "Chrome か Edge で使えます。", iconsCredit: "アイコン: Fukiai（MIT）Hügelton Instruments",
     nomidi: "このブラウザでは使えません。Chrome か Edge で開いてください。",
     denied: "MIDI（SysEx）の使用が許可されませんでした。",
-    nodevice: "Pocket GammaWave が見つかりません。USB で接続して、もう一度押してください。",
+    nodevice: "Quantum GammaWave / FM-1 が見つかりません。USB接続して再試行するか、「SIMULATE QG-1」でオフライン作業できます。",
     connecting: "接続中", reading: "読み込み中 ", steploading: "ステップを読み込み中 ",
-    ready: "接続しました", disconnected: "切断されました", lost: "Pocket GammaWave が外されました",
+    ready: "接続しました", disconnected: "切断されました", lost: "Quantum GammaWave / FM-1 が外されました",
     noreply: "応答がありません", error: "エラー: ", busy: "処理中",
     applying: "書き込み中 ", applied: "読み込みました", badfile: "ファイルを読み込めません: ",
     savedSlot: "保存しました: スロット ", loadedSlot: "読み込みました: スロット ", emptySlot: "空のスロットです: ",
@@ -2900,7 +2984,7 @@ const TEXT = {
     putDone: "本体に書き込みました: スロット ", storedSlot: "本体に保存しました: スロット ", erasedSlot: "消去しました: スロット ",
     loadedUser: "音色を読み込みました（シーケンスはそのまま。パターンは本体の SEQ > PHRASES から。SAVE 長押しで元に戻せます）: ", reloaded: "本体で音色が変わったので読み直しました", readingBank: "スロットを読み込み中",
     badEngine: "このファームウェアにないエンジンです: ", flashFail: "書き込みに失敗しました（rc {rc}）",
-    installer: "Pocket GammaWave インストーラー",
+    installer: "Quantum GammaWave インストーラー",
     tabSeq: "シーケンサー", tabTracks: "トラック", tabSettings: "設定",
     needDevice: "FM-1 を接続すると編集できます。",
     bankConnect: "FM-1 を接続すると本体のユーザープリセットも扱えます。", bankNone: "このファームウェアにはユーザープリセットがありません。",
@@ -2930,7 +3014,7 @@ const TEXT = {
     fm6OtherMaker: "SysEx from another manufacturer", fm6Universal: "Universal SysEx, not voice data",
     fm6Factories: "Factory patch",
     fm6NeedDevice: "Connect the FM-1 to edit 6-OP FM voices and send them to a track.",
-    fm6NoFw: "This firmware has no 6-OP FM (FM6). Update to the latest Pocket GammaWave firmware to use it.",
+    fm6NoFw: "This firmware has no 6-OP FM (FM6). Update to the latest Quantum GammaWave firmware to use it.",
     motion: "Automation", motionOn: "Play automation", motionClear: "Clear automation", motionConfirm: "Clear this track's automation?", chance: "Chance %", ratchet: "Ratchet", motionStep: "Step", motionParam: "Parameter", motionValue: "Value",
     backupTitle: "Complete backup", backupExport: "Save backup", backupImport: "Restore backup", backupHelp: "Save the current music, A–D, sound banks and settings to this computer.", backupOld: "Complete backups need firmware with archive support.", backupConfirm: "Restore this complete backup? Current music and saved data will be replaced. Keep USB connected.", backupWorking: "Backing up / restoring ", backupDone: "Backup saved", backupRestored: "Complete backup restored",
     deviceDisplay: "Device display",
@@ -2964,11 +3048,11 @@ const TEXT = {
     notesHelp: "Enter notes like C4 E4 G4 (up to 4, C4 = 60). Hits are DRUM lanes: KICK >SNARE HATCL (> = accent).",
     notes: "Notes", hits: "Hits", time: "Time", acc: "Accent", slide: "Slide", vel: "Velocity",
     foot: "Works in Chrome or Edge.", iconsCredit: "Icons: Fukiai (MIT), Hügelton Instruments",
-    nomidi: "This browser cannot do it. Open the page in Chrome or Edge.",
+    nomidi: "Web MIDI is unavailable in this context (requires HTTPS or http://localhost). Running in offline Simulator mode.",
     denied: "MIDI (SysEx) access was not allowed.",
-    nodevice: "Pocket GammaWave not found. Connect it by USB and press Connect again.",
+    nodevice: "Quantum GammaWave / FM-1 not found. Connect via USB and press Connect again (or click SIMULATE QG-1 to work offline).",
     connecting: "Connecting", reading: "Reading ", steploading: "Reading steps ",
-    ready: "Connected", disconnected: "Disconnected", lost: "Pocket GammaWave was unplugged",
+    ready: "Connected", disconnected: "Disconnected", lost: "Quantum GammaWave / FM-1 was unplugged",
     noreply: "No reply from the device", error: "Error: ", busy: "Busy",
     applying: "Writing ", applied: "Loaded", badfile: "Cannot read the file: ",
     savedSlot: "Saved to slot ", loadedSlot: "Loaded slot ", emptySlot: "Empty slot: ",
@@ -2997,7 +3081,7 @@ const TEXT = {
     putDone: "Written to the device: slot ", storedSlot: "Stored on the device: slot ", erasedSlot: "Erased slot ",
     loadedUser: "Sound loaded (the sequence stays; its pattern is on the device under SEQ > PHRASES; hold SAVE to undo): ", reloaded: "The sound changed on the device: read again", readingBank: "Reading the slots",
     badEngine: "This firmware has no such engine: ", flashFail: "Write failed (rc {rc})",
-    installer: "Pocket GammaWave installer",
+    installer: "Quantum GammaWave installer",
     tabSeq: "Sequencer", tabTracks: "Tracks", tabSettings: "Settings",
     needDevice: "Connect the FM-1 to edit.",
     bankConnect: "Connect the FM-1 to see its user presets too.", bankNone: "This firmware has no user presets.",
@@ -3145,7 +3229,7 @@ const stepEdit = new Map(); /* index -> time of the last edit */
 const EXPECT = { pcount: 91, gcount: 27, pe0: 83 };
 /* the same layout without the chord keys (P_COUNT 89, P_E0 81), the FM operator ENVs too (69, 61) or the matrix
    (firmware 1.0: 57, 49) */
-const knownLayout = (info) => [EXPECT.gcount, 32, 36, 37, 66, 67, 69].includes(info.gcount) &&   /* (JIANT FUNB: 5, 9, then 10 more globals; 0.6.3: the SLICER's 29) */
+const knownLayout = (info) => [EXPECT.gcount, 32, 36, 37, 66, 67, 69, 70].includes(info.gcount) &&   /* (JIANT FUNB: 5, 9, then 10 more globals; 0.6.3: the SLICER's 29) */
   [[120, 112], [99, 91], [91, 83], [89, 81], [69, 61], [57, 49]].some(([c, e]) => info.pcount === c && info.pe0 === e);
 const P = { LEVEL: 0, SLEN: 29 };
 const LAYOUT = (pe0) => [
@@ -3166,7 +3250,7 @@ const LAYOUT = (pe0) => [
       [50 + 4 * k, 51 + 4 * k, 52 + 4 * k, 53 + 4 * k]])] : [["SLICER", 0, [45, 46, 47, 48]]]),   /* (0.6.3: one, on a bus) */
     ["DLY", 1, [4, 5, 6, 7]], ...(pe0 >= 112 ? [["DLY 2", 1, [28, 34, 35, ...(dev && dev.info && dev.info.gcount >= 67 ? [66] : [])]],
     ...(dev && dev.info && dev.info.gcount >= 69 ? [["DLY 3", 1, [67, 68]]] : [])] : []), ["REVERB", 1, pe0 >= 112 ? [24, 8, 9, 31] : [24, 8, 9]],
-    ...(pe0 >= 112 ? [["REVERB 2", 1, [29, 30, 32, 33]]] : []), ["CHORUS", 1, pe0 >= 112 ? [10, 11, 27] : [10, 11]], ["MASTER", 1, [21, 25, 26, 13]]] },   /* G_RTYPE 24: ROOM SPRING SHIMR RESO CLOUD; MASTER: CLIP PNCH DUCK REL; (0.6.9) AUTOPAN: DPTH RATE SYNC WAVE, CHORUS: STER (27) */
+    ...(pe0 >= 112 ? [["REVERB 2", 1, [29, 30, 32, 33]]] : []), ["CHORUS", 1, pe0 >= 112 ? (dev && dev.info && dev.info.gcount >= 70 ? [10, 11, 27, 69] : [10, 11, 27]) : [10, 11]], ["MASTER", 1, [21, 25, 26, 13]]] },   /* G_RTYPE 24: ROOM SPRING SHIMR RESO CLOUD; MASTER: CLIP PNCH DUCK REL; (0.6.9) AUTOPAN: DPTH RATE SYNC WAVE, CHORUS: STER (27) */
   { t: "SCL", pages: [["SCL", 0, [25, 26, 27, 28]], ["SCL 2", 1, [36]]] },   /* (JIANT 0.4) G_STRN 36: every sequence along the scale */
   { t: "ARP", pages: [["ARP", 0, [17, 18, 19, 20]], ["ARP 2", 0, [21, 22, 23, 24]]] },
   { t: "SEQ PATTERN", tab: "seqgroups", pages: [["PATTERN", 0, [29, 30, 31, 32]], ...(pe0 >= 83 ? [["SHIFT", 0, P_SHIFT]] : [])] },   /* OFS PIT 81, 82 */
@@ -3189,7 +3273,16 @@ async function connect() {
   connecting = true;
   let connectedDevice = null;
   wantConnected = true;
-  if (!MOCK && !navigator.requestMIDIAccess) { connecting = false; sayK("nomidi"); return; }
+  if (!MOCK && !navigator.requestMIDIAccess) {
+    connecting = false;
+    if (location.protocol === "file:" || !window.isSecureContext) {
+      setMock(true);
+      say("Web MIDI requires HTTPS or http://localhost (blocked on file://). Switched to Quantum GammaWave Simulator.");
+    } else {
+      sayK("nomidi");
+    }
+    return;
+  }
   $("connect").disabled = true;
   sayK("connecting");
   try {
@@ -3201,7 +3294,7 @@ async function connect() {
       }
       access.onstatechange = onState;
     }
-    const isF = (p) => /felucca/i.test(p.name || "") && p.state !== "disconnected";
+    const isF = (p) => /felucca|fm-?1|gammawave|quantum/i.test(p.name || "") && p.state !== "disconnected";
     const input = [...access.inputs.values()].find(isF);
     const output = [...access.outputs.values()].find(isF);
     if (!input || !output) { sayK("nodevice"); return; }
@@ -3282,7 +3375,7 @@ async function load(d) {
     /* the first frame after opening the port can be lost: a few tries */
     d.info = parse[CMD.INFO](await sessionRequest(d, req.info(), { timeout: 500, retries: 3 }));
     /* shown as Pocket GammaWave; the firmware still reports "FELUCCA <version>" (INFO; the installer's check needs it) */
-    $("version").textContent = String(d.info.version || "").replace(/^FELUCCA\b/i, "POCKET GAMMAWAVE");
+    $("version").textContent = String(d.info.version || "").replace(/^FELUCCA\b/i, "QUANTUM GAMMAWAVE");
     const total = d.info.pcount + d.info.gcount;
     for (let i = 0; i < d.info.pcount; i++) { sayK("reading", `${i + 1}/${total}`); d.pdesc[i] = await getDescOrNull(0, i, d); }
     for (let i = 0; i < d.info.gcount; i++) { sayK("reading", `${d.info.pcount + i + 1}/${total}`); d.gdesc[i] = await getDescOrNull(1, i, d); }
@@ -5527,9 +5620,9 @@ $("connect").addEventListener("click", () => {
       ctx.textAlign = "center";
       ctx.font = "10px 'IBM Plex Mono', monospace";
       ctx.fillStyle = pal.text;
-      ctx.fillText("v1.2.1-GW", 120, 194);
+      ctx.fillText("v1.3-QG", 120, 194);
       ctx.fillStyle = pal.theme;
-      ctx.fillText("POCKET GAMMAWAVE // GW-1", 120, 212);
+      ctx.fillText("QUANTUM GAMMAWAVE // QG-1", 120, 212);
       ctx.textAlign = "left";
       requestAnimationFrame(renderLCD);
       return;
@@ -6009,7 +6102,7 @@ $("connect").addEventListener("click", () => {
       if (gwHasP(GWP.FTYPE)) gwSet(0, GWP.FTYPE, ftype);
       if (m === 5) { gwSet(1, GWG.DUCK, 96); gwSet(1, GWG.PUNCH, 90); }
     }
-    sayK("applied", ` — POCKET GAMMAWAVE MACRO [${name.toUpperCase()}]`);
+    sayK("applied", ` — QUANTUM GAMMAWAVE MACRO [${name.toUpperCase()}]`);
   }
 
   document.querySelectorAll(".gw-macro-btn").forEach((btn) => {
@@ -7002,7 +7095,10 @@ $("connect").addEventListener("click", () => {
 applyLang();
 showTab(tab);
 libInit();
-if (!MOCK && !navigator.requestMIDIAccess) sayK("nomidi");
+if (!MOCK && !navigator.requestMIDIAccess) {
+  setMock(true);
+  sayK("nomidi");
+}
 })();
 </script>
 </body>

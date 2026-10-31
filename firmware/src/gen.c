@@ -52,6 +52,25 @@ static struct {
     char last[20];                                      /* the last piece: "HOUSE 0421" */
 } gp = {.genre = 0, .seed = 1, .energy = 50, .form = 1, .amt = {GA_AUTO, GA_AUTO, GA_AUTO, GA_AUTO, GA_AUTO}, .complex = 50,
         .swing = GA_AUTO, .human = 30, .fills = GA_AUTO, .wet = GA_AUTO, .grit = GA_AUTO};
+/* (QG-1 audit) the power-on defaults, for the test harness too: ui_power_on must not inherit a previous test's GEN
+ * settings (the DICE ALL tempo check failed when a soak had left gp.tempo set) */
+static void gen_power_on(void)
+{
+    uint32_t i;
+    memset(&gp, 0, sizeof gp);
+    gp.genre = 0;
+    gp.seed = 1;
+    gp.energy = 50;
+    gp.form = 1;
+    for (i = 0; i < GP_N; i++)
+        gp.amt[i] = GA_AUTO;
+    gp.complex = 50;
+    gp.swing = GA_AUTO;
+    gp.human = 30;
+    gp.fills = GA_AUTO;
+    gp.wet = GA_AUTO;
+    gp.grit = GA_AUTO;
+}
 static const uint8_t GEN_SCL[8] = {0, SC_MIN, SC_MAJ, SC_DOR, SC_PHRY, SC_HARM, SC_MIX, SC_LYD};   /* (gp.scale) */
 
 /* the generator's own random numbers: a stream a part, from the seed */
@@ -1735,6 +1754,7 @@ static void gen_make(void)
     song.g[G_DMIX] = (int16_t)grr(70, 110);
     song.g[G_DCOLOR] = (int16_t)(g->dtype & 1u ? grr(50, 70) : grr(30, 52));
     song.g[G_DTYPE] = (int16_t)(g->dtype & 1u);
+    song.g[G_CTYPE] = 0;                                /* (QG-1) a piece's chorus the ensemble */
     song.g[G_DPING] = (int16_t)((g->dtype >> 1) & 1u);
     song.g[G_DMOD] = (int16_t)(wet >= 70u ? grr(20, 50) : g->human >= 40u && gch(50) ? grr(10, 36) : 0);   /* (0.6.97: the
                                                          * tape's wobble on the long tails) */

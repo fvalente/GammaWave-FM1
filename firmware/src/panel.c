@@ -121,7 +121,7 @@ static void settings_init(void)
     }
     if (settings.magic != SETTINGS_MAGIC || settings.palette >= NPALETTES) {
         settings.magic = SETTINGS_MAGIC;
-        settings.palette = UI_GAMMA_INDEX;     /* GAMMA (Bakelite Amber & Cherenkov Cyan default; also WRAITH & JIANT) */
+        settings.palette = UI_QUANTUM_INDEX;   /* QUANTUM (the default; also GAMMA, WRAITH, THERMAL) */
         settings.lowcut = 0;
         settings.zoom = 0;                     /* (retired: the LEDS setting, settings_persist.c) */
     }

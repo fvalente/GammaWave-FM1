@@ -138,7 +138,7 @@ static void palette_set(uint32_t i)
     const ui_pal_t *p = &UI_PALETTES[i % NPALETTES];
     i %= NPALETTES;
     ux.mono = i == UI_GREY_INDEX;
-    ux.chamfer = i == UI_JIANT_INDEX || i == UI_GAMMA_INDEX || i == UI_WRAITH_INDEX;
+    ux.chamfer = i == UI_JIANT_INDEX || i == UI_GAMMA_INDEX || i == UI_WRAITH_INDEX || i == UI_QUANTUM_INDEX;
     ux.bg = p->bg; ux.surf = ux.style ? p->bg : p->surf; ux.text = p->text; ux.theme = p->theme; ux.accent = p->accent;
     ux.mid = ux_mix(p->bg, p->text, UI_MID_PCT);
     ux.dim = ux_mix(p->bg, p->text, UI_DIM_PCT);

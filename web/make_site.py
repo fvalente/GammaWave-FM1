@@ -20,6 +20,8 @@ The package must be one made by tools/fm1pkg_make.py (Felucca's own loader, no v
 Its identity (FM-1_9xx) is read from the package; the device must report it after
 the install.
 """
+import base64
+import hashlib
 import json
 import re
 import shutil
@@ -69,6 +71,20 @@ def earlier(prev, version, product):
     return out
 
 
+def with_csp(html):
+    """(QG-1) a strict Content-Security-Policy: only the page's own inline script (by its hash) runs, nothing is
+    fetched from elsewhere (the packages are same-origin), no plugins, no <base>, no forms"""
+    m = re.search(r'<script type="module">(.*?)</script>', html, re.S)
+    if not m or html.count("<script") != 1:
+        raise SystemExit("index_pkg.html: expected exactly one inline module script (the CSP hashes it)")
+    h = base64.b64encode(hashlib.sha256(m.group(1).encode("utf-8")).digest()).decode()
+    csp = (f"default-src 'none'; script-src 'sha256-{h}'; style-src 'unsafe-inline'; img-src 'self' data: blob:; "
+           "connect-src 'self'; font-src 'self' data:; media-src 'self' blob:; object-src 'none'; base-uri 'none'; "
+           "form-action 'none'")
+    meta = f'<meta http-equiv="Content-Security-Policy" content="{csp}">\n<meta name="referrer" content="no-referrer">\n'
+    return html.replace('<meta charset="utf-8">\n', '<meta charset="utf-8">\n' + meta, 1)
+
+
 def main(pkg, version, out, prev=None):
     pkg, out = Path(pkg), Path(out)
     raw = pkg.read_bytes()
@@ -84,13 +100,19 @@ def main(pkg, version, out, prev=None):
         strip_module((HERE / "fm1backup.js").read_text(encoding="utf-8"))
     name = f"felucca-{re.sub(r'[^A-Za-z0-9.-]', '-', version)}.fwsc"
     old = earlier(Path(prev), version, product) if prev else []
-    versions = [{"version": version, "file": name}] + [e for e, _ in old]
-    meta = json.dumps({"version": version, "product": product, "pkg": "../../firmware/" + name,
-                       "versions": [{"version": e["version"], "pkg": "../../firmware/" + e["file"]} for e in versions]})
+    # (QG-1) each package with its SHA-256 and size: the installer refuses bytes that do not match
+    def digest(b):
+        return {"sha256": hashlib.sha256(b).hexdigest(), "size": len(b)}
+    versions = [{"version": version, "file": name, **digest(raw)}] + \
+        [{**e, **digest(src.read_bytes())} for e, src in old]
+    meta = json.dumps({"version": version, "product": product, "pkg": "../../firmware/" + name, **digest(raw),
+                       "versions": [{"version": e["version"], "pkg": "../../firmware/" + e["file"],
+                                     "sha256": e["sha256"], "size": e["size"]} for e in versions]})
     for mark in ("/*LIB*/", "/*META*/"):
         if html.count(mark) != 1:
             raise SystemExit(f"index_pkg.html must contain {mark} once; update make_site.py")
     html = html.replace("/*LIB*/", lib).replace("/*META*/", meta)
+    html = with_csp(html)
     inst, ed, fw = out / "webapp" / "installer", out / "webapp" / "editor", out / "firmware"
     for d in (inst, ed, fw):
         d.mkdir(parents=True, exist_ok=True)
@@ -109,7 +131,7 @@ def main(pkg, version, out, prev=None):
     for n in names:
         shutil.copy(lic / n, fw / "LICENSES" / n)
     (fw / "LICENSES" / "index.html").write_text(    # the installer links this folder: Pages lists no folders
-        '<!doctype html><meta charset="utf-8"><title>Pocket GammaWave (GW-1) licences</title><h1>Licence texts</h1><ul>'
+        '<!doctype html><meta charset="utf-8"><title>Quantum GammaWave (QG-1) licences</title><h1>Licence texts</h1><ul>'
         + "".join(f'<li><a href="{n}">{n}</a></li>' for n in names)
         + '</ul><p><a href="../LICENSING.md">LICENSING.md</a> · <a href="../LICENSE">LICENSE (GPL-3.0)</a></p>\n',
         encoding="utf-8")
@@ -120,9 +142,9 @@ def main(pkg, version, out, prev=None):
         if (HERE / f).exists():
             shutil.copy(HERE / f, ed / f)
     (out / "index.html").write_text(
-        '<!doctype html><meta charset="utf-8"><title>Pocket GammaWave (GW-1)</title>'
+        '<!doctype html><meta charset="utf-8"><title>Quantum GammaWave (QG-1)</title>'
         '<meta http-equiv="refresh" content="0; url=webapp/installer/">'
-        '<a href="webapp/installer/">Pocket GammaWave (GW-1) Installer</a>\n', encoding="utf-8")
+        '<a href="webapp/installer/">Quantum GammaWave (QG-1) Installer</a>\n', encoding="utf-8")
     print(f"site: {out}: webapp/installer ({len(html)} B), webapp/editor, firmware/{name} ({len(raw)} B, {product})"
           + (f", earlier: {' '.join(e['version'] for e, _ in old)}" if old else ""))
 

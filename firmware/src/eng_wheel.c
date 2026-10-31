@@ -283,6 +283,9 @@ static const preset_t WHEEL_PRESETS[] = {
     {"BAKELITE", {11, 4, 2, -2, 3, 65, 92, 2}, {2, 70, 120, 50}, 0, 0, FX(45, 20, 30, 45), PAT(6)},
     /* (1.2-GW, issue #17: ambient and expressive) an organ drone: flutes, the slow rotor, a long swell */
     {"DRONE ORGAN", {0, 4, 2, -4, 0, 0, 0, 1}, {60, 64, 127, 90}, 0, 0, FX(0, 40, 20, 85), PAT(5)},
+    /* (QUANTUM // QG-1) a bright drawbar set with percussion, a soft chapel */
+    {"QUANTUM DRAW", {9, 2, 1, 1, 2, 40, 30, 2}, {0, 64, 127, 45}, 0, 0, FX(10, 20, 15, 40), PAT(6)},
+    {"CHAPEL SOFT", {2, 2, -1, 0, 0, 5, 0, 1}, {40, 64, 127, 80}, 0, 0, FX(0, 30, 20, 80), PAT(5)},
 };
 
 static const engine_t ENG_WHEEL = {

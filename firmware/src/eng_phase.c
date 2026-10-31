@@ -221,6 +221,13 @@ static const preset_t PHASE_PRESETS[] = {
      {XP(P_LRATE, 12), XP(P_LWAVE, 1), XP(P_LFADE, 60), XP(P_LD_SHP, 18)}},
     {"HAZE STRINGS", {0, 7, 40, 60, 30, 0, 10, 0}, {70, 90, 115, 90}, 0, 0, FX(0, 90, 20, 75), PAT(5),
      {XP(P_LRATE, 48), XP(P_LD_PIT, 2), XP(P_M1SRC, 5), XP(P_M1DST, 3), XP(P_M1AMT, 10)}},
+    /* (QUANTUM // QG-1) keys, a phase 808, a sweep that opens by itself */
+    {"QBIT KEYS", {3, 6, 60, 50, 8, 0, 10, 0}, {0, 85, 40, 60}, 0, 0, FX(0, 30, 35, 45), PAT(6)},
+    {"PD EPIANO", {6, 3, 55, 60, 6, 0, 0, 0}, {0, 88, 30, 65}, 0, 0, FX(0, 40, 30, 50), PAT(6)},
+    {"PD 808", {3, 0, 20, 30, 0, 0, 90, 20}, {0, 80, 60, 40}, 0, 1, FX(30, 0, 0, 5), PAT(2),
+     {XP(P_VOICE, V_LEGATO), XP(P_GLIDE, 40)}},
+    {"ION SWEEP", {5, 4, 70, 80, 16, 0, 30, 40}, {60, 90, 110, 90}, 10, 0, FX(10, 60, 40, 80), PAT(5),
+     {XP(P_LRATE, 10), XP(P_LWAVE, 1), XP(P_LD_SHP, 20)}},
 };
 
 static const engine_t ENG_PHASE = {

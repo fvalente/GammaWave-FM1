@@ -1,0 +1,44 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# Host tests (no hardware, no JieLi toolchain, no AC79 SDK): every C test in tests/run_tests.sh,
+# the generated headers, the sanitizer runs, the Python tools and the web tests.
+#   NO_PACKAGE=1  skips the checks that need build/felucca.fwsc / build/loader/ota.bin; the
+#                 emulator workflow builds and tests the package with the toolchain.
+name: host tests
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+concurrency:
+  group: host-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  host:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Python packages (font / icon / table generation)
+        run: pip install Pillow numpy fonttools
+
+      - name: generated headers (fonts, icons, palettes, shapes, tables, FM6 patches)
+        run: python3 -c "import sys; sys.path.insert(0, 'tools'); import build; build.generate()"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: host tests (ASan + UBSan included; package tests skipped)
+        run: NO_PACKAGE=1 sh tests/run_tests.sh

@@ -728,12 +728,14 @@ static void input_off(track_t *t, uint32_t note)
     trk_note_off(t, note);                          /* other mode (ARP switched while held) */
 }
 
-/* the effect of key k in the FX layer (PF_N none): the first PF_M1 white keys (F3 .. A4) in order, black keys
- * 1..4 (F#3 G#3 A#3 C#4) the track mutes */
+/* the effect of key k in the FX layer (PF_N none): the first PF_M1 white keys (F3 .. F5) in order, black keys
+ * 1..6 (F#3 .. F#4) the track mutes, then G#4 VIBRATO, A#4 the tracks, C#5 GATE, D#5 SWEEP, F#5 DIVE (QG-1) */
 static uint32_t perf_key(uint32_t k)
 {
     uint32_t p = key_place(k);
-    return !key_black(k) ? (p < PF_M1 ? p : p == PF_M1 ? PF_CLR : PF_N) : p < NTRK ? PF_M1 + p : p == 7u ? PF_TGT : PF_N;
+    static const uint8_t BK[5] = {PF_VIB, PF_TGT, PF_GATE, PF_SWP, PF_DIVE};   /* (QG-1) G#4 A#4 C#5 D#5 F#5 */
+    return !key_black(k) ? (p < PF_M1 ? p : p == PF_M1 ? PF_CLR : PF_N) : p < NTRK ? PF_M1 + p :
+           p < NTRK + 5u ? BK[p - NTRK] : PF_N;
 }
 
 /* (0.6.14) LATCH: ARP OFF and ARP 2's HOLD ON, the keys' notes keep sounding when let go; the first key of the next

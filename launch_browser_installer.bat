@@ -1,15 +1,15 @@
 @echo off
-title GAMMAWAVE // WRAITH — M-VAVE FM-1 Browser Uploader & Web Studio
+title QUANTUM GAMMAWAVE — M-VAVE FM-1 Firmware Flasher & Recovery
 cd /d "%~dp0"
 echo ============================================================================
-echo   GAMMAWAVE // WRAITH — M-VAVE FM-1 Firmware Uploader ^& Web Studio (v1.0-GW)
+echo   QUANTUM GAMMAWAVE (QG-1) — M-VAVE FM-1 Web Installer & Hardware Tools
 echo ============================================================================
 echo.
-echo   Firmware binary : build\site\firmware\felucca-v1.0-GW.fwsc (610,113 B)
-echo   WebMIDI URL     : http://localhost:8765/webapp/installer/
-echo   Web Studio URL  : http://localhost:8765/webapp/editor/
-echo   Simulator URL   : http://localhost:8765/webapp/editor/?mock=1
+echo   Starting local secure web server for Web MIDI (SysEx enabled)...
+echo   URL: http://localhost:8765/web/index_pkg.html
 echo.
-echo   Opening browser (use Chrome, Edge, or Brave for WebMIDI SysEx)...
-start "" "http://localhost:8765/webapp/installer/"
-python -m http.server 8765 --directory build/site
+echo   Note: If your browser warns about Web MIDI permissions, click "Allow".
+echo   Works on Microsoft Edge, Google Chrome, Brave, and Chromium-based browsers.
+echo.
+start "" "http://localhost:8765/web/index_pkg.html"
+python -m http.server 8765

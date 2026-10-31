@@ -22,6 +22,7 @@ export function crc16(d, crc = 0) {
 }
 
 function enc(buf, off, size, key = 0xFFFF) {
+  if (off < 0 || size < 0 || off + size > buf.length) throw new Error("package field out of bounds");
   for (let i = 0; i < size; i++) {
     buf[off + i] ^= key & 0xFF;
     key = ((key * 2) ^ (key & 0x8000 ? 0x1021 : 0)) & 0xFFFF;
@@ -50,6 +51,8 @@ function w32(b, o, v) { w16(b, o, v & 0xFFFF); w16(b, o + 2, (v >>> 16) & 0xFFFF
 
 class Entry {                                   // JLFS head, 32 bytes
   constructor(raw, off) {
+    if (!Number.isInteger(off) || off < 0 || off + 32 > raw.length)
+      throw new Error(`JLFS header out of bounds @${off}`);
     this.hdrOff = off;
     this.hcrc = u16(raw, off);
     this.dcrc = u16(raw, off + 2);
@@ -101,6 +104,9 @@ export class Package {
   hdrFileOff(i) { return Math.floor(i / KEEP) * BLK + (i % KEEP); }
 
   parseUfw() {
+    /* (QG-1 stage 2) a file shorter than the 20 blocks the identity lives in cannot be a package:
+     * headerBytes() would read an empty tail and all-zero CRCs would compare equal */
+    if (this.raw.length < BLOCKS * BLK) throw new Error("not an FM-1 package (too short)");
     const h = this.headerBytes();
     enc(h, 0, 0x40);
     const hcrc = u16(h, 0), lcrc = u16(h, 2), nent = u16(h, 8);
@@ -109,6 +115,7 @@ export class Package {
     this.ufw = h;
     this.nent = nent;
     const hsize = 0x40 + nent * 0x50;
+    if (hsize > h.length) throw new Error("UFW entry list is larger than the header");
     if (crc16(h.subarray(0x40, hsize)) !== lcrc) throw new Error("UFW entry list CRC mismatch");
     this.entries = [];
     for (let off = 0x40; off < hsize; off += 0x50) {
@@ -123,30 +130,38 @@ export class Package {
     this.flashEntry = fl;
     this.flashFileOff = fl.dataOff + this.skew;
     this.flashSize = fl.size;
+    if (this.flashFileOff < 0 || this.flashFileOff + fl.size > this.raw.length)
+      throw new Error("flash.bin is outside the package");
     if (crc16(this.raw.subarray(this.flashFileOff, this.flashFileOff + fl.size)) !== fl.dcrc) throw new Error("flash.bin CRC mismatch");
   }
 
   parseFlash() {
+    if (this.flash.length < 32) throw new Error("flash image is too short");
     const dec = this.flash.slice();
     const h = dec.slice(0, 32);
     enc(h, 0, 32);
     if (crc16(h.subarray(2, 32)) !== u16(h, 0)) throw new Error("flash header CRC mismatch");
     this.chipKey = null; this.appBase = null;
-    for (let off = 32; ; off += 32) {
+    let listEnd = false;
+    for (let off = 32; off + 32 <= dec.length; off += 32) {
       enc(dec, off, 32);
       const e = new Entry(dec, off);
-      if (e.name === "isd_config.ini") {
+      if (e.name === "isd_config.ini" && e.offset + 34 <= dec.length) {
         const blob = dec.subarray(e.offset, e.offset + 34);
         if (crc16(blob.subarray(0, 32)) === u16(blob, 32)) this.chipKey = chipkeyDecode(blob.subarray(0, 32));
       }
-      if (e.flags === 0x81 && e.name === "app_dir_head" && this.appBase === null) this.appBase = e.offset;
-      if (e.index) break;
+      if (e.flags === 0x81 && e.name === "app_dir_head" && e.offset + 32 <= dec.length && this.appBase === null)
+        this.appBase = e.offset;
+      if (e.index) { listEnd = true; break; }
     }
+    if (!listEnd) throw new Error("flash entry list has no end");
     if (this.chipKey === null || this.appBase === null) throw new Error("chip key or app_dir_head not found");
     const b = this.appBase, k = this.chipKey, end = align32(b + 32);
+    if (!Number.isInteger(b) || b < 0 || end > dec.length) throw new Error("app_dir_head is outside the flash");
     sfc(dec, b, end - b, b, k);
     const head = new Entry(dec, b);
     const blkEnd = b + head.size;
+    if (blkEnd > dec.length) throw new Error("app area is outside the flash");
     if (blkEnd > end) sfc(dec, end, blkEnd - end, b, k);
     this.sfcEnd = Math.max(end, blkEnd);
     this.cfgLen = 0;
@@ -164,13 +179,21 @@ export class Package {
     }
     this.head = head;
     this.app = null;
-    for (let off = b + 32; ; off += 32) {
+    let appEnd = false;
+    /* (QG-1 stage 2) the app entry list lives inside the app area (head.size): the parser decrypts
+     * exactly [b, blkEnd), so an entry past blkEnd is still ciphertext and can never pass its header
+     * CRC. Stop there, as setApp() does, instead of walking the rest of a truncated list */
+    const appLimit = Math.min(dec.length, blkEnd);
+    for (let off = b + 32; off + 32 <= appLimit; off += 32) {
       const e = new Entry(dec, off);
       if (e.flags === 0x82 && e.name === "app.bin") this.app = e;
-      if (e.index) break;
+      if (e.index) { appEnd = true; break; }
     }
+    if (!appEnd) throw new Error("app entry list has no end");
     if (!this.app) throw new Error("app.bin not found in app area");
     this.appOff = b + this.app.offset;
+    if (this.appOff < 0 || this.appOff + this.app.size > dec.length)
+      throw new Error("app.bin is outside the flash");
     this.dec = dec;
   }
 

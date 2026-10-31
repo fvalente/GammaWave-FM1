@@ -706,7 +706,7 @@ static uint32_t layer_leds(uint32_t *br)
         uint32_t p = key_place(k), b = (uint32_t)key_black(k), on = 0, can = 0, e;
         if (l == LAYER_FX) {                            /* effects breathe, held lit, a too-long REPEAT dark */
             e = perf_key(k);
-            can = e < PF_N && ((ok >> e) & 1u);
+            can = PF_IS(e) && ((ok >> e) & 1u);
             on = can && ((held >> e) & 1u);
         } else if (l == LAYER_GLO) {                    /* sounding lit; SOLO held lit, the others, C4, F4 breathe */
             on = b ? (p < NTRK && glo_sounding(p)) || (p >= NTRK && p < NTRK + 4u && !((dx_mute >> (p - NTRK)) & 1u))
@@ -752,7 +752,7 @@ static uint32_t layer_leds(uint32_t *br)
 static const char *const PF_NAME[PF_M1] = {"1/8", "1/16", "1/32", "LPF", "HPF",          /* the audio ones (perform.c) */
     "OCT-", "OCT+", "1/2", "DEC-", "DEC+", "ST8", "ST16", "ATK+", "ARP", "RND"};            /* the MIDI ones (pfx.c) */
 static const char W_NOTE[16] = {'F', 'G', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'A', 'B', 'C', 'D', 'E', 'F', 'G'};
-static const char B_NOTE[10] = {'F', 'G', 'A', 'C', 'D', 'F', 'G', 'A', 'C', 'D'};   /* black keys 1..10: F# G# A# C# D# F# .. D# */
+static const char B_NOTE[11] = {'F', 'G', 'A', 'C', 'D', 'F', 'G', 'A', 'C', 'D', 'F'};   /* black keys 1..11: F# G# A# C# D# F# .. F# */
 #define G6_X(c) (7 + 38 * (int32_t)(c))                 /* (JIANT 0.6) a cell per track: 36 px wide, 2 px apart */
 #define G6_W 36
 #define LC_X(c) (6 + 58 * (int32_t)(c))                 /* cell column c: 54 px wide, 4 px apart */
@@ -761,6 +761,11 @@ static const char B_NOTE[10] = {'F', 'G', 'A', 'C', 'D', 'F', 'G', 'A', 'C', 'D'
 #define LF_X(c) (7 + 46 * (int32_t)(c))                 /* FX: the 10 effects, 5 a row (F3 .. C4, D4 .. A4), 42 px: x 7 .. 233 */
 #define LF_W 42
 #define LM_Y 96                                          /* the black keys' row (22 px) */
+#define LFR_P 26                                         /* (QG-1) FX: the white keys' rows 26 px apart, 22 high; */
+#define LFR_H 22
+#define LFM_Y 82                                         /* .. the mutes' row, the black effects' row under it */
+#define LFX_Y 103
+#define LFB_H 17
 #define LM_H 22
 enum { LS_OFF, LS_SEL, LS_HELD, LS_WAIT, LS_DIM, LS_MUTE };
 
@@ -848,21 +853,31 @@ static void lcell(int32_t x, int32_t y, int32_t h, const char *note, uint32_t ic
         GFX_HOOK_ALIGN(x, 0, x + lc_w, 0, AL_H | AL_PASS, "layer cell icon / name centred across");
         cv_text_in(x, t + 14 - AF_S_CAP_Y, lc_w, &AF_S, name, ink, fill);
     } else if (name) {                                     /* a key's row: the icon and the name on its middle */
+        int32_t ib[4];                                     /* (QG-1 stage 3) by its ink, not by the capitals: a
+                                                            * label with a "#" (G# C# .., the FX keys) reaches 2 px
+                                                            * below them and sat low in its cell */
+        text_ink(&AF_S, name, ib);
+        int32_t ny = y + HALF_UP(h - (ib[3] - ib[1])) - ib[1];   /* (the ink box is [y0, y1): its height is the difference) */
         if (!note && icon < ICON_COUNT) {                  /* (the EDIT layer: the engine's icon instead of the key) */
             GFX_HOOK_ALIGN(0, y, 0, y + h, AL_V, "layer key cell icon / name centred up/down");
             cv_icon_in(x + 3, y, 0, h, 12, icon, ink, fill);
             GFX_HOOK_ALIGN(0, y, 0, y + h, AL_V, "layer key cell icon / name centred up/down");
-            cv_text_r(x + lc_w - 3, y + CAP_IN(S, h), &AF_S, name, ink, fill);
+            cv_text_r(x + lc_w - 3, ny, &AF_S, name, ink, fill);
         } else {
             GFX_HOOK_ALIGN(0, y, 0, y + h, AL_V, "layer key cell icon / name centred up/down");
-            cv_text_r(x + lc_w - 5, y + CAP_IN(S, h), &AF_S, name, ink, fill);
+            cv_text_r(x + lc_w - 5, ny, &AF_S, name, ink, fill);
         }
     } else {
-        GFX_HOOK_ALIGN(0, y, 0, y + h, AL_V, "layer key cell icon / name centred up/down");
-        if (icon != ICON_NONE)                          /* (JIANT 0.6: a narrow cell, G6_W, the track's alone) */
+        /* (QG-1 stage 3) a hook declares the box for the item drawn next: one declared for an icon that is not
+         * there was paired with whatever came after (a cell 23 px below), a false finding */
+        if (icon != ICON_NONE) {                            /* (JIANT 0.6: a narrow cell, G6_W, the track's alone) */
+            GFX_HOOK_ALIGN(0, y, 0, y + h, AL_V, "layer key cell icon / name centred up/down");
             cv_icon_in(x + lc_w - 31, y, 0, h, 12, icon, ink, fill);
-        GFX_HOOK_ALIGN(0, y, 0, y + h, AL_V, "layer key cell icon / name centred up/down");
-        cv_icon_in(x + lc_w - (lc_w < LC_W ? 14 : 17), y, 0, h, 12, icon2, ink, fill);
+        }
+        if (icon2 != ICON_NONE) {
+            GFX_HOOK_ALIGN(0, y, 0, y + h, AL_V, "layer key cell icon / name centred up/down");
+            cv_icon_in(x + lc_w - (lc_w < LC_W ? 14 : 17), y, 0, h, 12, icon2, ink, fill);
+        }
     }
     if (tri) {
         int32_t j;
@@ -883,15 +898,22 @@ static void layer_fx(void)
         uint32_t st = !((ok >> e) & 1u) ? LS_DIM : !((held >> e) & 1u) ? LS_OFF :
                       (act >> e) & 1u || ((PF_MIDI >> e) & 1u) ? LS_HELD : LS_WAIT;
         n[0] = W_NOTE[e];
-        lcell(LF_X(e % 5u), 4 + 28 * (int32_t)(e / 5u), 24, 0, ICON_COUNT, 0, PF_NAME[e], st, 0);   /* (its name alone: the
+        lcell(LF_X(e % 5u), 4 + LFR_P * (int32_t)(e / 5u), LFR_H, 0, ICON_COUNT, 0, PF_NAME[e], st, 0);   /* (its name alone: the
                                                          * cells stand where the keys do, 5 a row) */
     }
     lc_w = G6_W;
     for (e = 0; e < NTRK; e++) {                        /* the mutes of the black keys 1..6 */
         bnote(n, e);
-        lcell(G6_X(e), LM_Y, LM_H, n, ICON_NONE, trk_icon(e, 0), 0, (held >> (PF_M1 + e)) & 1u ? LS_MUTE : LS_OFF, 0);
+        lcell(G6_X(e), LFM_Y, LFB_H, n, ICON_NONE, trk_icon(e, 0), 0, (held >> (PF_M1 + e)) & 1u ? LS_MUTE : LS_OFF, 0);
     }
     lc_w = LC_W;
+    for (e = 0; e < 4u; e++) {                          /* (QG-1) G#4 VIB, C#5 GATE, D#5 SWEEP, F#5 DIVE */
+        static const uint8_t K[4] = {PF_VIB, PF_GATE, PF_SWP, PF_DIVE}, B[4] = {NTRK, NTRK + 2, NTRK + 3, NTRK + 4};
+        static const char *const N[4] = {"VIB", "GATE", "SWP", "DIVE"};
+        uint32_t f = K[e];
+        bnote(n, B[e]);
+        lcell(LC_X(e), LFX_Y, LFB_H, n, ICON_NONE, 0, N[e], !((held >> f) & 1u) ? LS_OFF : LS_HELD, 0);
+    }
 }
 /* a track playing DRUM: the rows shrink (28, 28, 24 px) and the group mutes take the third */
 static const char *const GLO_GROUP[4] = {"KICK", "SNR", "HAT", "PERC"};

@@ -1208,7 +1208,7 @@ static void draw(int s)
     }
     if (s == S_SPLASH) {                          /* the power-on splash (main.c, before the UI): its lines, the version
                                                    * shown FELUCCA_VERSION (run_tests.sh: src/felucca.c's) */
-        static const char WANT[] = FELUCCA_VERSION "|POCKET GAMMAWAVE // GW-1";   /* (POCKET GAMMAWAVE: under the signature) */
+        static const char WANT[] = FELUCCA_VERSION "|QUANTUM GAMMAWAVE // QG-1";   /* (QUANTUM GAMMAWAVE: under the signature) */
         splash_seen[0] = 0;
         in_splash = 1;
         draw_splash();
@@ -1616,7 +1616,7 @@ int main(int argc, char **argv)
     const char *out = argc > 1 ? argv[1] : "build/ui_new";
     char path[600];
     uint32_t p, s;
-    static const char *const SHOW[] = {"GREY", "MONO", "GREEN", "PAPER", "NIGHT", "JIANT", "GAMMA", "WRAITH"};   /* (NIGHT: #50, to review) */
+    static const char *const SHOW[] = {"GREY", "MONO", "GREEN", "PAPER", "NIGHT", "THERMAL", "GAMMA", "WRAITH", "QUANTUM"};   /* (NIGHT: #50, to review) */
     snprintf(path, sizeof path, "%s/report.txt", out);
     rep = fopen(path, "w");
     if (!rep) { fprintf(stderr, "cannot write %s\n", path); return 1; }

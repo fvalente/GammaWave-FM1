@@ -349,7 +349,7 @@ static int test_keys(void)
     {   /* the white keys past the first 5 (D4 on), and black keys past the mutes: the layer's, nothing */
         uint32_t q, ok = 1, assigned = 0;
         for (q = 0; q < 27u; q++)
-            if (perf_key(q) < PF_N)
+            if (PF_IS(perf_key(q)))
                 assigned |= 1u << q;
         kb_mask = perf_mask = fx;
         mo0 = mo_w;
@@ -366,7 +366,7 @@ static int test_keys(void)
         }
         fm1_in.buttons = 0;
         bad += check("the keys without an effect (G5, the black keys past the mutes): silent, nothing held",
-                     ok && (uint32_t)__builtin_popcount(assigned) == PF_N);   /* (15 white F3 .. F5, 4 black) */
+                     ok && (uint32_t)__builtin_popcount(assigned) == PF_N + 4);   /* (15 white F3 .. F5, 6 mutes, QG-1: 4 black) */
         pfx_tgt = 0;                                /* (A#4 stepped it) */
         kb_mask = perf_mask = 0;
     }
@@ -544,7 +544,7 @@ static uint64_t instr_now(void)
 }
 static double cost_run(int on)
 {
-    static const int ALL[] = {PF_R16, PF_LPF, PF_HPF, PF_M1 + 2};
+    static const int ALL[] = {PF_R16, PF_LPF, PF_HPF, PF_M1 + 2, PF_GATE, PF_SWP};
     uint32_t f, k;
     uint64_t i0;
     int32_t o[2 * CTL];
@@ -562,7 +562,7 @@ static double cost_run(int on)
     i0 = instr_now();
     for (f = 0; f < 2u * FS; f += CTL)
         mix_block(o, CTL);
-    for (k = 0; k < PF_N; k++)
+    for (k = 0; k < PF_END; k++)
         perf_press(k, 0);
     perf_k[1] = perf_k[2] = perf_k[3] = 0;
     transport_req = 2;
@@ -865,6 +865,96 @@ static int test_pfx(void)
     return bad;
 }
 
+/* (QG-1) the black keys' effects: VIBRATO swings the pitch both ways and lets it back; DIVE falls two octaves over a
+ * beat, slow then fast; GATE shuts each 1/16's second half (and fades, no click); SWEEP closes the LPF mid-bar */
+static int test_qg(void)
+{
+    int bad = 0;
+    uint32_t i;
+    int32_t o[2 * CTL], lo = 0, hi = 0, d1 = 0, d4 = 0;
+    track_t *t1 = &trk[0];
+    song_setup();
+    host_preset(t1, 0, 1);
+    trk_note_on(t1, 57, 100);
+    perf_press(PF_VIB, 1);
+    for (i = 0; i < 44100u; i += CTL) {
+        mix_block(o, CTL);
+        lo = t1->pfx_pit < lo ? t1->pfx_pit : lo;
+        hi = t1->pfx_pit > hi ? t1->pfx_pit : hi;
+    }
+    perf_press(PF_VIB, 0);
+    mix_block(o, CTL);
+    mix_block(o, CTL);
+    bad += check("VIBRATO: the pitch swung both ways (+-1/2 semitone), back when let go",
+                 lo <= -6 && lo >= -9 && hi >= 6 && hi <= 9 && !t1->pfx_pit);
+    perf_press(PF_DIVE, 1);
+    for (i = 0; i < 22050u + 4u * CTL; i += CTL) {
+        mix_block(o, CTL);
+        if (i < 5513u) d1 = t1->pfx_pit;
+        d4 = t1->pfx_pit;
+    }
+    perf_press(PF_DIVE, 0);
+    mix_block(o, CTL);
+    mix_block(o, CTL);
+    bad += check("DIVE: slow then fast, two octaves down over a beat, back at once when let go",
+                 d1 < 0 && d1 > -40 && d4 <= -380 && !t1->pfx_pit);
+    trk_note_off(t1, 57);
+    {
+        ev_t ev[] = {{0, PF_GATE + 1}};
+        int32_t op, sh, ed = 0;
+        test_signal(220, 12000, 220, 12000);
+        run(120, 1, ev, 1, 8u * P16);
+        op = peak(out_l, 4u * P16 + 200u, 4u * P16 + P16 / 2u - 200u);
+        sh = peak(out_l, 4u * P16 + P16 / 2u + 400u, 5u * P16 - 50u);
+        for (i = 4u * P16 + 1u; i < 6u * P16; i++)
+            ed = abs(out_l[i] - out_l[i - 1]) > ed ? abs(out_l[i] - out_l[i - 1]) : ed;
+        bad += check("GATE: each 1/16 open for its first half, shut for the second, no step (click)",
+                     op > 10000 && sh < 400 && ed < 600);
+    }
+    {
+        ev_t ev[] = {{0, PF_SWP + 1}};
+        int32_t a, m;
+        test_signal(6000, 12000, 6000, 12000);
+        run(120, 1, ev, 1, 10u * P16);
+        a = peak(out_l, 2000u, 3000u);
+        m = peak(out_l, 7u * P16, 9u * P16);
+        bad += check("SWEEP: the LPF open at the bar's start, closed half way (a 6 kHz tone down)", a > 8000 && m < a / 4);
+    }
+    {   /* the lane: REC + DIVE over steps 2..5, VIBRATO over 8..9: codes 12 and 11 there; the next pass plays them */
+        uint32_t s16, st, ok = 1, dv = 0, vb = 0, none = 1;
+        song_setup();
+        memset(pfx_lane, 0, sizeof pfx_lane);
+        s16 = beat_samples() / 4u;
+        song.rec = 1;
+        transport_req = 1;
+        for (i = 0; i < 64u * s16; i += CTL) {
+            st = (i / s16) & 63u;
+            if (st == 2u && !(perf_held & PF_BIT(PF_DIVE))) perf_press(PF_DIVE, 1);
+            if (st == 6u && (perf_held & PF_BIT(PF_DIVE))) perf_press(PF_DIVE, 0);
+            if (st == 8u && !(perf_held & PF_BIT(PF_VIB))) perf_press(PF_VIB, 1);
+            if (st == 10u && (perf_held & PF_BIT(PF_VIB))) perf_press(PF_VIB, 0);
+            mix_block(o, CTL);
+        }
+        song.rec = 0;
+        for (st = 0; st < 64u; st++)
+            ok &= pfx_lane_at(st) == (st >= 2u && st < 6u ? 12u : st >= 8u && st < 10u ? 11u : 0u);
+        for (i = 64u * s16; i < 128u * s16; i += CTL) {
+            st = ((i - 64u * s16) / s16) & 63u;
+            mix_block(o, CTL);
+            if (st == 5u) dv |= t1->pfx_pit < -20;
+            if (st == 9u) vb |= t1->pfx_pit != 0;
+            if (st >= 12u && st < 60u) none &= !t1->pfx_pit;
+        }
+        transport_req = 2;
+        mix_block(o, CTL);
+        bad += check("punch-in lane: DIVE and VIBRATO recorded (12, 11), played back where they were", ok && dv && vb && none);
+        perf_press(PF_CLR, 1);
+        mix_block(o, CTL);
+        perf_press(PF_CLR, 0);
+    }
+    return bad;
+}
+
 int main(int argc, char **argv)
 {
     int bad = 0;
@@ -876,6 +966,7 @@ int main(int argc, char **argv)
     bad += test_idle();
     bad += test_misc();
     bad += test_pfx();
+    bad += test_qg();
     bad += test_cost();
     if (argc > 1)
         demos(argv[1]);

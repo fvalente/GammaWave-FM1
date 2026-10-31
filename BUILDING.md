@@ -21,6 +21,10 @@ The build makes three files in `build/`:
   tools/get_toolchain.sh            # installs to ~/.jieli/toolchain
   ```
 
+  The archive is pinned by SHA-256 when `JIELI_TOOLCHAIN_SHA256` is set (`tools/get_toolchain.sh`
+  prints the hash it got otherwise, so it can be reviewed and pinned); the SDK's three files are
+  checked against `SDK_SHA256` in `tools/build.py`.
+
 - The JieLi AC79 SDK (Apache-2.0). The package uses three of its files
   (`cpu/wl82/tools/uboot.boot`, `cfg_tool.bin`, `cfg/eq_cfg_hw.bin`); they are not part of this tree.
 
@@ -43,7 +47,7 @@ On Linux x86-64 the toolchain runs natively and Docker is not needed.
 `JIELI_TOOLCHAIN` and `AC79_SDK` override the default locations
 (`~/.jieli/toolchain`, `~/fw-AC79_AIoT_SDK`).
 
-`./build.sh --release 1.0` makes a release build: the package identity stays `FM-1_981` (Pocket GammaWave's own,
+`./build.sh --release 1.0` makes a release build: the package identity stays `FM-1_982` (Quantum GammaWave's own; Pocket GammaWave is FM-1_981,
 the one The Firmware Hub knows; Felucca's per-release `FM-1_9XY` gave 1.1 `FM-1_911`, Felucca 1.1's),
 and the version string `v1.0`; the package is `build/felucca-1.0.fwsc`, and
 `build/release-1.0/` holds what a release ships: the package, the app
